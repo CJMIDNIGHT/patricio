@@ -122,10 +122,10 @@ http://<IP_DEL_ROBOT>:8080
 ## Autores
 
 - **Adenor Buret** — [GitHub](https://github.com/CJMIDNIGHT)
-- **Santiago Aguirre Crespo** — [GitHub](https://github.com/XXX)
+- **Santiago Aguirre Crespo** — [GitHub](https://github.com/Saac04)
 - **Pablo Meana** — [GitHub](https://github.com/XXX)
-- **Mari Dapcheva** — [GitHub](https://github.com/XXX)
-- **César Herrero** — [GitHub](https://github.com/XXX)
-- **Juan Bautista** — [GitHub](https://github.com/XXX)
+- **Mari Dapcheva** — [GitHub](https://github.com/ohmarimari)
+- **César Herrero** — [GitHub](https://github.com/ElCesarEse)
+- **Juan Bautista** — [GitHub](https://github.com/jbperfon)
 
 ---
