@@ -123,7 +123,7 @@ http://<IP_DEL_ROBOT>:8080
 
 - **Adenor Buret** — [GitHub](https://github.com/CJMIDNIGHT)
 - **Santiago Aguirre Crespo** — [GitHub](https://github.com/Saac04)
-- **Pablo Meana** — [GitHub](https://github.com/XXX)
+- **Pablo Meana** — [GitHub](https://github.com/Meana13)
 - **Mari Dapcheva** — [GitHub](https://github.com/ohmarimari)
 - **César Herrero** — [GitHub](https://github.com/ElCesarEse)
 - **Juan Bautista** — [GitHub](https://github.com/jbperfon)
