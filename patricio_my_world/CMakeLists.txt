@@ -17,6 +17,10 @@ find_package(gz_math_vendor REQUIRED)
 find_package(gz_sim_vendor REQUIRED)
 
 
+add_executable(keyboard_teleop src/keyboard_teleop.cpp)
+ament_target_dependencies(keyboard_teleop rclcpp geometry_msgs)
+install(TARGETS keyboard_teleop DESTINATION lib/${PROJECT_NAME})
+
 install(
   DIRECTORY launch worlds rviz src include models params urdf
   DESTINATION share/${PROJECT_NAME}

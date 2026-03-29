@@ -28,4 +28,6 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+
+  <exec_depend>turtlebot3_gazebo</exec_depend>
 </package>
