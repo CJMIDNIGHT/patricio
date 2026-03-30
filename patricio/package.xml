@@ -9,7 +9,7 @@
  <maintainer email="amburet@epsg.upv.es">Adenor Buret</maintainer>
  <license>Apache 2.0</license>
  <url type="website">http://XXXXXXX</url>
- <url type="repository">https://github.com/XXXXXXX</url>
+ <url type="repository">https://github.com/CJMIDNIGHT/patricio</url>
  <url type="bugtracker">https://github.com/XXXXXX</url>
  <author email="amburet@epsg.upv.es">Adenor Buret</author>
  <buildtool_depend>ament_cmake</buildtool_depend>
