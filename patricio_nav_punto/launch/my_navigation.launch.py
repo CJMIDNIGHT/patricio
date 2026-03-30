@@ -8,6 +8,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
+    # --- Rutas ---
     pkg_dir = get_package_share_directory('patricio_nav_punto')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
@@ -15,7 +16,8 @@ def generate_launch_description():
     params_file = os.path.join(pkg_dir, 'param', 'burger.yaml')
     rviz_config = os.path.join(pkg_dir, 'rviz', 'tb3_navigation2.rviz')
 
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    # --- Argumentos ---
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')  # Gazebo = true
 
     return LaunchDescription([
 
@@ -24,6 +26,7 @@ def generate_launch_description():
             default_value='true',
             description='Usar reloj de Gazebo'),
 
+        # --- Nav2 completo ---
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')),
@@ -31,10 +34,10 @@ def generate_launch_description():
                 'map': map_file,
                 'use_sim_time': use_sim_time,
                 'params_file': params_file,
-                'use_composition': 'False',
             }.items(),
         ),
 
+        # --- RViz ---
         Node(
             package='rviz2',
             executable='rviz2',

@@ -12,9 +12,6 @@ from launch_ros.actions import Node
 TURTLEBOT3_MODEL = os.environ['TURTLEBOT3_MODEL']
 ROS_DISTRO = os.environ.get('ROS_DISTRO')
 
-nav2_yaml = os.path.join(get_package_share_directory('patricio_nav_punto'), 'param', 'burger.yaml')
-
-
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
@@ -73,13 +70,6 @@ def generate_launch_description():
                 'params_file': param_dir}.items(),
         ),
         
-        Node(
-            package='nav2_amcl',
-            executable='amcl',
-            name='amcl',
-            output='screen',
-            parameters=[nav2_yaml]
-        ),
 
         Node(
             package='rviz2',
