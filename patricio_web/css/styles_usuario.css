@@ -1,0 +1,532 @@
+/* Main container */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.main-container {
+    display: flex;
+    flex-wrap: nowrap; /* Evita que los elementos se apilen */
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* Perfil card styling */
+.perfil-card {
+    width: 60%; /* Ocupa el 60% del ancho del contenedor */
+    background-color: #f54aa1;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: black;
+    width: 45vw; /* Ancho del 45% de la vista del navegador */
+}
+
+/* Título de la tarjeta */
+.perfil-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #2c366b;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.perfil-card hr {
+    border: 0;
+    height: 1px;
+    background-color: #ccc;
+    margin: 1rem 0;
+}
+
+/* Etiquetas de los campos */
+.form-label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff; /* Cambia el color a blanco para mayor contraste */
+    margin-top: 1rem; /* Margen superior para separar del elemento anterior */
+    margin-bottom: 0.5rem; /* Margen inferior para separar del input */
+    display: block;
+}
+
+/* Campos de entrada */
+.form-control {
+    width: 100%; /* Ocupa el 100% del ancho del contenedor */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    color: #333;
+    box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
+}
+
+.form-control::placeholder {
+    color: black;
+    font-style: italic;
+}
+
+.profile-pic {
+    height: 200px;
+    width: 200px;
+    border: 3px solid #000;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    color: #2c366b;
+    font-size: 3rem;
+}
+
+/* Contenedor de los botones */
+.menu-container {
+    width: 45vw; /* Ancho del 45% de la vista del navegador */
+    height: 562.5px; /* Ocupa el 100% de la altura del contenedor principal */
+    display: flex;
+    flex-direction: column; /* Apila los botones verticalmente */
+    justify-content: space-evenly; /* Distribuye los botones equitativamente */
+    align-items: center; /* Centra los botones horizontalmente */
+}
+
+/* Botones del menú */
+.menu-btn {
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    background-color: #f54aa1;
+    border: none;
+    padding: 15px;
+    border-radius: 30px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: white;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.menu-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+/* Estilos para el popup */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #2c366b; /* Azul oscuro */
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    color: #fff;
+    
+}
+.popup-content .receta-tabla{
+    width: 90%;
+    max-width: 800px;
+    color: #2c366b; /* Azul oscuro */
+}
+
+.popup-content h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.popup-content .form-label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff; /* Blanco para contraste */
+    margin-top: 1rem; /* Margen superior para separación */
+    margin-bottom: 0.5rem; /* Margen inferior para separación */
+    text-align: left; /* Alinea el texto a la izquierda */
+    display: block;
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+}
+
+.popup-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.popup-buttons .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: #6c757d; /* Gris */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.popup-buttons .btn:hover {
+    background-color: #5a6268; /* Gris más oscuro */
+}
+
+.popup-buttons .btn-success {
+    background-color: #28a745; /* Verde para guardar */
+    color: #fff;
+    border: none;
+}
+
+.popup-buttons .btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.popup-buttons .btn-secondary {
+    background-color: #6c757d; /* Gris para cancelar */
+    color: #fff;
+    border: none;
+}
+
+.popup-buttons .btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.05);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column; /* Apila los elementos verticalmente */
+        padding: 1rem;
+    }
+
+    .main-container {
+        flex-direction: column; /* Apila los elementos verticalmente */
+    }
+
+    .perfil-card,
+    .menu-container {
+        width: 100%; /* Ocupan todo el ancho en pantallas pequeñas */
+    }
+
+    .menu-btn {
+        width: 100%; /* Botones ocupan todo el ancho */
+    }
+}
+
+/* Estilos para el popup de notificaciones */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #fff; /* Fondo blanco */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 800px;
+    color: #2c366b; /* Azul oscuro */
+}
+
+.popup-content h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.notificaciones-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+/* Estilo de cada notificación */
+.notificaciones-lista li {
+    background-color: pink; /* Rosa */
+    margin-bottom: 8px; /* Reduce el margen inferior entre notificaciones */
+    padding: 8px; /* Reduce el padding interno */
+    border-radius: 8px; /* Ajusta el borde redondeado */
+    color: #2c366b; /* Azul oscuro para el texto */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 50px; /* Establece una altura mínima más pequeña */
+}
+
+/* Botones dentro de las notificaciones */
+.notificaciones-lista li .popup-buttons {
+    display: flex;
+    flex-direction: column; /* Apila los botones verticalmente */
+    gap: 2px; /* Reduce aún más el espaciado entre los botones */
+    margin-top: 5px; /* Espacio entre el texto y los botones */
+}
+
+/* Botones dentro de las notificaciones */
+.notificaciones-lista li .popup-buttons .btn {
+    width: 100%; /* Los botones ocupan todo el ancho del contenedor */
+    text-align: center;
+    padding: 5px 15px; /* Reduce el padding interno de los botones */
+    font-size: 0.85rem; /* Reduce el tamaño del texto */
+    }
+
+.popup-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 5px;
+}
+
+.popup-buttons .btn {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.popup-buttons .btn-danger {
+    background-color: #ff3434; /* Rojo para eliminar */
+    color: #fff;
+    border: none;
+}
+
+.popup-buttons .btn-danger:hover {
+    background-color: #d62828;
+    transform: scale(1.05);
+}
+
+.popup-buttons .btn-primary {
+    background-color: #4caf50; /* Verde para redirigir */
+    color: #fff;
+    border: none;
+}
+
+.popup-buttons .btn-primary:hover {
+    background-color: #3e8e41;
+    transform: scale(1.05);
+}
+
+.popup-buttons .btn-secondary {
+    background-color: #6c757d; /* Gris para cerrar */
+    color: #fff;
+    border: none;
+}
+
+.popup-buttons .btn-secondary:hover {
+    background-color: #5a6268;
+    transform: scale(1.05);
+}
+
+/* Estilo para botones deshabilitados */
+.redirigir-notificacion:disabled {
+    background-color: #ccc; /* Color gris para indicar que está deshabilitado */
+    color: #666; /* Texto gris */
+    cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+    opacity: 0.9; /* Reduce la opacidad para dar un efecto apagado */
+    box-shadow: none; /* Elimina cualquier sombra */
+}
+
+/* Popup de receta electrónica */
+.receta-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.receta-tabla th, .receta-tabla td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.receta-tabla th {
+    background-color: #2c366b; /* Azul oscuro */
+    color: #fff; /* Texto blanco */
+    font-weight: bold;
+}
+
+.receta-tabla tr:nth-child(even) {
+    background-color: #f2f2f2; /* Fondo gris claro para filas pares */
+}
+
+.receta-tabla tr:hover {
+    background-color: #ddd; /* Fondo más oscuro al pasar el ratón */
+}
+
+/* Estilos para el popup de receta electrónica */
+.popup-content-receta {
+    background-color: #2c366b; /* Azul oscuro */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 95%; /* Aumenta el ancho del popup */
+    max-width: 1200px; /* Permite que sea más ancho en pantallas grandes */
+    height: auto; /* Ajusta la altura automáticamente al contenido */
+    color: #fff; /* Texto blanco */
+    box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
+    overflow: hidden; /* Elimina cualquier scroll */
+}
+
+/* Tabla de receta electrónica */
+.popup-content-receta .receta-tabla {
+    width: 100%; /* Asegura que la tabla ocupe todo el ancho del popup */
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9rem;
+    text-align: center;
+    background-color: #fff; /* Fondo blanco para la tabla */
+    border-radius: 10px; /* Bordes redondeados */
+    table-layout: fixed; /* Ajusta automáticamente el ancho de las columnas */
+}
+
+.popup-content-receta .receta-tabla th, 
+.popup-content-receta .receta-tabla td {
+    border: 1px solid #ddd; /* Bordes ligeros */
+    padding: 10px; /* Espaciado interno */
+    word-wrap: break-word; /* Ajusta el texto dentro de las celdas */
+    color: #2c366b; /* Texto azul oscuro */
+}
+
+.popup-content-receta .receta-tabla th {
+    background-color: #f54aa1; /* Rosa */
+    color: #fff; /* Texto blanco */
+    font-weight: bold;
+    text-transform: uppercase; /* Texto en mayúsculas */
+}
+
+.popup-content-receta .receta-tabla tr:nth-child(even) {
+    background-color: #f9f9f9; /* Fondo gris claro para filas pares */
+}
+
+.popup-content-receta .receta-tabla tr:nth-child(odd) {
+    background-color: #fff; /* Fondo blanco para filas impares */
+}
+
+.popup-content-receta .receta-tabla tr:hover {
+    background-color: #f1f1f1; /* Fondo más oscuro al pasar el ratón */
+}
+
+/* Botones dentro del popup */
+.popup-content-receta .popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.popup-content-receta .popup-buttons .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: #f54aa1; /* Rosa */
+    color: #fff; /* Texto blanco */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.popup-content-receta .popup-buttons .btn:hover {
+    background-color: #d94c9a; /* Rosa más oscuro */
+}
+
+/* Popup de historial de compras */
+#comprasPopup .popup-content-receta {
+    background-color: #2c366b; /* Azul oscuro */
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 95%; /* Aumenta el ancho del popup */
+    max-width: 1200px; /* Permite que sea más ancho en pantallas grandes */
+    height: auto; /* Ajusta la altura automáticamente al contenido */
+    color: #fff; /* Texto blanco */
+    box-sizing: border-box; /* Asegura que el padding no exceda el ancho */
+    overflow: hidden; /* Elimina cualquier scroll */
+}
+
+/* Tabla de historial de compras */
+#comprasPopup .receta-tabla {
+    width: 100%; /* Asegura que la tabla ocupe todo el ancho del popup */
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9rem;
+    text-align: center;
+    background-color: #fff; /* Fondo blanco para la tabla */
+    border-radius: 10px; /* Bordes redondeados */
+    table-layout: fixed; /* Ajusta automáticamente el ancho de las columnas */
+}
+
+#comprasPopup .receta-tabla th, 
+#comprasPopup .receta-tabla td {
+    border: 1px solid #ddd; /* Bordes ligeros */
+    padding: 10px; /* Espaciado interno */
+    word-wrap: break-word; /* Ajusta el texto dentro de las celdas */
+    color: #2c366b; /* Texto azul oscuro */
+}
+
+#comprasPopup .receta-tabla th {
+    background-color: #f54aa1; /* Rosa */
+    color: #fff; /* Texto blanco */
+    font-weight: bold;
+    text-transform: uppercase; /* Texto en mayúsculas */
+}
+
+#comprasPopup .receta-tabla tr:nth-child(even) {
+    background-color: #f9f9f9; /* Fondo gris claro para filas pares */
+}
+
+#comprasPopup .receta-tabla tr:nth-child(odd) {
+    background-color: #fff; /* Fondo blanco para filas impares */
+}
+
+#comprasPopup .receta-tabla tr:hover {
+    background-color: #f1f1f1; /* Fondo más oscuro al pasar el ratón */
+}
+
+/* Botones dentro del popup */
+#comprasPopup .popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+#comprasPopup .popup-buttons .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    background-color: #f54aa1; /* Rosa */
+    color: #fff; /* Texto blanco */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#comprasPopup .popup-buttons .btn:hover {
+    background-color: #d94c9a; /* Rosa más oscuro */
+}
+
+/* —— Habilitar scroll en la lista de notificaciones —— */
+.notificaciones-lista {
+    max-height: 300px; /* Ajusta según necesidad */
+    overflow-y: auto;
+    padding-right: 5px;
+  }

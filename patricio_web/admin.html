@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Patricio | Administración</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles_generales.css">
+  <link rel="stylesheet" href="css/styles_admin.css">
+  <link rel="stylesheet" href="css/styles_logout.css">
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+ 
+
+</head>
+<body>
+  <header>
+    <a href="index.html">
+  <img src="images/logo_patricio.png" alt="Patricio" class="logo">
+</a>
+  <div class="logout-button">
+    <button class="btn boton" id="logoutButton">Cerrar Sesión</button>
+  </div>
+  </header>
+  <main>
+    <div class="container">
+      <div class="row">
+        <!-- Left menu -->
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="text-center">Menu</h3>
+              <p class="text-center">Configuración de conexión</p>
+              <hr>
+              <label for="ipInput">Dirección del servidor:</label>
+              <input type="text" id="ipInput" class="form-control" />
+
+              <p class="mt-2" id="estado">🔌 Sin conexión</p>
+              <button class="mt-2 boton" id="btn_con">Conectar</button>
+              <button class="mt-2 boton" id="btn_dis">Desconectar</button>
+              <hr>
+              <h5>Vista de cámara</h5>
+              <div id="divCamera" style="margin-top: 10px;">
+                <img id="cameraFeed" src="" 
+                style="width: 100%; height: auto; border-radius: 10px;" />
+                <button id="btn_guardar_imagen" class="mt-2 boton" type="button">Capturar imagen</button>
+              </div>
+              <hr>
+              <h5>Vista del mapa</h5>
+              <canvas id="mapCanvas" style="width: 100%; border: 1px solid white; border-radius: 10px;"></canvas>
+              <hr>
+              <h5>Último identificador (niño / grupo)</h5>
+              <span id="patricio-ultimo-id" style="font-weight:bold; font-size:1.2em;">—</span>
+              
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Right content -->
+        <div class="col-8">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="text-center" id="title">Controles de movimiento circular</h2>
+              <div class="d-flex justify-content-center gap-5">
+                <button class="mt-2 boton" id="btn_move">Mover</button>
+                <button class="mt-2 boton" id="btn_stop">Parar</button>
+                <button class="mt-2 boton" id="btn_reverse">Cambiar sentido</button>
+              </div>
+              <hr>
+
+              <h3 class="text-center">Controles WSAD</h3>
+              <hr>
+
+              <!-- Controles WSAD -->
+<h2 class="titulo-seccion">Controles WSAD</h2>
+<div class="wsad">
+  <button class="mt-2 boton" id="btn_wsad_delante">Delante</button>
+  <button class="mt-2 boton" id="btn_wsad_atras">Atrás</button>
+  <button class="mt-2 boton" id="btn_wsad_izquierda">Izquierda</button>
+  <button class="mt-2 boton" id="btn_wsad_derecha">Derecha</button>
+  <button class="mt-2 boton" id="btn_wsad_parar">Parar</button>
+</div>
+
+              <hr>
+              <p>Coordenadas de la ubicación del robot</p>
+              <p>
+                <span>Coordenada X: <span id="pos_x">0.00</span></span><br>
+                <span>Coordenada Y: <span id="pos_y">0.00</span></span><br>
+                <span>Coordenada Z: <span id="pos_z">0.00</span></span><br>
+                <span>Orientación: <span id="pos_w">0.00</span></span>
+              </p>
+              <hr>
+              <h1>📡 Monitor de Patricio (TurtleBot)</h1>
+
+                <div class="metric">🔋 Batería: <span id="bateria">No disponible</span></div>
+                <div class="metric">🚶 Velocidad lineal: <span id="velocidad">Cargando...</span></div>
+                <div class="metric">🌡 Temperatura: <span id="temperatura">Cargando...</span></div>
+                <div class="metric">📅 Última actualización: <span id="timestamp">--</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h3 class="text-center">Ubicaciones predeterminadas</h3>
+              <div class="d-flex justify-content-center gap-3">
+                <button class="mt-3 boton" id="btn_goto_cola">Ir a zona de espera</button>
+                <button class="mt-3 boton" id="btn_goto_casa">Ir a base / inicio</button>
+                <button class="mt-3 boton" id="btn_goto_almacen">Ir a taller / material</button>
+                <button class="mt-3 boton" id="btn_cancelar_nav">Cancelar navegación</button>
+
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </main>
+  <footer>
+    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
+    <span>Patricio 2026 ®</span>
+    <a href="contacto.html" class="contact-link">CONTACTO</a>
+  </footer>
+
+    <!-- Popup de confirmación cerrar sesion -->
+  <div id="logoutPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
+      <div class="popup-buttons">
+        <button id="confirmLogout" class="btn boton">Sí</button>
+        <button id="cancelLogout" class="btn boton">No</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+  <script src="js/script_monitor.js"></script>
+  <script src="js/script_admin.js"></script>
+  <script src="js/script_singup_login_logout.js"></script>
+  <script src="js/draw_occupancy_grid.js"></script>
+ 
+</body>
+</html>

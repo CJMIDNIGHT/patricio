@@ -1,0 +1,269 @@
+/* Ajustar el tamaño del contenedor de la tarjeta */
+.perfil-card {
+    width: 70%; /* Ocupa el 70% del ancho de la pantalla */
+    background-color: #f54aa1;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: black;
+    margin: 0; /* Elimina márgenes automáticos */
+    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+}
+
+/* Contenedor principal */
+.main-container {
+    display: flex;
+    justify-content: space-between; /* Espacio entre la tarjeta y los botones */
+    align-items: flex-start; /* Alinea los elementos en la parte superior */
+    gap: 20px; /* Espaciado entre la tarjeta y los botones */
+    margin: 20px auto; /* Centra el contenedor principal horizontalmente */
+    max-width: 1200px; /* Limita el ancho máximo del contenedor */
+}
+
+/* Contenedor de los botones */
+.menu-container {
+    width: 25%; /* Ocupa el 25% del ancho de la pantalla */
+    display: flex;
+    flex-direction: column; /* Apila los botones verticalmente */
+    justify-content: flex-start; /* Alinea los botones al inicio */
+    gap: 15px; /* Espaciado entre los botones */
+}
+
+/* Botones del menú */
+.menu-btn {
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    background-color: #f54aa1;
+    border: none;
+    padding: 15px;
+    border-radius: 30px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: white;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.menu-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+/* Estilo para la tabla de stock */
+.stock-tabla {
+    width: 100%; /* La tabla ocupa todo el ancho del contenedor */
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #333;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stock-tabla th, .stock-tabla td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.stock-tabla th {
+    background-color: #f54aa1;
+    color: #fff;
+    font-weight: bold;
+}
+
+.stock-tabla tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.stock-tabla tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Centrar el popup en la pantalla */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    z-index: 1000;
+}
+
+/* Estilo del contenido del popup */
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px; /* Ancho máximo del popup */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    overflow-y: auto; /* Permite desplazamiento si el contenido excede la altura */
+}
+
+/* Popup especial para el registro de ventas */
+.popup-content.ventas {
+    background-color: #1e2a78;
+    color: #fff;
+    padding: 40px 20px 30px 20px;
+    border-radius: 20px;
+    width: 75vw;
+    max-width: 1400px;
+    max-height: 90vh;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Popup especial para recetas por cliente */
+.popup-content.recetas {
+    background-color: #1e2a78;
+    color: #222;
+    padding: 40px 20px 30px 20px;
+    border-radius: 20px;
+    width: 75vw;
+    max-width: 1400px;
+    max-height: 90vh;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-content.recetas label {
+    color: #fff;
+}
+
+/* Scroll horizontal para tablas grandes dentro del popup */
+.tabla-scroll {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+/* Tabla dentro del popup de ventas */
+.popup-content.ventas .stock-tabla {
+    min-width: 900px;
+    width: 100%;
+    background: #fff;
+    color: #222;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.popup-content.ventas .stock-tabla th,
+.popup-content.ventas .stock-tabla td {
+    border: 1px solid #ddd;
+    padding: 10px 16px;
+    text-align: center;
+}
+
+.popup-content.ventas .stock-tabla th {
+    background-color: #f54aa1;
+    color: #fff;
+    font-weight: bold;
+}
+
+.popup-content.ventas .stock-tabla tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.popup-content.ventas .stock-tabla tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Distribución en dos columnas para el formulario */
+#modificarProductoForm {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas de igual tamaño */
+    gap: 20px; /* Espaciado entre los campos */
+}
+
+/* Asegura que los botones ocupen toda la fila */
+#modificarProductoForm .popup-buttons {
+    grid-column: span 2; /* Los botones ocupan ambas columnas */
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Estilo para cantidades bajas */
+.cantidad-baja {
+    color: red;
+    font-weight: bold;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+    #modificarProductoForm {
+        grid-template-columns: 1fr; /* Una sola columna en pantallas pequeñas */
+    }
+
+    #modificarProductoForm .popup-buttons {
+        flex-direction: column; /* Botones apilados verticalmente */
+        gap: 10px;
+    }
+}
+
+/* Estilo específico para el popup de entrega de medicamento */
+#popupEntregaMedicamento .popup-content {
+    align-items: center; /* Centra el contenido horizontalmente */
+}
+
+#popupEntregaMedicamento h3 {
+    margin: 0 0 1em 0; /* Margen inferior para separación */
+    font-size: 1.5em;
+    color: #fff;
+    text-align: center;
+}
+
+#popupEntregaMedicamento .popup-buttons {
+    margin-top: 1.5em;
+    display: flex;
+    justify-content: center; /* Centra el botón en el popup */
+}
+
+#popupEntregaMedicamento .btn {
+    background-color: #f54aa1;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#popupEntregaMedicamento .btn:hover {
+    background-color: #d43f8d;
+}
+
+/* Estilo para la imagen del medicamento detectado */
+#imagenMedicamentoDetectado {
+    max-width: 120px;
+    max-height: 120px;
+    border-radius: 10px;
+}
+
+/* Estilo para el texto de entrega de medicamento */
+#textoEntregaMedicamento {
+    font-size: 1.2em;
+    color: #fff;
+    margin: 0;
+    text-align: left;
+}
+
+/* Flex para imagen y texto en el popup de entrega */
+.entrega-flex {
+    display: flex;
+    align-items: center;
+    gap: 2em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}

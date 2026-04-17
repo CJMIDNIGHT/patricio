@@ -1,0 +1,108 @@
+/* General container styling */
+.container {
+    margin-top: 2rem;
+    color: white;
+    font-family: 'Arial', sans-serif; /* Fuente más legible */
+}
+
+/* Card styling */
+.card {
+    background-color: #5a6fae; /* Azul más oscuro para mayor contraste */
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    margin-bottom: 1.5rem;
+}
+
+.card-body {
+    padding: 2rem; /* Más espacio interno */
+}
+
+/* Titles */
+h2, h3 {
+    color: #ff4da6; /* Rosa más brillante para destacar */
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center; /* Centrar los títulos */
+}
+
+h3.text-center {
+    font-size: 1.8rem; /* Tamaño de fuente más grande */
+}
+
+/* Buttons */
+button {
+    background-color: #ff4da6; /* Rosa brillante */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.1); /* Efecto de zoom más notable */
+    background-color: #e6398f; /* Rosa más oscuro al pasar el ratón */
+}
+
+/* Input styling */
+input.form-control {
+    background-color: #5a6fae; /* Azul oscuro */
+    color: white;
+    border: 1px solid #ff4da6; /* Borde rosa brillante */
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+input.form-control:focus {
+    outline: none;
+    border-color: #ff4da6;
+    box-shadow: 0 0 8px #ff4da6; /* Efecto de brillo rosa */
+}
+
+/* Status text */
+#estado {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff4da6;
+    text-align: center;
+}
+
+/* Flexbox for buttons */
+.d-flex {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem; /* Más espacio entre botones */
+    flex-wrap: wrap;
+}
+
+/* Footer alignment */
+footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ccc; /* Gris claro */
+}
+
+footer a {
+    color: white; /* Rosa brillante */
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Coordenadas */
+p {
+    font-size: 1rem;
+    color: white; /* Gris claro */
+}
+
+p span {
+    font-weight: bold;
+    color: #ff4da6; /* Rosa brillante */
+}

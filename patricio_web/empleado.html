@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Patricio | Educador</title>
+  <link rel="stylesheet" href="css/styles_generales.css">
+  <link rel="stylesheet" href="css/styles_usuario.css">
+  <link rel="stylesheet" href="css/styles_empleado.css">
+  <link rel="stylesheet" href="css/styles_logout.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <a href="index.html">
+      <img src="images/logo_patricio.png" alt="Patricio" class="logo">
+    </a>
+      <div class="logout-button">
+        <button class="btn boton" id="logoutButton">Cerrar Sesión</button>
+      </div>
+  </header>
+    <main> 
+      <!-- Contenedor principal -->
+      <div class="main-container">
+        <!-- Tarjeta -->
+        <div class="perfil-card">
+          <div class="card-body">
+            <h2 class="perfil-title text-center">Material didáctico (aula)</h2>
+            <hr>
+            <table class="stock-tabla">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Área</th>
+                  <th>Unidades</th>
+                  <th>Ubicación</th>
+                  <th>Revisión material</th>
+                </tr>
+              </thead>
+                            <tbody>
+                <tr>
+                  <td>001</td>
+                  <td>Cuentos rimados (pack)</td>
+                  <td>Lectura</td>
+                  <td>45</td>
+                  <td>Estante A</td>
+                  <td>15/08/2026</td>
+                </tr>
+                <tr>
+                  <td>002</td>
+                  <td>Puzzle 12 piezas</td>
+                  <td>Motricidad</td>
+                  <td>30</td>
+                  <td>Cajón B</td>
+                  <td>10/09/2026</td>
+                </tr>
+                <tr>
+                  <td>003</td>
+                  <td>Bloques lógicos</td>
+                  <td>Lógica</td>
+                  <td>50</td>
+                  <td>Mesa taller</td>
+                  <td>20/07/2026</td>
+                </tr>
+                <tr>
+                  <td>004</td>
+                  <td>Figuras magnéticas</td>
+                  <td>Creatividad</td>
+                  <td>28</td>
+                  <td>Cajón B</td>
+                  <td>05/06/2026</td>
+                </tr>
+                <tr>
+                  <td>005</td>
+                  <td>Memoria con dibujos</td>
+                  <td>Atención</td>
+                  <td>20</td>
+                  <td>Estante A</td>
+                  <td>30/12/2026</td>
+                </tr>
+                <tr>
+                  <td>006</td>
+                  <td>Pelotas sensoriales</td>
+                  <td>Psicomotricidad</td>
+                  <td>35</td>
+                  <td>Cesta suelo</td>
+                  <td>25/11/2026</td>
+                </tr>
+                <tr>
+                  <td>007</td>
+                  <td>Pizarra magnética pequeña</td>
+                  <td>Expresión</td>
+                  <td>15</td>
+                  <td>Pared taller</td>
+                  <td>18/10/2026</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+  
+        <!-- Contenedor de los botones -->
+        <div class="menu-container">
+          <button class="btn menu-btn" data-bs-toggle="modal" data-bs-target="#añadirProducto">AÑADIR MATERIAL</button>
+          <button class="btn menu-btn" data-bs-toggle="modal" data-bs-target="#eliminarProducto">QUITAR MATERIAL</button>
+          <!-- Botón para abrir el popup de notificaciones -->
+          <button id="botonNotificaciones" class="btn menu-btn" data-bs-toggle="modal" data-bs-target="#notificacionesPopup">MIS NOTIFICACIONES (0)</button>
+          <button class="btn menu-btn" data-bs-toggle="modal" data-bs-target="#modificarProducto">AJUSTAR UNIDADES</button>
+          <button class="btn menu-btn" data-bs-target="#modificarInfoPopup">EDITAR FICHA DE MATERIAL</button>
+          <button class="btn menu-btn" data-bs-target="#registroVentasPopup" id="botonRegistroVentas">REGISTRO DE SESIONES</button>
+          <button class="btn menu-btn" data-bs-target="#popupRecetasCliente" id="botonRecetasCliente">ACTIVIDADES POR NIÑO/A</button>
+          <button class="btn menu-btn" id="botonEntregaMedicamento" type="button">CONFIRMAR SESIÓN / ENTREGA</button>
+      </div>
+    
+  </main>
+
+  <footer>
+    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
+    <span>Patricio 2026 ®</span>
+    <a href="contacto.html" class="contact-link">CONTACTO</a>
+  </footer>
+
+    <!-- Popup de confirmación cerrar sesion-->
+  <div id="logoutPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
+      <div class="popup-buttons">
+        <button id="confirmLogout" class="btn boton">Sí</button>
+        <button id="cancelLogout" class="btn boton">No</button>
+      </div>
+    </div>
+  </div>
+  <!-- Popup de notificaciones -->
+  <div id="notificacionesPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Notificaciones</h3>
+      <ul id="notificacionesLista" class="notificaciones-lista">
+        <!-- Aquí se agregarán las notificaciones dinámicamente -->
+      </ul>
+      <div class="popup-buttons">
+        <button type="button" id="cerrarNotificaciones" class="btn btn-secondary boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+<!-- Popup para añadir material -->
+<div id="añadirProductoPopup" class="popup-overlay" style="display: none;">
+  <div class="popup-content">
+    <h3>Añadir material didáctico</h3>
+    <form id="añadirProductoForm">
+      <div class="form-group mb-3">
+        <label for="codigoProducto" class="form-label">Código</label>
+        <input id="codigoProducto" class="form-control" placeholder="Código" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="nombreProducto" class="form-label">Nombre</label>
+        <input id="nombreProducto" class="form-control" placeholder="Nombre" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="categoriaProducto" class="form-label">Área</label>
+        <input id="categoriaProducto" class="form-control" placeholder="Área o categoría" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="cantidadProducto" class="form-label">Unidades</label>
+        <input id="cantidadProducto" type="number" class="form-control" placeholder="Unidades disponibles" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="ubicacionProducto" class="form-label">Ubicación en el aula</label>
+        <input id="ubicacionProducto" type="text" class="form-control" placeholder="Ej. Estante, cajón…" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="fechaVencimientoProducto" class="form-label">Próxima revisión</label>
+        <input id="fechaVencimientoProducto" type="date" class="form-control" required />
+      </div>
+      <div class="popup-buttons">
+        <button type="button" id="guardarProducto" class="btn btn-success boton">Guardar</button>
+        <button type="button" id="cancelarAñadirProducto" class="btn btn-secondary boton">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <!-- Popup para quitar material -->
+  <div id="eliminarProductoPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Quitar material del inventario</h3>
+      <form id="eliminarProductoForm">
+        <div class="form-group mb-3">
+          <label for="codigoEliminar" class="form-label">Código del material</label>
+          <input id="codigoEliminar" class="form-control" placeholder="Código" required />
+        </div>
+        <div class="popup-buttons">
+          <button type="button" id="confirmarEliminarProducto" class="btn btn-danger boton">Eliminar</button>
+          <button type="button" id="cancelarEliminarProducto" class="btn btn-secondary boton">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Popup para ajustar unidades -->
+  <div id="modificarProductoPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Ajustar unidades</h3>
+      <form id="modificarProductoForm">
+        <div class="form-group">
+          <label for="codigoModificar" class="form-label">Código del material</label>
+          <input id="codigoModificar" class="form-control" placeholder="Código" required />
+        </div>
+        <div class="form-group">
+          <label for="accionModificar" class="form-label">Acción</label>
+          <select id="accionModificar" class="form-control" required>
+            <option value="añadir">Sumar unidades</option>
+            <option value="eliminar">Restar unidades</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cantidadModificar" class="form-label">Cantidad</label>
+          <input id="cantidadModificar" type="number" class="form-control" placeholder="Unidades" required />
+        </div>
+        <div class="popup-buttons">
+          <button type="button" id="confirmarModificarProducto" class="btn btn-success boton">Guardar Cambios</button>
+          <button type="button" id="cancelarModificarProducto" class="btn btn-secondary boton">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Popup para modificar toda la información -->
+  <div id="modificarInfoPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Editar ficha de material</h3>
+      <form id="modificarInfoForm">
+        <div class="form-group mb-3">
+          <label for="codigoModificarInfo" class="form-label">Código del material</label>
+          <input id="codigoModificarInfo" class="form-control" placeholder="Código" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="nuevoNombre" class="form-label">Nombre</label>
+          <input id="nuevoNombre" class="form-control" placeholder="Nombre" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="nuevaCategoria" class="form-label">Área</label>
+          <input id="nuevaCategoria" class="form-control" placeholder="Área" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="nuevaCantidad" class="form-label">Unidades</label>
+          <input id="nuevaCantidad" type="number" class="form-control" placeholder="Unidades" required />
+        </div>
+        <div class="form-group mb-3">
+          <label for="nuevaFechaVencimiento" class="form-label">Próxima revisión</label>
+          <input id="nuevaFechaVencimiento" type="date" class="form-control" required />
+        </div>
+        <div class="popup-buttons">
+          <button type="button" id="confirmarModificarInfo" class="btn btn-success boton">Guardar Cambios</button>
+          <button type="button" id="cancelarModificarInfo" class="btn btn-secondary boton">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Popup para registro de sesiones -->
+  <div id="registroVentasPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content ventas">
+      <h3>Registro de sesiones con Patricio</h3>
+      <div class="tabla-scroll">
+        <table class="stock-tabla">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>ID niño/a</th>
+              <th>Actividad</th>
+              <th>Participantes</th>
+              <th>Notas</th>
+            </tr>
+          </thead>
+          <tbody id="ventasTablaBody">
+            <!-- Las ventas se mostrarán aquí dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+      <div class="popup-buttons">
+        <button type="button" id="cerrarRegistroVentas" class="btn btn-secondary boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup actividades por niño/a -->
+  <div id="popupRecetasCliente" class="popup-overlay" style="display: none;">
+  <div class="popup-content recetas">
+      <h3>Actividades asignadas</h3>
+      <form id="formBuscarRecetas" style="margin-bottom: 1em;">
+        <label for="inputSipRecetas">Identificador del niño o grupo:</label>
+        <input id="inputSipRecetas" class="form-control" placeholder="Ej. NINO-042" required />
+        <button type="submit" class="btn btn-success boton" style="margin-top: 0.5em;">Buscar</button>
+      </form>
+      <div class="tabla-scroll">
+        <table class="stock-tabla">
+          <thead>
+            <tr>
+              <th>Actividad</th>
+              <th>Código material</th>
+              <th>Unidades</th>
+              <th>¿Disponible?</th>
+            </tr>
+          </thead>
+          <tbody id="tablaRecetasClienteBody">
+            <!-- Recetas se mostrarán aquí -->
+          </tbody>
+        </table>
+      </div>
+      <div class="popup-buttons">
+        <button type="button" id="cerrarPopupRecetasCliente" class="btn boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup confirmar sesión -->
+  <div id="popupEntregaMedicamento" class="popup-overlay" style="display: none;">
+    <div class="popup-content recetas" style="align-items:center;">
+      <h3>Confirmación de sesión</h3>
+      <div class="entrega-flex">
+        <img id="imagenMedicamentoDetectado" src="images/detectada.jpg" alt="Vista de la actividad">
+        <p id="textoEntregaMedicamento">
+          Identificador: <span id="nombreClienteEntrega">NINO-042</span>
+        </p>
+      </div>
+      <div class="popup-buttons">
+        <button type="button" id="cerrarPopupEntregaMedicamento" class="btn boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script_singup_login_logout.js"></script>
+  <script src="js/script_empleado.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+// Botón y popup de entrega de medicamento
+document.addEventListener("DOMContentLoaded", function() {
+  const btnEntrega = document.getElementById("botonEntregaMedicamento");
+  const popupEntrega = document.getElementById("popupEntregaMedicamento");
+  const cerrarEntrega = document.getElementById("cerrarPopupEntregaMedicamento");
+  const imagenMedicamento = document.getElementById("imagenMedicamentoDetectado");
+  const nombreClienteEntrega = document.getElementById("nombreClienteEntrega");
+
+  if (btnEntrega && popupEntrega && cerrarEntrega) {
+    btnEntrega.addEventListener("click", function() {
+    
+      popupEntrega.style.display = "flex";
+    });
+    cerrarEntrega.addEventListener("click", function() {
+      popupEntrega.style.display = "none";
+    });
+  }
+});
+</script>
+</body>
+</html>

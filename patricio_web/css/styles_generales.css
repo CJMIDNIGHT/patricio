@@ -1,0 +1,83 @@
+/* Paleta: azules y morados suaves (tono logo Patricio), sin rosa/magenta */
+:root {
+  --color-fondo: #283250;
+  --color-borde-suave: rgba(255, 255, 255, 0.22);
+  --color-icono-usuario: #8b95c9;
+  --color-boton-inicio: #5d4e85;
+  --color-boton-fin: #3d5f8c;
+}
+
+/*Body*/
+body {
+  margin: 0;
+  font-family: 'Arial Black', sans-serif;
+  background-color: var(--color-fondo);
+  color: #e8eaf4;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-borde-suave);
+    height: 100px; /* Altura fija para header */
+    padding: 0 20px; /* Espaciado interno opcional */
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    max-width: min(260px, 55vw);
+    object-fit: contain;
+    display: block;
+}
+
+.user-icon {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-icono-usuario);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid var(--color-borde-suave);
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-around; /* Espaciado equitativo entre los elementos */
+    align-items: center;
+    padding: 10px 20px;
+    height: 100px; /* Altura fija para footer */
+}
+
+footer a {
+    text-decoration: none; /* Quitar subrayado */
+    color: #dce0f0;
+    font-weight: bold; /* Opcional: hacer el texto más visible */
+    margin: 0 0.5rem;
+}
+
+footer span {
+    text-decoration: none; /* Quitar subrayado */
+    color: #dce0f0;
+    font-weight: bold; /* Opcional: hacer el texto más visible */
+}
+
+/* Botones */
+.boton {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--color-boton-inicio) 0%, var(--color-boton-fin) 100%);
+  padding: 1rem 2rem;
+  color: #f4f5fb;
+  font-weight: bold;
+  border-radius: 30px;
+  text-decoration: none;
+  margin: 1rem 0;
+  border: none; /* Eliminar cualquier borde predeterminado */
+  outline: none; /* Eliminar el contorno al hacer clic */
+}

@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Patricio | Familia</title>
+  <link rel="stylesheet" href="css/styles_generales.css">
+  <link rel="stylesheet" href="css/styles_usuario.css">
+  <link rel="stylesheet" href="css/styles_logout.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <a href="index.html">
+      <img src="images/logo_patricio.png" alt="Patricio" class="logo">
+    </a>
+      <div class="logout-button">
+        <button class="btn boton" id="logoutButton">Cerrar Sesión</button>
+      </div>
+  </header>
+    <main>
+    <!-- Contenedor principal -->
+    <div class="main-container">
+      <!-- Panel de Perfil -->
+      <div class="perfil-card">
+        <div class="card-body">
+          <h2 class="perfil-title text-center">Perfil (familia / tutor)</h2>
+          <hr> <!-- Línea separadora -->
+          <form>
+            <div class="form-group mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input id="nombre" class="form-control" placeholder="Nombre" />
+            </div>
+            <div class="form-group mb-3">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input id="apellido" class="form-control" placeholder="Apellido" />
+            </div>
+            <div class="form-group mb-3">
+              <label for="codigo_aula" class="form-label">Código de grupo o aula</label>
+              <input id="codigo_aula" class="form-control" placeholder="Ej. AULA-AZUL-01" />
+            </div>
+            <div class="form-group mb-3">
+              <label for="correo" class="form-label">Correo Electrónico</label>
+              <input id="correo" class="form-control" placeholder="Correo Electrónico" />
+            </div>
+            <div class="form-group mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input id="telefono" class="form-control" placeholder="Teléfono" />
+            </div>
+          </form>
+        </div>
+      </div>
+  
+      <!-- Menú de Opciones -->
+      <div class="menu-container">
+        <button class="btn menu-btn boton" data-bs-toggle="modal" data-bs-target="#notificacionesModal">MIS NOTIFICACIONES</button>
+        <button class="btn menu-btn boton" data-bs-toggle="modal" data-bs-target="#recetasModal">ACTIVIDADES CON PATRICIO</button>
+        <button class="btn menu-btn boton" data-bs-toggle="modal" data-bs-target="#editarDatosModal">EDITAR DATOS</button>
+        <button class="btn menu-btn boton" data-bs-toggle="modal" data-bs-target="#historialModal">HISTORIAL DE SESIONES</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
+    <span>Patricio 2026 ®</span>
+    <a href="contacto.html" class="contact-link">CONTACTO</a>
+  </footer>
+
+    <!-- Popup de confirmación cerrar sesion-->
+  <div id="logoutPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
+      <div class="popup-buttons">
+        <button id="confirmLogout" class="btn boton">Sí</button>
+        <button id="cancelLogout" class="btn boton">No</button>
+      </div>
+    </div>
+  </div>
+  <!-- Popup de notificaciones -->
+  <div id="notificacionesPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Últimas notificaciones</h3>
+      <ul id="notificacionesLista" class="notificaciones-lista">
+        <li class="fija">
+          <span>Resumen de actividades con Patricio</span>
+          <div class="popup-buttons">
+            <button class="btn boton eliminar-notificacion">
+              <i class="bi bi-trash"></i> <!-- Icono de eliminar -->
+            </button>
+            <button class="btn boton redirigir_notificacion_receta">
+              <i class="bi bi-arrow-right-circle"></i> <!-- Icono de redirigir -->
+            </button>
+          </div>
+        </li>
+        <li class="fija">
+          <span>Nueva sesión de juego cooperativo <br> ¡ya está disponible el informe!</span>
+          <div class="popup-buttons">
+            <button class="btn boton eliminar-notificacion">
+              <i class="bi bi-trash"></i> <!-- Icono de eliminar -->
+            </button>
+            <button class="btn boton redirigir-notificacion" disabled>
+              <i class="bi bi-arrow-right-circle"></i> <!-- Icono de redirigir -->
+            </button>
+          </div>
+        </li>
+        <li class="fija">
+          <span>Sesión registrada correctamente</span>
+          <div class="popup-buttons">
+            <button class="btn boton eliminar-notificacion">
+              <i class="bi bi-trash"></i> <!-- Icono de eliminar -->
+            </button>
+            <button class="btn boton redirigir_notificacion_compra">
+              <i class="bi bi-arrow-right-circle"></i> <!-- Icono de redirigir -->
+            </button>
+          </div>
+        </li>
+      </ul>
+      <div class="popup-buttons">
+        <button id="cerrarNotificaciones" class="btn boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Popup de actividades -->
+  <div id="recetasPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content-receta">
+      <h3>Actividades con Patricio</h3>
+      <hr>
+      <table class="receta-tabla actividades-tabla">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Código</th>
+            <th>Actividad</th>
+            <th>Área</th>
+            <th>Próxima revisión</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>13/02/26</td>
+            <td>ACT-01</td>
+            <td>Colores y formas con el robot</td>
+            <td>Lógica</td>
+            <td>13/06/26</td>
+            <td><button class="btn btn-sm btn-outline-warning editar-fecha-btn">Editar</button></td>
+          </tr>
+          <tr>
+            <td>13/03/26</td>
+            <td>ACT-02</td>
+            <td>Cuenta y mueve: números del 1 al 10</td>
+            <td>Matemáticas</td>
+            <td>13/06/26</td>
+            <td><button class="btn btn-sm btn-outline-warning editar-fecha-btn">Editar</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="popup-buttons">
+        <button id="cerrarRecetas" class="btn boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Popup para editar datos -->
+  <div id="editarDatosPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Información del perfil</h3>
+      <form id="editarDatosForm">
+        <div class="form-group mb-3">
+          <label for="popupNombre" class="form-label">Nombre</label>
+          <input id="popupNombre" class="form-control" placeholder="Nombre" />
+        </div>
+        <div class="form-group mb-3">
+          <label for="popupApellido" class="form-label">Apellido</label>
+          <input id="popupApellido" class="form-control" placeholder="Apellido" />
+        </div>
+        <div class="form-group mb-3">
+          <label for="popupCodigoAula" class="form-label">Código de grupo o aula</label>
+          <input id="popupCodigoAula" class="form-control" placeholder="Código" />
+        </div>
+        <div class="form-group mb-3">
+          <label for="popupCorreo" class="form-label">Correo Electrónico</label>
+          <input id="popupCorreo" class="form-control" placeholder="Correo Electrónico" />
+        </div>
+        <div class="form-group mb-3">
+          <label for="popupTelefono" class="form-label">Teléfono</label>
+          <input id="popupTelefono" class="form-control" placeholder="Teléfono" />
+        </div>
+        <div class="popup-buttons">
+          <button type="button" id="guardarDatos" class="btn btn-success boton">Guardar</button>
+          <button type="button" id="cancelarEdicion" class="btn btn-secondary boton">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+    <!-- Popup de historial de sesiones -->
+  <div id="comprasPopup" class="popup-overlay" style="display: none;">
+    <div class="popup-content-receta">
+      <h3>Historial de sesiones</h3>
+      <hr>
+      <table class="receta-tabla">
+        <thead>
+          <tr>
+            <th>Nº</th>
+            <th>Fecha</th>
+            <th>Actividad</th>
+            <th>Resumen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>003</td>
+            <td>01/04/26</td>
+            <td>Juego del tesoro</td>
+            <td><a href="#" class="btn btn-primary" title="Informe PDF (demo)"><i class="bi bi-download"></i></a></td>
+          </tr>
+          <tr>
+            <td>002</td>
+            <td>15/03/26</td>
+            <td>Formas en el suelo</td>
+            <td><a href="#" class="btn btn-primary" title="Informe PDF (demo)"><i class="bi bi-download"></i></a></td>
+          </tr>
+          <tr>
+            <td>001</td>
+            <td>10/03/26</td>
+            <td>Saluda a Patricio</td>
+            <td><a href="#" class="btn btn-primary" title="Informe PDF (demo)"><i class="bi bi-download"></i></a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="popup-buttons">
+        <button id="cerrarHistorial" class="btn boton">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="js/script_singup_login_logout.js"></script>
+  <script src="js/script_usuario.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Patricio | Contacto</title>
+  <link rel="stylesheet" href="css/styles_generales.css">
+  <link rel="stylesheet" href="css/styles_contacto.css">
+  <link rel="stylesheet" href="css/styles_login.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <a href="index.html">
+        <img src="images/logo_patricio.png" alt="Patricio" class="logo">
+    </a>
+    <div class="user-icon" id="userIcon">
+      <i class="bi bi-person-circle"></i>
+    </div>
+  </header>
+  <main>
+    <section class="contact-section">
+        <h1>CONTÁCTANOS</h1>
+        <div class="contact-info">
+          
+          <div class="contact-item">
+            <i class="bi bi-house-fill icono"></i>
+            <h3>PROYECTO:</h3>
+            <p>Carrer del Paraninf, 1, 46730<br>Gandia, Valencia</p>
+          </div>
+    
+          <div class="contact-item">
+            <i class="bi bi-chat-dots-fill icono"></i>
+            <h3>TELÉFONO:</h3>
+            <p>+34 123 45 67 89</p>
+          </div>
+    
+          <div class="contact-item">
+            <i class="bi bi-envelope-fill icono"></i>
+            <h3>CORREO ELECTRÓNICO:</h3>
+            <p>patricio.robot.educativo@gmail.com</p>
+          </div>
+    
+        </div>
+      </section>
+  </main>
+    
+  <footer>
+    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
+    <span>Patricio 2026 ®</span>
+    <a href="contacto.html" class="contact-link">CONTACTO</a>
+  </footer>
+
+  <!-- Modal de Login -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>Iniciar sesión</h2>
+      <img src="images/robot_login.png" alt="Patricio"><br><br>
+      <label for="username">Usuario</label>
+      <input type="text" id="username" placeholder="Usuario">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" placeholder="Contraseña">
+      <p id="errorMessage" class="error-message"></p>
+      <button id="loginBtn">Entrar</button>
+    </div>
+  </div>
+
+  <script src="js/script_singup_login_logout.js"></script>
+</body>
+</html>
