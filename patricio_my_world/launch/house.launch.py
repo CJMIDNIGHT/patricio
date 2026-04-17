@@ -44,8 +44,8 @@ def generate_launch_description():
     # Permiten sobreescribir valores desde la línea de comandos al lanzar
     # -----------------------------------------------------------------------
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    x_pose = LaunchConfiguration('x_pose', default='0.0')
-    y_pose = LaunchConfiguration('y_pose', default='0.0')
+    x_pose = LaunchConfiguration('x_pose', default='-2.0')
+    y_pose = LaunchConfiguration('y_pose', default='-2.0')
 
     # -----------------------------------------------------------------------
     # Variables de entorno — modelos propios
