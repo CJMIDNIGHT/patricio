@@ -155,6 +155,7 @@ function connect() {
 
     data.ros.on("connection", () => {
         data.connected = true;
+        initGameTopics(data.ros);
         document.getElementById("estado").textContent = '🔌 Conectado';
         document.getElementById("estado").style.color = 'green';
         console.log("Conexión con ROSBridge correcta");
@@ -874,6 +875,11 @@ document.addEventListener('DOMContentLoaded', event => {
     document.getElementById("btn_wsad_derecha").addEventListener("click", () => moveRobot("derecha"));
     document.getElementById("btn_wsad_parar").addEventListener("click", stop);
     document.getElementById("btn_cancelar_nav").addEventListener("click", cancelNavigation);
+
+    //Botones de Juegos
+    document.getElementById('btn_pilla_pilla').addEventListener('click', () => iniciarJuego('pilla_pilla'));
+    document.getElementById('btn_escondite').addEventListener('click', () => iniciarJuego('escondite'));
+    document.getElementById('btn_stop_juego').addEventListener('click', detenerJuego);
 
     //  Suscribirse al topic /ultimo_sip (identificador; mismo nombre en ROS)
     if (data.ros) {

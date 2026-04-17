@@ -106,3 +106,35 @@ p span {
     font-weight: bold;
     color: #ff4da6; /* Rosa brillante */
 }
+
+/*CSS Sección panel de juegos*/
+.game-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 1.5rem 2rem;
+  min-width: 140px;
+  transition: background 0.3s, border-color 0.3s;
+}
+.game-icon { font-size: 2rem; line-height: 1; }
+.game-label { font-size: 1rem; font-weight: 500; }
+.game-sub { font-size: 0.75rem; opacity: 0.7; }
+
+.game-btn.juego-activo { background: #3a7d44 !important; border-color: #3a7d44 !important; }
+.game-btn.juego-exito  { background: #2e7d32 !important; border-color: #2e7d32 !important; }
+.game-btn.juego-fallo  { background: #c62828 !important; border-color: #c62828 !important; }
+
+.juego-bubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  font-size: 0.95rem;
+  font-style: italic;
+  min-height: 52px;
+}
