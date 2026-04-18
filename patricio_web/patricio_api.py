@@ -13,6 +13,7 @@ import json
 import threading
 import time
 import uuid
+import atexit
 
 import websocket  # pip install websocket-client
 from flask import Flask, request, jsonify
@@ -186,10 +187,21 @@ def estado_juego():
 
 # ── Entry point ───────────────────────────────────────────
 
+def on_shutdown():
+    print('API shutting down, sending STOP...')
+    rosbridge_publish(
+        topic='/patricio/pilla_pilla/cmd',
+        msg_type='std_msgs/msg/String',
+        data={'data': 'STOP'}
+    )
+    time.sleep(1)
+
 if __name__ == '__main__':
     # Start status subscriber in background
     sub_thread = threading.Thread(target=rosbridge_subscribe_status, daemon=True)
     sub_thread.start()
 
     print('Starting Patricio API on http://0.0.0.0:5000')
+
+    atexit.register(on_shutdown)
     app.run(host='0.0.0.0', port=5000)

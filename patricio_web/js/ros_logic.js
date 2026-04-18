@@ -64,6 +64,9 @@ async function iniciarJuego(juego) {
             updateBubble('⚠️ No se pudo iniciar el juego: ' + (result.error || 'error desconocido'));
             setGameButtonState(null, '');
             juegoActivo = null;
+        } else {
+            // Poll status for a few seconds to catch "Corriendo"
+            pollEstado(8);
         }
 
     } catch (err) {
@@ -74,13 +77,49 @@ async function iniciarJuego(juego) {
     }
 }
 
+//-----------------------------------------
+//pollEstado()
+//-----------------------------------------
+async function pollEstado(intentos) {
+    if (intentos <= 0) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/api/juego/estado`);
+        const data = await res.json();
+        console.log('Poll estado:', data.status);
+        handleGameFeedback(data.status);
+
+        // Keep polling while running
+        if (data.status.toLowerCase().includes('corriendo')) {
+            setTimeout(() => pollEstado(intentos), 3000);
+        } else if (data.status.toLowerCase().includes('descansando') && juegoActivo) {
+            // Game finished naturally
+            setGameButtonState(null, '');
+            updateBubble('✅ Patricio ha terminado el juego.');
+            juegoActivo = null;
+        } else {
+            setTimeout(() => pollEstado(intentos - 1), 1000);
+        }
+    } catch (err) {
+        console.error('Poll error:', err);
+    }
+}
+
 // Called when Stop button is clicked
 // Publishes directly to /patricio/pilla_pilla/cmd via rosbridge
-function detenerJuego() {
+async function detenerJuego() {
+    // Publish directly via rosbridge
     if (cmdPublisher) {
         const msg = new ROSLIB.Message({ data: 'STOP' });
         cmdPublisher.publish(msg);
         console.log('Publicado STOP en /patricio/pilla_pilla/cmd');
+    }
+
+    // Also call API stop as backup
+    try {
+        await fetch(`${API_BASE}/api/juego/detener`, { method: 'POST' });
+    } catch(err) {
+        console.error('API detener error:', err);
     }
 
     juegoActivo = null;
@@ -111,13 +150,14 @@ function handleGameFeedback(estado) {
 
     if (lower.includes('corriendo')) {
         setGameButtonState('pilla_pilla', 'juego-activo');
-        updateBubble('🏃 Patricio está corriendo en Pilla-Pilla!');
+        // Show actual status from node instead of hardcoded text
+        updateBubble('🏃 Patricio: ' + estado);
         juegoActivo = 'pilla_pilla';
     } else if (lower.includes('descansando')) {
         setGameButtonState(null, '');
         updateBubble('😴 Patricio está descansando...');
         juegoActivo = null;
     } else {
-        updateBubble('Patricio: ' + estado);
+        updateBubble('🤖 Patricio: ' + estado);
     }
 }
