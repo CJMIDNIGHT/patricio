@@ -1,0 +1,17 @@
+# IniciarEscondite.srv
+# Servicio unificado para iniciar o detener la búsqueda del escondite.
+#
+# Uso:
+#   command = "START"  →  elige una pose aleatoria de la lista y navega hacia ella
+#   command = "STOP"   →  cancela la navegación en curso (poses puede ir vacío)
+#
+# Colocar en: patricio_interfaces/srv/IniciarEscondite.srv
+
+# ── REQUEST ──────────────────────────────────────────────────────────────────
+geometry_msgs/PoseArray poses   # Lista de coordenadas candidatas desde la web
+string command                  # "START" | "STOP"
+---
+# ── RESPONSE ─────────────────────────────────────────────────────────────────
+bool success                    # true si el comando fue aceptado correctamente
+string message                  # Descripción del resultado o error
+geometry_msgs/Pose target_pose  # Pose elegida como objetivo (válida solo con START)

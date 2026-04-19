@@ -26,6 +26,38 @@
   <main>
     <div class="container">
       <div class="row">
+        <!-- PANEL DE JUEGOS -->
+        <div class="col-12 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="text-center">Panel de juegos</h3>
+              <div class="d-flex justify-content-center gap-4 flex-wrap mt-3">
+              
+                <button class="boton game-btn" id="btn_pilla_pilla">
+                  <span class="game-icon">🏃</span>
+                  <span class="game-label">Pilla-Pilla</span>
+                  <span class="game-sub">Juego de persecución</span>
+                </button>
+              
+                <button class="boton game-btn" id="btn_escondite">
+                  <span class="game-icon">👁️</span>
+                  <span class="game-label">Escondite</span>
+                  <span class="game-sub">Búsqueda y detección</span>
+                </button>
+              
+              </div>
+              <div class="d-flex justify-content-center mt-3">
+                <button class="boton" id="btn_stop_juego">Detener juego</button>
+              </div>
+            
+              <!-- Speech bubble de estado -->
+              <div id="juego_bubble" class="juego-bubble mt-3">
+                <span id="juego_status_icon">🤖</span>
+                <span id="juego_status_text">Patricio está esperando instrucciones...</span>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Left menu -->
         <div class="col-4">
           <div class="card">
@@ -138,6 +170,7 @@
   <script src="js/script_admin.js"></script>
   <script src="js/script_singup_login_logout.js"></script>
   <script src="js/draw_occupancy_grid.js"></script>
+  <script src="js/ros_logic.js"></script>
  
 </body>
 </html>

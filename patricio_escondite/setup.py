@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'patricio_nav_ruta'
+package_name = 'patricio_escondite'
 
 setup(
     name=package_name,
@@ -13,8 +13,8 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='adenor',
-    maintainer_email='amburet@epsg.upv.es',
+    maintainer='saac',
+    maintainer_email='santiagoaaguirrec@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     extras_require={
@@ -24,6 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            #"escondite_node = patricio_escondite.escondite_node:main",
+            "escondite_service = patricio_escondite.escondite_service:main",
         ],
     },
 )
