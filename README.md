@@ -183,6 +183,62 @@ http://<IP_DEL_ROBOT>:8000/admin.html
 
 ---
 
+##Troubleshooting
+
+A continuación se describen los problemas más comunes detectados durante el uso del sistema y sus posibles soluciones.
+
+### 🌐 Problema 1: La web muestra "Disconnected"
+- 🔌 Verificar que rosbridge está en ejecución:
+  ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+- 📡 Comprobar que el puerto 9090 está activo
+- 🌍 Revisar la IP introducida en la web (ws://<IP>:9090)
+- 🔥 Comprobar firewall o red
+
+---
+
+### 🔗 Problema 2: No conecta la web con el robot
+- ▶️ Asegurarse de haber lanzado rosbridge
+- 🤖 Verificar que el robot/simulación está en ejecución
+- 🌐 Revisar conexión de red entre cliente y robot
+
+---
+
+### 🤖 Problema 3: El robot no se mueve
+- 🚀 Verificar que la navegación está lanzada:
+  ros2 launch patricio_nav_punto my_navigation.launch.py
+- 📍 Comprobar que se ha hecho "2D Pose Estimate" en RViz
+- 🗺️ Verificar que el mapa está cargado correctamente
+- 📤 Revisar que /cmd_vel recibe mensajes
+
+---
+
+### 🎮 Problema 4: El juego Pilla-Pilla no inicia
+- ▶️ Verificar que el nodo está activo:
+  ros2 run patricio_pilla_pilla pilla_pilla_node
+- 🔌 Comprobar que el servicio /start_game está disponible
+- 🧾 Revisar logs en consola
+
+---
+
+### 📍 Problema 5: El robot no llega a los waypoints
+- 🎯 Comprobar tolerancia de llegada
+- 🗺️ Verificar que los puntos están en zona navegable del mapa
+- 🚧 Revisar si hay obstáculos en el entorno
+
+---
+
+### 🗺️ Problema 6: No se ve el mapa en la web
+- 📡 Verificar que /map está siendo publicado
+- 🔗 Comprobar conexión con rosbridge
+- 🖥️ Revisar errores en consola del navegador
+
+---
+
+### 🔐 Problema 7: El login no funciona
+- 👤 Verificar credenciales introducidas
+- 🔌 Revisar conexión con la API Flask
+- 🖥️ Comprobar que el backend está activo
+
 ## 👥 Autores
 
 Adenor Buret — https://github.com/CJMIDNIGHT  
