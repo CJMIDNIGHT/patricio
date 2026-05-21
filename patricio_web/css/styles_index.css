@@ -4,7 +4,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { width: 100%; height: 100%; }
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   background-color: #ffffff;
   overflow-x: hidden;
 }
@@ -18,7 +18,7 @@ body {
   width: 100%;
   z-index: 9999;
   padding: 8px 32px;
-  background-color: #F97316; /* orange navbar from HiFi */
+  background-color: #F97316;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -48,6 +48,7 @@ body {
 .nav-links a {
   text-decoration: none;
   font-size: 17px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   color: #ffffff;
   font-weight: 600;
   transition: opacity 0.2s;
@@ -63,6 +64,7 @@ body {
 .login {
   color: #ffffff;
   font-size: 16px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-weight: 600;
   text-decoration: none;
   transition: opacity 0.2s;
@@ -70,11 +72,12 @@ body {
 .login:hover { opacity: 0.8; }
 
 .btn-signup {
-  background-color: #6698CC; /* blue button from HiFi */
+  background-color: #6698CC;
   border: none;
   padding: 10px 26px;
   border-radius: 12px;
   font-size: 16px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-weight: 700;
   cursor: pointer;
   color: #ffffff;
@@ -96,83 +99,92 @@ body {
 }
 
 
-    /* ======================================================
-    HERO
-    ====================================================== */
-    .hero {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 72px; /* navbar height */
-    }
+/* ======================================================
+   HERO
+   ====================================================== */
+.hero {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 72px;
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 4px 12px #444444;
+}
 
-    .hero-bg {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    filter: brightness(0.6);
-    z-index: 1;
-    }
+.hero-bg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6);
+  z-index: 1;
+}
 
-    .hero-content {
-    position: relative;
-    z-index: 2;
-    padding-left: 6%;
-    color: #ffffff;
-    }
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding-left: 6%;
+  color: #ffffff;
+}
 
-    .hero-content h1 {
-    font-family: 'Baloo 2', cursive;
-    font-size: clamp(2.4rem, 5vw, 4.2rem);
-    font-weight: 800;
-    line-height: 1.15;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
+.hero-content h1 {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
 
-    .hero-content h1 span {
-    color: #FFD966; /* yellow accent for "Aprender, Jugar y Crecer" */
-    }
+.hero-content h1 span {
+  color: #FFD966;
+}
 
-    /* Scroll-down chevron button */
-    .hero-scroll-btn {
-    position: absolute;
-    bottom: 36px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #333;
-    font-size: 1.2rem;
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: background 0.2s;
-    animation: bounce 2s infinite;
-    }
-    .hero-scroll-btn:hover { background: #fff; }
+.hero-scroll-btn {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: 1.2rem;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+  animation: bounce 2s infinite;
+}
+.hero-scroll-btn:hover { background: #fff; }
 
-    @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50%       { transform: translateX(-50%) translateY(8px); }
-    }
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
+}
 
-    @media (max-width: 600px) {
-    .hero-content h1 { font-size: 2rem; }
-    }
+@media (max-width: 600px) {
+  .hero-content h1 { font-size: 2rem; }
+}
 
 
 /* ======================================================
    DOODLE DIVIDER
    ====================================================== */
+.doodle-divider1 {
+  width: 100%;
+  height: 80px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='80'%3E%3Cpath d='M0 40 Q 60 10 120 40 Q 180 70 240 40 Q 300 10 360 40 Q 420 70 480 40 Q 540 10 600 40 Q 660 70 720 40 Q 780 10 840 40 Q 900 70 960 40 Q 1020 10 1080 40 Q 1140 70 1200 40' fill='none' stroke='%23F97316' stroke-width='3' opacity='0.3'/%3E%3Ccircle cx='100' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='300' cy='60' r='4' fill='%23A7C575' opacity='0.6'/%3E%3Ccircle cx='500' cy='15' r='7' fill='%23CBCBF3' opacity='0.7'/%3E%3Ccircle cx='700' cy='65' r='5' fill='%23F97316' opacity='0.5'/%3E%3Ccircle cx='900' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='1100' cy='55' r='4' fill='%23A7C575' opacity='0.6'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 1200px 80px;
+  margin-top: 100vh;
+}
 .doodle-divider {
   width: 100%;
   height: 80px;
@@ -191,19 +203,19 @@ body {
   background-color: #ffffff;
 }
 
-/* Big rounded card — matches HiFi blue card */
 .producto-card {
-  background-color: #6B8FD4; /* blue-ish card from HiFi */
+  background-color: #6B8FD4;
   border-radius: 32px;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 50px 50px 60px;
+  padding: 50px;
+  box-shadow: 0 4px 12px #444444;
 }
 
 .producto-inner {
   display: flex;
-  align-items: flex-start;
-  gap: 50px;
+  align-items: center;
+  gap: 20px;
 }
 
 .producto-img-col {
@@ -214,7 +226,7 @@ body {
 }
 
 .producto-robot {
-  width: 260px;
+  width: 400px;
   object-fit: contain;
   filter: drop-shadow(0 8px 20px rgba(0,0,0,0.25));
 }
@@ -222,16 +234,17 @@ body {
 .producto-text-col { flex: 1; }
 
 .section-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 2rem;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 3rem;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 16px;
+  margin-bottom: 25px;
 }
 .section-title.center { text-align: center; }
 .section-title.orange { color: #F97316; }
 
 .producto-desc {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 15px;
   color: rgba(255,255,255,0.9);
   line-height: 1.7;
@@ -239,17 +252,22 @@ body {
   text-align: center;
 }
 
-/* 3-column feature grid inside producto card */
-.producto-grid {
+.producto-grid1 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
+  margin: 24px;
+}
+.producto-grid2 {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  margin: 20px 150px;
 }
 
 .feature-v {
   background: rgba(255,255,255,0.15);
   border-radius: 16px;
-  padding: 24px 16px;
+  padding: 35px 35px;
   text-align: center;
   backdrop-filter: blur(4px);
   transition: transform 0.2s;
@@ -257,15 +275,16 @@ body {
 .feature-v:hover { transform: translateY(-4px); }
 
 .icon-feature {
-  font-size: 2.2rem;
-  color: #ffffff;
-  margin-bottom: 12px;
+  text-align: center;
+  width : 4rem;
+  margin: 0 auto 12px;
   display: block;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 .feature-v:hover .icon-feature { transform: scale(1.15); color: #FFD966; }
 
 .feature-v h4 {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 16px;
   font-weight: 800;
   color: #ffffff;
@@ -273,6 +292,7 @@ body {
 }
 
 .feature-v p {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 13px;
   color: rgba(255,255,255,0.85);
   line-height: 1.55;
@@ -294,9 +314,8 @@ body {
   background-color: #ffffff;
 }
 
-/* Big rounded card — matches HiFi yellow/cream card */
 .nosotros-card {
-  background-color: #F9F3DC; /* warm cream card from HiFi */
+  background-color: #F9F3DC;
   border-radius: 32px;
   max-width: 1100px;
   margin: 0 auto;
@@ -305,6 +324,7 @@ body {
 }
 
 .nosotros-desc {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   max-width: 750px;
   margin: 0 auto 48px;
   font-size: 17px;
@@ -312,7 +332,6 @@ body {
   line-height: 1.7;
 }
 
-/* 3 + 2 grid layout */
 .nosotros-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -321,12 +340,11 @@ body {
   margin-bottom: 48px;
 }
 
-/* Center the 4th and 5th cards (second row) */
 .nosotros-grid > div:nth-child(4) { grid-column: 1; justify-self: end; }
 .nosotros-grid > div:nth-child(5) { grid-column: 2; justify-self: start; }
 
 .nosotros-card-item {
-  background-color: #F5C842; /* yellow card from HiFi */
+  background-color: #F5C842;
   border-radius: 20px;
   padding: 28px 20px;
   width: 240px;
@@ -347,18 +365,19 @@ body {
 }
 
 .nosotros-card-item p {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 14px;
   color: #333;
   line-height: 1.5;
   font-weight: 600;
 }
 
-/* CTA block */
 .nosotros-cta {
   margin-top: 20px;
   text-align: center;
 }
 .nosotros-cta p {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: #333;
@@ -368,6 +387,7 @@ body {
 .btn-cta-large {
   padding: 14px 48px !important;
   font-size: 20px !important;
+  font-family: 'DM Sans', 'Nunito', sans-serif !important;
   border-radius: 16px !important;
   background-color: #F97316 !important;
 }
@@ -389,9 +409,10 @@ body {
    CONTACTO / FOOTER
    ====================================================== */
 .contact-section {
-  background-color: #E8637A; /* pink/salmon footer from HiFi */
-  padding: 60px 0 0;
+  background-color: #E8637A;
+  
   color: white;
+  padding: 100px 0 0 !important;
 }
 
 .contact-wrapper {
@@ -400,28 +421,30 @@ body {
   display: flex;
   justify-content: space-between;
   gap: 50px;
-  padding-bottom: 50px;
+  padding-bottom: 80px; /* was 50px */
 }
 
 .contact-left { width: 45%; }
 
 .contact-title {
-  font-family: 'Baloo 2', cursive;
-  font-size: 42px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 56px !important;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 16px;
+  margin-bottom: 24px; /* was 16px */
 }
 
 .contact-phone {
-  font-size: 20px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 24px; /* was 20px */
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 20px; /* was 16px */
 }
 
 .contact-text {
-  font-size: 17px;
-  margin-bottom: 8px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 20px; /* was 17px */
+  margin-bottom: 12px; /* was 8px */
 }
 
 .contact-list {
@@ -429,8 +452,9 @@ body {
   padding-left: 20px;
 }
 .contact-list li {
-  font-size: 17px;
-  margin-bottom: 6px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 20px; /* was 17px */
+  margin-bottom: 10px; /* was 6px */
 }
 
 .contact-right {
@@ -440,20 +464,21 @@ body {
 }
 
 .map-label {
-  font-size: 17px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 20px; /* was 17px */
   font-weight: 700;
   margin-bottom: 14px;
 }
 
 .contact-map-container {
   width: 100%;
-  height: 280px;
+  height: 400px !important;
   border-radius: 14px;
   overflow: hidden;
   border: 3px solid rgba(255,255,255,0.4);
+  
 }
 
-/* Footer middle bar */
 .footer-bottom {
   background-color: #E8637A;
   border-top: 2px solid rgba(255,255,255,0.25);
@@ -477,13 +502,13 @@ body {
 .footer-links a {
   color: #fff;
   text-decoration: none;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 16px;
   font-weight: 600;
   transition: opacity 0.2s;
 }
 .footer-links a:hover { opacity: 0.75; }
 
-/* Legal bar */
 .footer-legal {
   background-color: #d45068;
   padding: 18px 0;
@@ -497,6 +522,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 13px;
   color: rgba(255,255,255,0.75);
   flex-wrap: wrap;
