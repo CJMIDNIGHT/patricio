@@ -13,8 +13,12 @@ find_package(std_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/StartGame.srv"
   "srv/IniciarEscondite.srv"
+  "msg/PersonDetection.msg"
+  "msg/PoseResult.msg" 
   DEPENDENCIES
     geometry_msgs 
+    std_msgs
+    builtin_interfaces
 )
 
 ament_package()
