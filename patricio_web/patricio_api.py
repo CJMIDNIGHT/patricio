@@ -14,7 +14,7 @@ Endpoints:
   GET  /api/incidencias/pendientes → incidencias con resuelto=0
   POST /api/incidencias/<id>/revisar → marca resuelta (silencia alerta)
   POST /api/guardar_juego     → nueva fila en partidas (actividad finalizada)
-  GET  /api/historico_dia     → partidas del día agrupadas (favorito) + detalle
+  GET  /api/historico_dia     → partidas del día (filtros: fecha, actividad, duración, orden)
   POST /api/auth/login        → comprobar email/dni + contraseña (bcrypt)
   POST /api/auth/register      → alta en users, contraseña con política fuerte
   POST /api/juego/iniciar        → calls /start_game service via rosbridge
@@ -523,11 +523,24 @@ def guardar_juego():
         return jsonify({'ok': False, 'error': str(e)}), 500
 
 
+_HISTORICO_ORDEN = {
+    'fecha_desc': 'p.fecha DESC, p.id_partida DESC',
+    'fecha_asc': 'p.fecha ASC, p.id_partida ASC',
+    'puntuacion_desc': 'p.puntuacion DESC, p.fecha DESC, p.id_partida DESC',
+    'puntuacion_asc': 'p.puntuacion ASC, p.fecha DESC, p.id_partida DESC',
+    'duracion_desc': 'p.duracion DESC, p.fecha DESC, p.id_partida DESC',
+    'duracion_asc': 'p.duracion ASC, p.fecha DESC, p.id_partida DESC',
+}
+
+
 @app.route('/api/historico_dia', methods=['GET'])
 def historico_dia():
     """
-    Juegos registrados para la fecha indicada (o hoy, hora servidor).
-    Query: fecha=YYYY-MM-DD (opcional), usuario_id (opcional).
+    Histórico de partidas para la fecha indicada (o hoy).
+    Query: fecha=YYYY-MM-DD, id_usuario|usuario_id,
+           actividad (nombre exacto en actividades),
+           duracion_min, duracion_max (segundos),
+           orden (fecha_desc|puntuacion_desc|puntuacion_asc|duracion_desc|duracion_asc).
     """
     fecha_str = request.args.get('fecha')
     if fecha_str:
@@ -542,13 +555,35 @@ def historico_dia():
     if id_usuario is None:
         id_usuario = request.args.get('usuario_id', type=int)
 
-    filt_usuario = ''
-    params = {'fecha': fecha_str}
-    if id_usuario is not None:
-        filt_usuario = ' AND p.id_usuario = :uid'
-        params['uid'] = id_usuario
+    actividad = (request.args.get('actividad') or request.args.get('nombre_actividad') or '').strip()
+    duracion_min = request.args.get('duracion_min', type=int)
+    duracion_max = request.args.get('duracion_max', type=int)
+    orden = (request.args.get('orden') or 'fecha_desc').strip().lower()
+    if orden not in _HISTORICO_ORDEN:
+        return jsonify({
+            'ok': False,
+            'error': 'orden no válido (fecha_desc, puntuacion_desc, puntuacion_asc, duracion_desc, duracion_asc)',
+        }), 400
 
-    base_where = 'DATE(p.fecha) = :fecha' + filt_usuario
+    clauses = ['DATE(p.fecha) = :fecha']
+    params = {'fecha': fecha_str}
+
+    if id_usuario is not None:
+        # Partidas del robot/admin suelen guardarse sin id_usuario (NULL)
+        clauses.append('(p.id_usuario = :uid OR p.id_usuario IS NULL)')
+        params['uid'] = id_usuario
+    if actividad:
+        clauses.append('a.nombre = :act')
+        params['act'] = actividad[:100]
+    if duracion_min is not None:
+        clauses.append('p.duracion >= :dmin')
+        params['dmin'] = max(0, duracion_min)
+    if duracion_max is not None:
+        clauses.append('p.duracion <= :dmax')
+        params['dmax'] = max(0, duracion_max)
+
+    where_sql = ' AND '.join(clauses)
+    order_sql = _HISTORICO_ORDEN[orden]
 
     try:
         with get_engine().connect() as conn:
@@ -556,21 +591,23 @@ def historico_dia():
                 text(
                     f"""SELECT p.id_partida, p.id_usuario, p.id_actividad, p.puntuacion,
                                p.duracion, p.detalles_json, p.fecha,
-                               a.nombre AS nombre_actividad
+                               a.nombre AS nombre_actividad, a.tipo AS tipo_actividad
                         FROM partidas p
                         JOIN actividades a ON a.id_actividad = p.id_actividad
-                        WHERE {base_where}
-                        ORDER BY p.fecha DESC, p.id_partida DESC"""
+                        WHERE {where_sql}
+                        ORDER BY {order_sql}"""
                 ),
                 params,
             ).mappings().all()
 
             agrupado = conn.execute(
                 text(
-                    f"""SELECT a.nombre AS nombre_actividad, COUNT(*) AS veces
+                    f"""SELECT a.nombre AS nombre_actividad, COUNT(*) AS veces,
+                               COALESCE(SUM(p.puntuacion), 0) AS puntos_totales,
+                               COALESCE(SUM(p.duracion), 0) AS duracion_total
                         FROM partidas p
                         JOIN actividades a ON a.id_actividad = p.id_actividad
-                        WHERE {base_where}
+                        WHERE {where_sql}
                         GROUP BY a.nombre
                         ORDER BY veces DESC, a.nombre ASC"""
                 ),
@@ -583,20 +620,30 @@ def historico_dia():
                 'nombre_juego': r['nombre_actividad'],
                 'nombre_actividad': r['nombre_actividad'],
                 'veces': int(r['veces']),
+                'puntos_totales': float(r['puntos_totales']) if r['puntos_totales'] is not None else 0.0,
+                'duracion_total': int(r['duracion_total'] or 0),
             }
             for r in agrupado
         ]
         veces_list = [int(x['veces']) for x in lista_agrupado]
         total = sum(veces_list)
         favorito = lista_agrupado[0]['nombre_actividad'] if lista_agrupado else None
+        favorito_veces = int(lista_agrupado[0]['veces']) if lista_agrupado else 0
 
         return jsonify({
             'ok': True,
             'fecha': fecha_str,
             'total_partidas': total,
             'favorito': favorito,
+            'favorito_veces': favorito_veces,
             'agrupado': lista_agrupado,
             'detalle': lista_detalle,
+            'filtros_aplicados': {
+                'actividad': actividad or None,
+                'duracion_min': duracion_min,
+                'duracion_max': duracion_max,
+                'orden': orden,
+            },
         })
     except Exception as e:
         return jsonify({'ok': False, 'error': str(e)}), 500
