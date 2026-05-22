@@ -70,6 +70,75 @@
           </div>
         </div>
 
+        <!-- TABLA DE INCIDENCIAS (API + filtros + tiempo real) -->
+        <div class="col-12 mb-3">
+          <div class="card incidencias-tabla-card">
+            <div class="card-body">
+              <h3 class="text-center">📋 Incidencias del robot</h3>
+              <p class="text-center text-muted incidencias-tabla-sub">
+                Estado del niño en tiempo real (caídas, batería, alertas). Los datos se cargan desde la API.
+              </p>
+
+              <div class="incidencias-filtros" role="search">
+                <div class="incidencias-filtros__grupo">
+                  <label class="incidencias-filtros__label" for="filtro_solo_hoy">
+                    <input type="checkbox" id="filtro_solo_hoy" checked>
+                    Solo hoy
+                  </label>
+                </div>
+                <div class="incidencias-filtros__grupo">
+                  <label class="incidencias-filtros__label" for="filtro_fecha_desde">Desde</label>
+                  <input type="date" id="filtro_fecha_desde" class="form-control incidencias-filtros__input" disabled>
+                </div>
+                <div class="incidencias-filtros__grupo">
+                  <label class="incidencias-filtros__label" for="filtro_fecha_hasta">Hasta</label>
+                  <input type="date" id="filtro_fecha_hasta" class="form-control incidencias-filtros__input" disabled>
+                </div>
+                <div class="incidencias-filtros__grupo">
+                  <label class="incidencias-filtros__label" for="filtro_estado">Estado</label>
+                  <select id="filtro_estado" class="form-control incidencias-filtros__input">
+                    <option value="">Todas</option>
+                    <option value="pendiente">No resueltas</option>
+                    <option value="resuelta">Resueltas</option>
+                  </select>
+                </div>
+                <div class="incidencias-filtros__grupo incidencias-filtros__grupo--grow">
+                  <label class="incidencias-filtros__label" for="filtro_busqueda">Buscar</label>
+                  <input type="search" id="filtro_busqueda" class="form-control incidencias-filtros__input"
+                    placeholder="Tipo o descripción (ej. Caída)" autocomplete="off">
+                </div>
+                <div class="incidencias-filtros__grupo incidencias-filtros__grupo--acciones">
+                  <button type="button" class="boton" id="btn_incidencias_aplicar">Aplicar filtros</button>
+                  <button type="button" class="boton incidencias-btn-sec" id="btn_incidencias_limpiar">Limpiar</button>
+                </div>
+              </div>
+
+              <p id="incidencias-tabla-resumen" class="incidencias-tabla-resumen" aria-live="polite"></p>
+              <p id="incidencias-tabla-error" class="incidencias-tabla-error" hidden></p>
+
+              <div class="table-responsive incidencias-tabla-wrap">
+                <table class="table incidencias-tabla" id="tabla_incidencias">
+                  <thead>
+                    <tr>
+                      <th scope="col">Incidencia</th>
+                      <th scope="col">Fecha</th>
+                      <th scope="col">Estado</th>
+                      <th scope="col">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="incidencias-tabla-body">
+                    <tr><td colspan="4">Cargando incidencias…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="incidencias-tabla-leyenda">
+                <span id="incidencias-live-indicator" class="incidencias-live--off" title="Actualización automática"></span>
+                Actualización automática cada 15 s y al recibir alertas nuevas.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- MENÚ IZQUIERDO -->
         <div class="col-4">
           <div class="card">
