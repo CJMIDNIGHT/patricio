@@ -9,6 +9,7 @@ Endpoints:
   GET  /api/juego/estado    → returns last known status
   GET  /api/db/health       → comprobación SELECT 1 contra MySQL
   POST /api/db/selftest     → INSERT+SELECT en users/actividades/partidas/incidencias (solo si ENABLE_DB_SELFTEST)
+  GET  /api/incidencias     → listado con filtros (fecha, rango, resuelto/estado, búsqueda)
   POST /api/incidencias     → registra anomalía (robot / monitor) y notifica admin por WebSocket
   GET  /api/incidencias/pendientes → incidencias con resuelto=0
   POST /api/incidencias/<id>/revisar → marca resuelta (silencia alerta)
@@ -832,6 +833,93 @@ def db_selftest():
             'partida_insertada_y_leida': dict(fila_partida),
             'incidencia_insertada_y_leida': dict(fila_incidencia),
         })
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)}), 500
+
+
+def _parse_fecha_query(arg_name: str):
+    """Valida YYYY-MM-DD desde query string; devuelve (str, None) o (None, error_msg)."""
+    raw = request.args.get(arg_name)
+    if not raw:
+        return None, None
+    try:
+        datetime.strptime(raw.strip(), '%Y-%m-%d').date()
+        return raw.strip(), None
+    except ValueError:
+        return None, f'{arg_name} debe ser YYYY-MM-DD'
+
+
+@app.route('/api/incidencias', methods=['GET'])
+def api_listar_incidencias():
+    """
+    Listado de incidencias para la tabla web.
+    Query: fecha (día concreto), fecha_desde, fecha_hasta,
+           resuelto (0|1), estado (pendiente|resuelta),
+           q (búsqueda en tipo/descripcion).
+    """
+    fecha, err = _parse_fecha_query('fecha')
+    if err:
+        return jsonify({'ok': False, 'error': err}), 400
+    fecha_desde, err = _parse_fecha_query('fecha_desde')
+    if err:
+        return jsonify({'ok': False, 'error': err}), 400
+    fecha_hasta, err = _parse_fecha_query('fecha_hasta')
+    if err:
+        return jsonify({'ok': False, 'error': err}), 400
+
+    clauses = []
+    params = {}
+
+    if fecha:
+        clauses.append('DATE(fecha) = :fecha')
+        params['fecha'] = fecha
+    else:
+        if fecha_desde:
+            clauses.append('DATE(fecha) >= :fdesde')
+            params['fdesde'] = fecha_desde
+        if fecha_hasta:
+            clauses.append('DATE(fecha) <= :fhasta')
+            params['fhasta'] = fecha_hasta
+
+    resuelto_raw = request.args.get('resuelto')
+    if resuelto_raw is not None and str(resuelto_raw).strip() != '':
+        try:
+            params['resuelto'] = int(resuelto_raw)
+            if params['resuelto'] not in (0, 1):
+                raise ValueError()
+            clauses.append('resuelto = :resuelto')
+        except ValueError:
+            return jsonify({'ok': False, 'error': 'resuelto debe ser 0 o 1'}), 400
+    else:
+        estado = (request.args.get('estado') or '').strip().lower()
+        if estado in ('pendiente', 'abierta', 'no_resuelta', 'no_resuelto'):
+            clauses.append('resuelto = 0')
+        elif estado in ('resuelta', 'revisada', 'resuelto'):
+            clauses.append('resuelto = 1')
+
+    q = (request.args.get('q') or '').strip()
+    if q:
+        clauses.append('(tipo LIKE :q OR descripcion LIKE :q)')
+        params['q'] = f'%{q[:80]}%'
+
+    where_sql = ' AND '.join(clauses) if clauses else '1=1'
+
+    try:
+        with get_engine().connect() as conn:
+            rows = conn.execute(
+                text(
+                    f"""SELECT id_incidencia, id_usuario, tipo, descripcion,
+                               resuelto, fecha
+                        FROM incidencias
+                        WHERE {where_sql}
+                        ORDER BY fecha DESC, id_incidencia DESC
+                        LIMIT 500"""
+                ),
+                params,
+            ).mappings().all()
+
+        lista = [_incidencia_row_to_dict(r) for r in rows]
+        return jsonify({'ok': True, 'incidencias': lista, 'total': len(lista)})
     except Exception as e:
         return jsonify({'ok': False, 'error': str(e)}), 500
 
