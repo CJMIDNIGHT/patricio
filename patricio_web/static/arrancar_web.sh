@@ -50,7 +50,7 @@ echo '🎮 Lanzando Patricio API...';
 source ~/turtlebot3_ws/install/setup.bash;
 export ROS_DOMAIN_ID=7;
 cd ~/turtlebot3_ws/src/patricio/patricio_web;
-python3 patricio_api.py;
+./scripts/arrancar_api.sh;
 exec bash"
 
 # TERMINAL 7: Pilla-Pilla node

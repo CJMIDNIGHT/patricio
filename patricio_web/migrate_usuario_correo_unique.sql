@@ -1,5 +1,2 @@
--- Solo si ya tenías tabla `usuario` sin índice único en correo (instalaciones anteriores).
--- Si falla por correos repetidos o duplicados, limpia datos antes.
-
-ALTER TABLE usuario
-  ADD UNIQUE KEY uq_usuario_correo (correo);
+-- OBSOLETO: la tabla users ya define UNIQUE en email.
+-- Para migrar desde el esquema antiguo use migrate_esquema_er.sql + schema.sql + seed.
