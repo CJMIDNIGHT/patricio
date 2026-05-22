@@ -5,7 +5,14 @@
   }
 
   function nombreLegible(slug) {
-    const map = { pilla_pilla: 'Pilla-Pilla', escondite: 'Escondite' };
+    const map = {
+      pilla_pilla: 'Pilla-Pilla',
+      escondite: 'Escondite',
+      calamar: 'Juego del Calamar',
+      'Pilla-Pilla': 'Pilla-Pilla',
+      'Escondite': 'Escondite',
+      'Juego del Calamar': 'Juego del Calamar',
+    };
     return map[slug] || slug || '—';
   }
 
@@ -59,11 +66,12 @@
 
     detalle.forEach((r) => {
       const tr = document.createElement('tr');
+      const juego = r.nombre_actividad || r.nombre_juego;
       tr.innerHTML = `
-        <td>${nombreLegible(r.nombre_juego)}</td>
-        <td>${fmtHora(r.finalizado_en || r.iniciado_en)}</td>
-        <td>${escapeCell(r.resultado)}</td>
-        <td>${escapeCell(r.estado)}</td>`;
+        <td>${nombreLegible(juego)}</td>
+        <td>${fmtHora(r.fecha || r.finalizado_en || r.iniciado_en)}</td>
+        <td>${escapeCell(r.puntuacion != null ? r.puntuacion : r.resultado)}</td>
+        <td>${escapeCell(r.duracion != null ? r.duracion + ' s' : r.estado)}</td>`;
       tbody.appendChild(tr);
     });
   }
@@ -81,11 +89,12 @@
     let n = detalle.length;
     detalle.forEach((r) => {
       const tr = document.createElement('tr');
+      const juego = r.nombre_actividad || r.nombre_juego;
       tr.innerHTML = `
         <td>${String(n--).padStart(3, '0')}</td>
-        <td>${fmtHora(r.finalizado_en || r.iniciado_en)}</td>
-        <td>${nombreLegible(r.nombre_juego)}</td>
-        <td>${escapeCell(r.resultado)}</td>`;
+        <td>${fmtHora(r.fecha || r.finalizado_en || r.iniciado_en)}</td>
+        <td>${nombreLegible(juego)}</td>
+        <td>${escapeCell(r.puntuacion != null ? r.puntuacion : r.resultado)}</td>`;
       tbodyModal.appendChild(tr);
     });
   }

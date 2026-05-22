@@ -28,7 +28,7 @@
 
   function pickActive(list) {
     return sortPending(
-      list.filter((x) => !x.resuelta && String(x.estado) === 'abierta')
+      list.filter((x) => !(x.resuelto || x.resuelta))
     );
   }
 
@@ -69,7 +69,7 @@
             Estado: ${escapeHtml(current.estado)}
             · Severidad: ${escapeHtml(sev)}
           </span>
-          <p class="incidencias-banner__detail">${escapeHtml(current.titulo)} — ${escapeHtml(current.mensaje)}</p>
+          <p class="incidencias-banner__detail">${escapeHtml(current.descripcion || (current.titulo + ' — ' + current.mensaje))}</p>
           ${more > 0 ? `<p class="incidencias-banner__extra">+ ${more} alerta(s) pendiente(s) en cola.</p>` : ''}
         </div>
         <button type="button" class="boton incidencias-banner__btn" id="btn_incidencia_revisar">

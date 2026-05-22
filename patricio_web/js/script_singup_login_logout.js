@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!username || !password) {
         if (errorMessage) {
-          errorMessage.textContent = "Introduce usuario y contraseña.";
+          errorMessage.textContent = "Introduce email y contraseña.";
           errorMessage.style.display = "block";
         }
         return;
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({
-            nombre_usuario: username,
+            email: username,
             contrasena: password,
           }),
         });
@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         guardarSesionUsuario(data.usuario);
         alert(
-          `Registro exitoso ✅\nTu usuario de acceso es: ${data.usuario.nombre_usuario}`
+          `Registro exitoso ✅\nAccede con tu email: ${data.usuario.email || data.usuario.correo}`
         );
         registerModal.style.display = "none";
         if (loginModal) loginModal.style.display = "flex";
