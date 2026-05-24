@@ -2,119 +2,269 @@
    styles_login_page.css — Página de Login de Patricio
    ============================================================ */
 
-/* ── Layout principal ── */
-.login-main {
-  min-height: calc(100vh - 120px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
+/* ── Body background ── */
+.login-body {
+  background-color: #F5EDD6;
+  background-image: url('../images/doodle_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
 }
 
-/* ── Tarjeta del formulario ── */
-.login-card {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  padding: 2.5rem 2rem;
-  width: 100%;
-  max-width: 400px;
+/* ── Header (shared with registro) ── */
+.reg-header {
+  background-color: #F08C21;
+  padding: 32px 32px;
+  display: flex;
+  align-items: center;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 0 10px 2px #444444;
+}
+
+.reg-back {
+  color: #ffffff;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.3s ease;
+}
+.reg-back:hover {
+  font-weight: 800;
+  transform: scale(1.25);
+}
+
+/* ── Main layout ── */
+.login-main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 2.5rem 1rem 3rem;
+}
+
+/* ── Logo (shared with registro) ── */
+.reg-logo-wrap {
+  margin-bottom: 2rem;
+}
+
+.reg-logo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #3a2a6e;
+  display: block;
+}
+
+/* ── Login card ── */
+.login-card {
+  width: 100%;
+  max-width: 460px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+/* Card title bar — darker olive green */
+.login-card__header {
+  background: #B4B534;
+  padding: 18px 24px;
   text-align: center;
 }
 
-.login-card h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: var(--color-primary, #333);
+.login-card__header h1 {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
 }
 
-/* ── Imagen del robot ── */
-.robot-login-img {
-  width: 110px;
-  margin-bottom: 1.5rem;
+/* Card body — lighter olive green */
+.login-card__body {
+  background: #D7D590;
+  padding: 28px 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-/* ── Etiquetas e inputs ── */
-.login-card label {
-  align-self: flex-start;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #555;
-  margin-bottom: 0.3rem;
+/* ── Field ── */
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
-.login-card input {
+.login-field label {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.login-field input {
   width: 100%;
-  padding: 0.6rem 0.75rem;
-  border: 1.5px solid #ddd;
+  padding: 12px 16px;
+  border: none;
   border-radius: 8px;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  transition: border-color 0.2s;
+  background: rgba(255,255,255,0.85);
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: #333;
+  outline: none;
+  transition: background 0.2s;
   box-sizing: border-box;
 }
 
-.login-card input:focus {
-  outline: none;
-  border-color: var(--color-primary, #5b9bd5);
+.login-field input:focus {
+  background: rgba(255,255,255,1);
 }
 
-/* ── Mensaje de error ── */
-.error-message {
+.login-field input::placeholder {
+  color: #aaa;
+}
+
+.login-field input.input-error {
+  background: rgba(231, 76, 60, 0.25);
+  border: 1.5px solid #e74c3c;
+}
+
+.login-field input.input-error::placeholder {
   color: #e74c3c;
+}
+
+/* ── Error message ── */
+.error-message {
+  color: #F97316;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 0.85rem;
   min-height: 1.2em;
-  margin-bottom: 0.5rem;
-  align-self: flex-start;
+  text-align: center;
 }
 
-/* ── Botón principal ── */
-#loginBtn {
-  width: 100%;
-  padding: 0.75rem;
-  background: var(--color-primary, #5b9bd5);
-  color: #fff;
+/* ── Login button (outside card) ── */
+.login-submit {
+  margin-top: 1.8rem;
+  padding: 18px 60px;
+  background: #F97316;
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
+  border-radius: 14px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1.15rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-bottom: 1rem;
+  transition: transform 0.3s ease, background 0.2s;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.35);
 }
 
-#loginBtn:hover {
-  background: var(--color-primary-dark, #3d7fbf);
-  transform: translateY(-1px);
+.login-submit:hover {
+  background: #B4B534;
+  transform: scale(1.05);
 }
 
-#loginBtn:active {
-  transform: translateY(0);
+/* ── Register link ── */
+.login-register-link {
+  margin-top: 1rem;
 }
 
-/* ── Enlace a registro ── */
-.register-text {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 0.25rem;
-}
-
-.register-text a {
-  color: var(--color-primary, #5b9bd5);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.register-text a:hover {
+.login-register-link a {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #F97316;
   text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.login-register-link a:hover { color: #B4B534; }
+
+/* ── Footer (shared with registro) ── */
+
+.back-to-top {
+  align-self: flex-end;
+  margin-bottom: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  color: #333;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+  animation: bounce-up 2s infinite;
+}
+
+.back-to-top:hover { background: #fff; }
+
+@keyframes bounce-up {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.site-footer {
+  background-color: #d45068;
+  padding: 32px 48px;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 0 10px 2px #444444;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.legal-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legal-links span,
+.legal-links a {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 15px;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.legal-links a:hover { color: #fff; }
+
+@media (max-width: 600px) {
+  .footer-inner { flex-direction: column; text-align: center; }
+  .legal-links { justify-content: center; }
 }
 
 /* ── Responsive ── */
 @media (max-width: 480px) {
-  .login-card {
-    padding: 1.75rem 1.25rem;
-  }
+  .login-card__body { padding: 20px 20px 24px; }
+  .reg-logo { width: 100px; height: 100px; }
+  .site-footer { padding: 20px 24px; }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .legal-links { justify-content: center; }
 }

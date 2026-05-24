@@ -20,6 +20,8 @@
   padding: 32px 32px;
   display: flex;
   align-items: center;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 0 10px 2px #444444;
 }
 
 .reg-back {
