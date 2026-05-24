@@ -24,12 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const fechaVencimiento = document.getElementById("fechaVencimientoProducto").value;
 
     if (codigo && nombre && categoria && cantidad && ubicacion && fechaVencimiento) {
-      // Formatear la fecha al formato DD/MM/YYYY
-      const fechaFormateada = new Date(fechaVencimiento).toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+      const fechaFormateada =
+        typeof PatricioFecha !== 'undefined'
+          ? PatricioFecha.fmtDmy(fechaVencimiento)
+          : new Date(fechaVencimiento).toLocaleDateString('es-ES', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            });
 
       // Crear una nueva fila
       const nuevaFila = document.createElement("tr");

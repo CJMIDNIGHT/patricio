@@ -67,20 +67,17 @@
   }
 
   function fmtFecha(iso) {
-    if (!iso) return '—';
-    try {
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return String(iso);
-      return d.toLocaleString(undefined, {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch (_) {
-      return String(iso);
+    if (typeof PatricioFecha !== 'undefined') {
+      return PatricioFecha.fmtDmyHora(iso, false);
     }
+    return iso || '—';
+  }
+
+  function fmtFechaResumen(ymd) {
+    if (typeof PatricioFecha !== 'undefined') {
+      return PatricioFecha.fmtDmy(ymd);
+    }
+    return ymd || '—';
   }
 
   function readFiltrosDom() {
@@ -158,7 +155,7 @@
       extras.push(`orden: ${ordenTxt[filtros.orden] || filtros.orden}`);
     }
     resumen.innerHTML =
-      `<strong>${total}</strong> partida${total === 1 ? '' : 's'} el <strong>${fecha}</strong>` +
+      `<strong>${total}</strong> partida${total === 1 ? '' : 's'} el <strong>${fmtFechaResumen(fecha)}</strong>` +
       (extras.length ? ` · Filtros: ${extras.join(' · ')}` : '');
   }
 

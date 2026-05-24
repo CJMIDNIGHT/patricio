@@ -39,7 +39,10 @@
   // Función para actualizar timestamp
   function actualizarTimestamp() {
     const ahora = new Date();
-    timestampEl.textContent = ahora.toLocaleTimeString();
+    timestampEl.textContent =
+      typeof PatricioFecha !== 'undefined'
+        ? PatricioFecha.fmtDmyHora(ahora, true)
+        : ahora.toLocaleString('es-ES');
   }
 
   // 🟡 Batería: suscripción con control de intervalo
