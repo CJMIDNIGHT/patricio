@@ -34,12 +34,11 @@ body {
 .nav-left { display: flex; align-items: center; }
 
 .logo-circle {
-  height: 56px;
-  width: 56px;
+  height: 74px;
+  width: 74px;
   object-fit: contain;
   border-radius: 50%;
-  background: #fff;
-  padding: 2px;
+  margin-top: 8px;
 }
 
 .nav-links {
