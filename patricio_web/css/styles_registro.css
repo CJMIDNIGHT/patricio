@@ -2,151 +2,337 @@
    styles_registro.css — Página de Registro de Patricio
    ============================================================ */
 
-/* ── Layout principal ── */
-.registro-main {
-  min-height: calc(100vh - 120px); /* espacio para header y footer */
+/* ── Body background ── */
+.registro-body {
+  background-color: #F5EDD6;
+  background-image: url('../images/polkadot_back.jpeg'); /* replace with your doodle bg */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+}
+
+/* ── Header ── */
+.reg-header {
+  background-color: #F08C21;
+  padding: 32px 32px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
 }
 
-/* ── Tarjeta del formulario ── */
-.registro-card {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  padding: 2.5rem 2rem;
-  width: 100%;
-  max-width: 560px;
-  text-align: center;
-}
-
-.registro-card h1 {
-  font-size: 2rem;
-  margin-bottom: 0.25rem;
-  color: var(--color-primary, #333);
-}
-
-.registro-subtitle {
-  font-size: 0.95rem;
-  color: #888;
-  margin-bottom: 1.5rem;
-}
-
-/* ── Grid del formulario ── */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  text-align: left;
-  margin-bottom: 1.25rem;
-}
-
-.form-grid label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-  color: #555;
-}
-
-.form-grid input {
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  border: 1.5px solid #ddd;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
-}
-
-.form-grid input:focus {
-  outline: none;
-  border-color: var(--color-primary, #5b9bd5);
-}
-
-/* Campos que ocupan el ancho completo */
-.form-grid .full-width {
-  grid-column: 1 / -1;
-}
-
-/* ── Requisitos de contraseña ── */
-.password-requirements {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1rem 0;
+.reg-back {
+  color: #ffffff;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 1rem;
-  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.3s ease;
+}
+.reg-back:hover {
+  font-weight: 800;
+  transform: scale(1.25);
 }
 
-.password-requirements li {
-  font-size: 0.8rem;
-  color: #777;
+/* ── Main layout ── */
+.registro-main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ── Mensaje de error ── */
+/* ── Logo ── */
+.reg-logo-wrap {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.reg-logo {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #3a2a6e;
+  display: block;
+}
+
+/* ── Title ── */
+.reg-title {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #1a1a1a;
+  align-self: flex-start;
+  margin-bottom: 1.2rem;
+}
+
+/* ── Form wrapper ── */
+.reg-form-wrap {
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Collapsible section ── */
+.reg-section {
+  background: #B8CCDE;
+  border-radius: 16px;
+  overflow: visible;
+  padding-bottom: 40px;
+  box-shadow: 0 4px 12px #444444;
+}
+
+.reg-section + .reg-section {
+  margin-top: -40px; /* adjust this value to control how much they overlap */
+}
+
+.reg-section:nth-child(1) { z-index: 1; position: relative; }
+.reg-section:nth-child(2) { z-index: 2; position: relative; }
+.reg-section:nth-child(3) { z-index: 3; position: relative; }
+
+.reg-section__header {
+  width: 100%;
+  background: #6698CC;
+  border: none;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border-radius: 16px 16px 0 0;
+  transition: background 0.2s;
+  overflow: visible;
+}
+
+.reg-section__header:hover { background: #4e72b8; }
+
+.reg-section__title {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reg-section__arrow {
+  color: #ffffff;
+  font-size: 0.85rem;
+  transition: transform 0.3s ease;
+}
+
+/* collapsed state */
+.reg-section.collapsed .reg-section__body {
+  display: none;
+}
+
+.reg-section.collapsed .reg-section__arrow {
+  transform: rotate(-90deg);
+}
+
+.reg-section.collapsed .reg-section__header {
+  border-radius: 16px;
+}
+
+/* ── Section body ── */
+.reg-section__body {
+  padding: 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+}
+
+/* ── Grid layouts ── */
+.reg-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.reg-grid--1 { grid-template-columns: 1fr; }
+.reg-grid--2 { grid-template-columns: 1fr 1fr; }
+.reg-grid--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ── Field ── */
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.reg-field label {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.reg-field input {
+  width: auto;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.75);
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  color: #333;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.reg-field input:focus {
+  background: rgba(255,255,255,0.95);
+}
+
+.reg-field input::placeholder {
+  color: #999;
+}
+
+.reg-field input.input-error {
+  background: rgba(231, 76, 60, 0.25);
+  border: 1.5px solid #e74c3c;
+}
+
+.reg-field input.input-error::placeholder {
+  color: #e74c3c;
+}
+
+/* ── Error message ── */
 .error-message {
   color: #e74c3c;
   font-size: 0.85rem;
   min-height: 1.2em;
-  margin-bottom: 0.5rem;
+  margin: 0.5rem 0;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
 }
 
-/* ── Botón principal ── */
-#registerBtn {
-  width: 100%;
-  padding: 0.75rem;
-  background: var(--color-primary, #5b9bd5);
-  color: #fff;
+/* ── Submit button ── */
+.reg-submit {
+  margin-top: 1.5rem;
+  padding: 24px 60px;
+  background: #F08C21;
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
+  border-radius: 14px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1.25rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-bottom: 1rem;
+  transition: transform 0.3s ease, background 0.2s;
+  box-shadow: 0 4px 12px #444444;
 }
 
-#registerBtn:hover {
-  background: var(--color-primary-dark, #3d7fbf);
-  transform: translateY(-1px);
+.reg-submit:hover {
+  background: #B4B534;
+  transform: scale(1.05);
 }
 
-#registerBtn:active {
-  transform: translateY(0);
+/* ── Login link ── */
+.reg-login-link {
+  margin-top: 1rem;
 }
 
-/* ── Enlace a login ── */
-.login-text {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 0.5rem;
-}
-
-.login-text a {
-  color: var(--color-primary, #5b9bd5);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.login-text a:hover {
+.reg-login-link a {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #F08C21;
   text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.reg-login-link a:hover { color: #B4B534; }
+
+/* ── Footer (shared with landing) ── */
+
+.back-to-top {
+  align-self: flex-end;
+  margin-bottom: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  color: #333;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+  animation: bounce-up 2s infinite;
+}
+
+.back-to-top:hover { background: #fff; }
+
+@keyframes bounce-up {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.site-footer {
+  background-color: #d45068;
+  padding: 32px 48px;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 0 10px 2px #444444;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.legal-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legal-links span,
+.legal-links a {
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 15px;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.legal-links a:hover { color: #fff; }
+
+@media (max-width: 600px) {
+  .footer-inner { flex-direction: column; text-align: center; }
+  .legal-links { justify-content: center; }
 }
 
 /* ── Responsive ── */
-@media (max-width: 480px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid .full-width {
-    grid-column: 1;
-  }
-
-  .registro-card {
-    padding: 1.75rem 1.25rem;
-  }
+@media (max-width: 640px) {
+  .reg-grid--3 { grid-template-columns: 1fr; }
+  .reg-grid--2 { grid-template-columns: 1fr; }
+  .reg-title { font-size: 1.8rem; }
+  .reg-logo { width: 100px; height: 100px; }
+  .site-footer { padding: 20px 24px; }
+  .footer-inner { flex-direction: column; text-align: center; }
+  .legal-links { justify-content: center; }
 }
+

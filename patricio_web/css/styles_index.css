@@ -54,9 +54,11 @@ body {
   font-family: 'DM Sans', 'Nunito', sans-serif;
   color: #ffffff;
   font-weight: 600;
-  transition: opacity 0.2s;
+  transition: transform 0.3s ease;
 }
-.nav-links a:hover { opacity: 0.8; }
+.nav-links a:hover { 
+  font-weight: 700;
+  transform: scale(1.25);  }
 
 .nav-right {
   display: flex;
@@ -70,9 +72,11 @@ body {
   font-family: 'DM Sans', 'Nunito', sans-serif;
   font-weight: 600;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: transform 0.3s ease;
 }
-.login:hover { opacity: 0.8; }
+.login:hover {  
+  font-weight: 700;
+  transform: scale(1.25); }
 
 .btn-signup {
   background-color: #6698CC;

@@ -8,81 +8,171 @@
   <link rel="stylesheet" href="css/styles_generales.css">
   <link rel="stylesheet" href="css/styles_registro.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/logo_patricio.png" type="image/png">
 </head>
-<body>
-  <header>
-    <a href="index.html">
-      <img src="images/logo_patricio.png" alt="Patricio" class="logo">
+<body class="registro-body">
+
+  <!-- ── HEADER ── -->
+  <header class="reg-header">
+    <a href="index.html" class="reg-back">
+      <i class="bi bi-chevron-left"></i> Volver atrás
     </a>
-    <div class="user-icon" id="userIcon">
-      <i class="bi bi-person-circle"></i>
-    </div>
   </header>
 
+  <!-- ── MAIN ── -->
   <main class="registro-main">
-    <div class="registro-card">
-      <h1>Registrarse</h1>
-      <p class="registro-subtitle">Crea tu cuenta para acceder a Patricio</p>
 
-      <div class="form-grid">
-        <div class="nombre">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" placeholder="Nombre (tutor o centro)*">
-        </div>
+    <!-- Logo centered -->
+    <div class="reg-logo-wrap">
+      <img src="images/logo_patricio.png" alt="Patricio" class="reg-logo">
+    </div>
 
-        <div class="apellido">
-          <label for="apellido">Apellido</label>
-          <input type="text" id="apellido" placeholder="Apellido*">
-        </div>
+    <!-- Title -->
+    <h1 class="reg-title">Registro</h1>
 
-        <div class="email full-width">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Email*">
-        </div>
+    <!-- Form card -->
+    <div class="reg-form-wrap">
 
-        <div class="sip">
-          <label for="codigo_aula">Código de grupo o aula</label>
-          <input type="text" id="codigo_aula" placeholder="Ej. AULA-AZUL-01*">
-        </div>
-
-        <div class="telefono">
-          <label for="telefono">Teléfono</label>
-          <input type="tel" id="telefono" placeholder="Teléfono (opcional)">
-        </div>
-
-        <div class="password1">
-          <label for="password1">Contraseña</label>
-          <input type="password" id="password1" placeholder="Contraseña*">
-        </div>
-
-        <div class="password2">
-          <label for="password2">Repite la contraseña</label>
-          <input type="password" id="password2" placeholder="Repite la contraseña*">
+      <!-- ── Datos primarios ── -->
+      <div class="reg-section" id="secPrimarios">
+        <button class="reg-section__header" onclick="toggleSection('secPrimarios')" type="button">
+          <span class="reg-section__title">Datos primarios</span>
+          <i class="bi bi-caret-down-fill reg-section__arrow"></i>
+        </button>
+        <div class="reg-section__body">
+          <div class="reg-grid reg-grid--3">
+            <div class="reg-field">
+              <label for="apellido">* 1er Apellido :</label>
+              <input type="text" id="apellido" placeholder="Apellido...">
+            </div>
+            <div class="reg-field">
+              <label for="nombre">* Nombre :</label>
+              <input type="text" id="nombre" placeholder="Nombre...">
+            </div>
+            <div class="reg-field">
+              <label for="dni">* DNI/NIE :</label>
+              <input type="text" id="dni" placeholder="YxxxxxxxxQ...">
+            </div>
+          </div>
+          <div class="reg-grid reg-grid--1">
+            <div class="reg-field">
+              <label for="apellido2">2o Apellido :</label>
+              <input type="text" id="apellido2" placeholder="Apellido...">
+            </div>
+          </div>
         </div>
       </div>
 
-      <ul class="password-requirements">
-        <li>➤ Mínimo 8 caracteres</li>
-        <li>➤ Una letra mayúscula</li>
-        <li>➤ Una letra minúscula</li>
-        <li>➤ Un número</li>
-      </ul>
+      <!-- ── Datos secundarios ── -->
+      <div class="reg-section" id="secSecundarios">
+        <button class="reg-section__header" onclick="toggleSection('secSecundarios')" type="button">
+          <span class="reg-section__title">Datos segundarios</span>
+          <i class="bi bi-caret-down-fill reg-section__arrow"></i>
+        </button>
+        <div class="reg-section__body">
+          <div class="reg-grid reg-grid--1">
+            <div class="reg-field">
+              <label for="direccion">* Dirección :</label>
+              <input type="text" id="direccion" placeholder="Calle/Avinguda, Puerta, Piso, Puerta, Codigo postal, Ciudad, País...">
+            </div>
+          </div>
+          <div class="reg-grid reg-grid--2">
+            <div class="reg-field">
+              <label for="email">* Correo :</label>
+              <input type="email" id="email" placeholder="nombre@gmail.com...">
+            </div>
+            <div class="reg-field">
+              <label for="telefono">* Teléfono :</label>
+              <input type="tel" id="telefono" placeholder="+34 xxx xxx xxx...">
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <p id="registroError" class="error-message"></p>
+      <!-- ── Datos del usuario ── -->
+      <div class="reg-section" id="secUsuario">
+        <button class="reg-section__header" onclick="toggleSection('secUsuario')" type="button">
+          <span class="reg-section__title">Datos del usuario</span>
+          <i class="bi bi-caret-down-fill reg-section__arrow"></i>
+        </button>
+        <div class="reg-section__body">
+          <div class="reg-grid reg-grid--3">
+            <div class="reg-field">
+              <label for="usuario">* Usuario :</label>
+              <input type="text" id="usuario" placeholder="usuario123...">
+            </div>
+            <div class="reg-field">
+              <label for="password1">* Contraseña :</label>
+              <input type="password" id="password1" placeholder="Contraseña...">
+            </div>
+            <div class="reg-field">
+              <label for="password2">* Confirma Contraseña :</label>
+              <input type="password" id="password2" placeholder="Repite la contraseña...">
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <button id="registerBtn">Enviar</button>
+    </div><!-- /reg-form-wrap -->
 
-      <p class="login-text">¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a></p>
-    </div>
+    <p id="registroError" class="error-message"></p>
+
+    <!-- Submit -->
+    <button class="reg-submit" id="registerBtn">Registrarme</button>
+
+    <!-- Login link -->
+    <p class="reg-login-link">
+      <a href="login.html" id="loginLink">¿Ya tienes cuenta? ¡Inicia sesión!</a>
+    </p>
+
   </main>
 
-  <footer>
-    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
-    <span>Patricio 2026 ®</span>
-    <a href="contacto.html" class="contact-link">CONTACTO</a>
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <img src="images/logo_patricio.png" alt="Patricio" class="footer-logo">
+      <div class="legal-links">
+        <span>©2026 Patricio</span>
+        <a href="#">Aviso legal</a>
+        <a href="#">Política de cookies</a>
+        <a href="politica_privacidad.html">Política de privacidad</a>
+        <a href="#">Gestión de Cookies</a>
+      </div>
+      <button class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Volver arriba">
+        <i class="bi bi-chevron-up"></i>
+      </button>
+    </div>
   </footer>
 
   <script src="js/script_singup_login_logout.js"></script>
+  <script>
+    function toggleSection(id) {
+      const sec = document.getElementById(id);
+      sec.classList.toggle('collapsed');
+    }
+
+    document.getElementById('registerBtn').addEventListener('click', function () {
+      const requiredFields = [
+        'nombre', 'apellido', 'email',
+        'password1', 'password2',
+        'dni', 'direccion', 'telefono', 'usuario'
+      ];
+
+      requiredFields.forEach(function (fieldId) {
+        const input = document.getElementById(fieldId);
+        if (!input) return;
+        if (!input.value.trim()) {
+          input.classList.add('input-error');
+        } else {
+          input.classList.remove('input-error');
+        }
+
+        input.addEventListener('input', function () {
+          if (this.value.trim()) this.classList.remove('input-error');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
