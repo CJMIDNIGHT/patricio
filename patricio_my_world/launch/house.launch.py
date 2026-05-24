@@ -145,7 +145,7 @@ def generate_launch_description():
         package='ros_gz_bridge',
         executable='parameter_bridge',
         parameters=[{
-            'config_file': os.path.join(pkg, 'params', model_folder + '_bridge.yaml'),
+            'config_file': os.path.join(pkg, 'config', 'turtlebot3_burger_cam_bridge.yaml'),
             'qos_overrides./tf_static.publisher.durability': 'transient_local',
         }],
         output='screen'

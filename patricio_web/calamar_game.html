@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>🦑 Juego del Calamar — Luz Roja / Luz Verde</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP BAR ── */
+    #topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1.5rem;
+      background: #111;
+      border-bottom: 1px solid #222;
+      flex-shrink: 0;
+    }
+    #topbar h1 { font-size: 1.2rem; font-weight: bold; letter-spacing: 1px; }
+    #topbar .controls { display: flex; gap: 0.6rem; align-items: center; }
+
+    .btn {
+      padding: 0.45rem 1.1rem;
+      border: none; border-radius: 6px;
+      font-size: 0.9rem; font-weight: bold; cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn:hover  { transform: scale(1.05); }
+    .btn:active { transform: scale(0.97); }
+    .btn-auto  { background: #e91e8c; color: white; }
+    .btn-verde { background: #2e7d32; color: white; }
+    .btn-roja  { background: #c62828; color: white; }
+    .btn-stop  { background: #333; color: #ccc; border: 1px solid #555; }
+
+    /* ── MAIN LAYOUT ── */
+    #main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── CAMERA PANEL ── */
+    #camera-panel {
+      flex: 1; position: relative; background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #cameraFeed { width: 100%; height: 100%; object-fit: cover; }
+    #camera-label {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(0,0,0,0.6); padding: 4px 10px;
+      border-radius: 4px; font-size: 0.78rem; color: #aaa; letter-spacing: 0.5px;
+    }
+
+    /* ── POSE BADGE ── */
+    #pose-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(0,0,0,0.65); padding: 4px 12px;
+      border-radius: 20px; font-size: 0.75rem; letter-spacing: 0.5px;
+      border: 1px solid #333; transition: border-color 0.3s, color 0.3s;
+    }
+    #pose-badge.detected    { border-color: #4caf50; color: #4caf50; }
+    #pose-badge.no-detected { border-color: #ff9800; color: #ff9800; }
+    #pose-badge.idle        { color: #555; }
+
+    /* ── INFRACTION OVERLAY ── */
+    #infraccion-overlay {
+      position: absolute; inset: 0;
+      background: rgba(198,40,40,0.0);
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 10;
+    }
+    #infraccion-overlay.active {
+      animation: parpadeo-overlay 0.5s ease-in-out 6;
+    }
+    @keyframes parpadeo-overlay {
+      0%,100% { background: rgba(198,40,40,0.0); }
+      50%     { background: rgba(198,40,40,0.75); }
+    }
+    #infraccion-text {
+      font-size: 3.5rem; font-weight: 900; color: white;
+      text-shadow: 0 0 30px rgba(255,0,0,0.8);
+      opacity: 0; transform: scale(0.7);
+      transition: opacity 0.2s, transform 0.2s;
+      text-align: center; line-height: 1.2;
+    }
+    #infraccion-overlay.active #infraccion-text { opacity: 1; transform: scale(1); }
+
+    /* ── STATUS PANEL ── */
+    #status-panel {
+      width: 280px; flex-shrink: 0; background: #111;
+      border-left: 1px solid #222;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1.5rem; padding: 1.5rem;
+    }
+
+    /* ── TRAFFIC LIGHT ── */
+    #traffic-light { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .light {
+      width: 90px; height: 90px; border-radius: 50%;
+      border: 3px solid #333; transition: box-shadow 0.3s, background 0.3s;
+    }
+    .light.verde { background: #1b5e20; }
+    .light.verde.active {
+      background: #4caf50;
+      box-shadow: 0 0 30px #4caf50, 0 0 60px rgba(76,175,80,0.4);
+    }
+    .light.roja { background: #4a0000; }
+    .light.roja.active {
+      background: #f44336;
+      box-shadow: 0 0 30px #f44336, 0 0 60px rgba(244,67,54,0.4);
+    }
+    .light.roja.active.parpadeo { animation: parpadeo-luz 0.8s ease-in-out infinite; }
+    @keyframes parpadeo-luz {
+      0%,100% { box-shadow: 0 0 30px #f44336, 0 0 60px rgba(244,67,54,0.4); }
+      50%     { box-shadow: 0 0 8px #f44336; }
+    }
+
+    /* ── STATUS TEXT ── */
+    #estado-texto {
+      font-size: 1.3rem; font-weight: bold; text-align: center;
+      letter-spacing: 1px; min-height: 2rem; transition: color 0.3s;
+    }
+    #estado-texto.verde      { color: #4caf50; }
+    #estado-texto.roja       { color: #f44336; }
+    #estado-texto.espera     { color: #888; }
+
+    /* ── POSE SENSITIVITY SLIDER ── */
+    #threshold-section { width: 100%; border-top: 1px solid #222; padding-top: 1rem; }
+    #threshold-section .section-title {
+      font-size: 0.72rem; color: #888; text-transform: uppercase;
+      letter-spacing: 1px; text-align: center; margin-bottom: 0.6rem;
+    }
+    #threshold-section .slider-row {
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;
+    }
+    #threshold-section .slider-label { font-size: 0.7rem; color: #555; white-space: nowrap; }
+    #threshold-section input[type=range] { flex: 1; accent-color: #e91e8c; }
+    #threshold-value { text-align: center; font-size: 0.85rem; color: #aaa; margin-top: 2px; }
+    #sensitivity-hint { text-align: center; font-size: 0.7rem; color: #555; margin-top: 4px; }
+
+    /* ── INFRACTION COUNTER ── */
+    #contador { text-align: center; }
+    #contador .num { font-size: 2.5rem; font-weight: 900; color: #f44336; line-height: 1; }
+    #contador .lbl { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ── CONNECTION STATUS ── */
+    #conn-status { font-size: 0.75rem; color: #555; text-align: center; }
+    #conn-status.ok    { color: #4caf50; }
+    #conn-status.error { color: #f44336; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <h1>🦑 JUEGO DEL CALAMAR</h1>
+    <div class="controls">
+      <button class="btn btn-auto"  onclick="enviarComando('START_AUTO')">▶ Auto</button>
+      <button class="btn btn-verde" onclick="enviarComando('CAMBIAR_A_VERDE')">🟢 Verde</button>
+      <button class="btn btn-roja"  onclick="enviarComando('CAMBIAR_A_ROJO')">🔴 Roja</button>
+      <button class="btn btn-stop"  onclick="enviarComando('STOP')">⏹ Parar</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- CAMERA -->
+    <div id="camera-panel">
+      <img id="cameraFeed" src="" alt="Feed de cámara" />
+      <div id="camera-label">📷 /patricio/calamar/camera_annotated</div>
+      <div id="pose-badge" class="idle">🦴 Pose: —</div>
+      <div id="infraccion-overlay">
+        <div id="infraccion-text">🚨<br>¡TE HAS MOVIDO!</div>
+      </div>
+    </div>
+
+    <!-- STATUS PANEL -->
+    <div id="status-panel">
+
+      <div id="traffic-light">
+        <div class="light roja"  id="luz-roja"></div>
+        <div style="width:12px;height:20px;background:#222;margin:2px auto;"></div>
+        <div class="light verde" id="luz-verde"></div>
+      </div>
+
+      <div id="estado-texto" class="espera">ESPERANDO...</div>
+
+      <div id="contador">
+        <div class="num" id="num-infracciones">0</div>
+        <div class="lbl">infracciones</div>
+      </div>
+
+      <div id="threshold-section">
+        <div class="section-title">🦴 Sensibilidad — Pose</div>
+        <div class="slider-row">
+          <span class="slider-label">Alta</span>
+          <input type="range" id="threshold-slider"
+                 min="0.01" max="0.15" step="0.005" value="0.05"
+                 oninput="actualizarThreshold(this.value)" />
+          <span class="slider-label">Baja</span>
+        </div>
+        <div id="threshold-value">Umbral: 0.050</div>
+        <div id="sensitivity-hint">Desplazamiento medio de articulaciones</div>
+      </div>
+
+      <div id="conn-status">Conectando con API...</div>
+
+    </div>
+  </div>
+
+<script>
+  const localIp  = location.hostname;
+  const API_BASE = `http://${localIp}:5000`;
+
+  let estadoActual    = 'ESPERA';
+  let infracciones    = 0;
+  let pollInterval    = null;
+
+  // ── Infraction dedup state ────────────────────────────
+  // lastAlertaTs: the alerta_ts value from the last infraction we already showed.
+  // infraccionCooldown: fallback flag when backend has no alerta_ts.
+  // Without these guards, every 500 ms poll that returns alerta='INFRACCION'
+  // re-triggers the overlay + TTS + counter — causing the "stuck screaming" bug.
+  let lastAlertaTs      = null;
+  let infraccionCooldown = false;
+
+  // ── Camera feed ───────────────────────────────────────
+  function iniciarCamara() {
+    const img = document.getElementById('cameraFeed');
+    img.src = `http://${localIp}:8080/stream?topic=/patricio/calamar/camera_annotated&timestamp=${Date.now()}`;
+  }
+  iniciarCamara();
+
+  // ── API command ───────────────────────────────────────
+  async function enviarComando(comando) {
+    try {
+      const res  = await fetch(`${API_BASE}/api/calamar/comando`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comando })
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        console.error('Error:', data.error);
+      } else {
+        if (comando === 'START_AUTO') iniciarPoll();
+        if (comando === 'STOP')       detenerPoll();
+      }
+    } catch (e) {
+      setConnStatus('❌ No se pudo conectar con la API', 'error');
+    }
+  }
+
+  // ── Polling ───────────────────────────────────────────
+  function iniciarPoll() {
+    detenerPoll();
+    pollInterval = setInterval(pollEstado, 500);
+  }
+  function detenerPoll() {
+    if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+  }
+
+  async function pollEstado() {
+    try {
+      const res  = await fetch(`${API_BASE}/api/calamar/estado`);
+      const data = await res.json();
+      setConnStatus('🟢 API conectada', 'ok');
+
+      // ── Traffic light state ───────────────────────────
+      // data.status must only ever be LUZ_VERDE | LUZ_ROJA | ESPERA.
+      // 'INFRACCION' is an EVENT delivered via data.alerta, NOT a state.
+      // We guard against it here so the light never gets stuck.
+      aplicarEstado(data.status);
+
+      // ── Pose badge ────────────────────────────────────
+      if (data.pose_detected !== undefined) {
+        actualizarPoseBadge(data.pose_detected);
+      }
+
+      // ── Infraction event — fire ONCE per event ────────
+      // The API holds alerta='INFRACCION' for several poll cycles.
+      // We use alerta_ts (a timestamp the backend should send) to
+      // identify unique events. If the backend doesn't send alerta_ts,
+      // we fall back to a 3 s cooldown so we fire at most once per event.
+      if (data.alerta === 'INFRACCION') {
+        const ts = data.alerta_ts ?? null;   // backend timestamp, or null
+        if (ts !== null) {
+          // Timestamp path: only fire if this is a new event
+          if (ts !== lastAlertaTs) {
+            lastAlertaTs = ts;
+            mostrarInfraccion();
+          }
+        } else {
+          // No timestamp: cooldown path
+          if (!infraccionCooldown) {
+            mostrarInfraccion();   // sets infraccionCooldown = true internally
+          }
+        }
+      } else {
+        // No active alert — reset so the next infraction fires normally
+        lastAlertaTs      = null;
+        infraccionCooldown = false;
+      }
+
+    } catch (e) {
+      setConnStatus('❌ API no disponible', 'error');
+    }
+  }
+
+  // Start polling on load
+  iniciarPoll();
+
+  // ── State machine UI ──────────────────────────────────
+  function aplicarEstado(estado) {
+    // CRITICAL: 'INFRACCION' is not a game state — it's a one-shot event.
+    // If it somehow arrives in data.status, silently ignore it so the
+    // traffic light doesn't get stuck in an undefined visual state.
+    if (!estado || estado === 'INFRACCION') return;
+
+    if (estado === estadoActual) return;
+    const prev = estadoActual;
+    estadoActual = estado;
+
+    const luzVerde = document.getElementById('luz-verde');
+    const luzRoja  = document.getElementById('luz-roja');
+    const texto    = document.getElementById('estado-texto');
+
+    luzVerde.classList.remove('active');
+    luzRoja.classList.remove('active', 'parpadeo');
+    texto.className = 'espera';
+
+    switch (estado) {
+      case 'LUZ_VERDE':
+        luzVerde.classList.add('active');
+        texto.textContent = '¡LUZ VERDE!';
+        texto.className   = 'verde';
+        if (prev !== 'LUZ_VERDE') hablar('Luz verde');
+        break;
+
+      case 'LUZ_ROJA':
+        luzRoja.classList.add('active', 'parpadeo');
+        texto.textContent = '¡LUZ ROJA!';
+        texto.className   = 'roja';
+        if (prev !== 'LUZ_ROJA') hablar('Luz roja');
+        break;
+
+      case 'ESPERA':
+      default:
+        texto.textContent = 'ESPERANDO...';
+        texto.className   = 'espera';
+        break;
+    }
+  }
+
+  // ── Pose badge ────────────────────────────────────────
+  function actualizarPoseBadge(detected) {
+    const badge = document.getElementById('pose-badge');
+    if (estadoActual === 'ESPERA') {
+      badge.textContent = '🦴 Pose: —';
+      badge.className   = 'idle';
+    } else if (detected) {
+      badge.textContent = '🦴 Pose: ✓ Detectada';
+      badge.className   = 'detected';
+    } else {
+      badge.textContent = '🦴 Pose: ⚠ Sin persona';
+      badge.className   = 'no-detected';
+    }
+  }
+
+  // ── Infraction flash ──────────────────────────────────
+  let infraccionTimeout = null;
+
+  function mostrarInfraccion() {
+    // Set cooldown immediately to block re-entry from the next poll tick
+    infraccionCooldown = true;
+
+    infracciones++;
+    document.getElementById('num-infracciones').textContent = infracciones;
+
+    const overlay = document.getElementById('infraccion-overlay');
+    overlay.classList.remove('active');
+    void overlay.offsetWidth;   // force reflow to restart animation
+    overlay.classList.add('active');
+
+    hablar('¡Te has movido!');
+
+    if (infraccionTimeout) clearTimeout(infraccionTimeout);
+    infraccionTimeout = setTimeout(() => {
+      overlay.classList.remove('active');
+      // Cooldown is cleared by pollEstado when alerta is no longer 'INFRACCION',
+      // NOT here — so we don't re-fire if the backend still holds the alert.
+    }, 3000);
+  }
+
+  // ── Text to speech ────────────────────────────────────
+  function hablar(texto) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'es-ES'; u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
+    window.speechSynthesis.speak(u);
+  }
+
+  // ── Pose sensitivity slider ───────────────────────────
+  function actualizarThreshold(val) {
+    const v = parseFloat(val).toFixed(3);
+    document.getElementById('threshold-value').textContent = `Umbral: ${v}`;
+    let hint = '';
+    if      (val <= 0.02) hint = 'Muy alta — cualquier micro-movimiento';
+    else if (val <= 0.04) hint = 'Alta — movimientos pequeños';
+    else if (val <= 0.07) hint = 'Media — movimientos normales';
+    else if (val <= 0.10) hint = 'Baja — movimientos amplios';
+    else                  hint = 'Muy baja — solo movimientos grandes';
+    document.getElementById('sensitivity-hint').textContent = hint;
+    enviarComando(`SET_THRESHOLD:${v}`);
+  }
+
+  // ── Connection status ─────────────────────────────────
+  function setConnStatus(msg, cls) {
+    const el = document.getElementById('conn-status');
+    el.textContent = msg; el.className = cls;
+  }
+
+  // ── Close cleanly ─────────────────────────────────────
+  window.addEventListener('beforeunload', () => enviarComando('STOP'));
+</script>
+</body>
+</html>

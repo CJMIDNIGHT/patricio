@@ -1,0 +1,24 @@
+# GuardarPartida.srv
+# Servicio ROS 2 para registrar una partida finalizada en la BBDD SQL
+# a través del cliente HTTP del paquete patricio_db_interface.
+#
+# El nodo servidor (db_interface_node) traduce esta petición en un
+# POST /api/guardar_juego contra patricio_api.py y devuelve success=True
+# únicamente cuando la API confirma el guardado (ok=true).
+#
+# Colocar en: patricio_interfaces/srv/GuardarPartida.srv
+
+# ── REQUEST ──────────────────────────────────────────────────────────────────
+string  nombre_juego        # Obligatorio. Ej: "pilla_pilla", "escondite", "calamar"
+int32   usuario_id          # Opcional. 0 o negativo = sin usuario (anónimo / sistema)
+float32 puntuacion          # Opcional. NaN = no aplica (no se envía a la API)
+int32   duracion            # Opcional. Segundos. 0 si no aplica.
+string  resultado           # Opcional. Ej: "victoria", "derrota", "abortado"
+string  estado              # Opcional. Por defecto "finalizado_ok". Ej: "en_curso", "abortado"
+string  detalles_json       # Opcional. Cadena JSON con metadatos extra (poses, eventos…)
+                            # Se envía vacío "" si no hay detalles.
+---
+# ── RESPONSE ─────────────────────────────────────────────────────────────────
+bool   success              # true sólo si la API y la BBDD confirman el guardado
+string message              # Mensaje descriptivo (OK o motivo del error)
+int64  id_partida           # ID del registro creado en la tabla `partidas` (0 si fallo)

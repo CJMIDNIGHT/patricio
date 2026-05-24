@@ -31,6 +31,7 @@ exec bash"
 # TERMINAL 4: web_video_server
 gnome-terminal -- bash -c "
 echo '📷 Lanzando web_video_server...';
+sleep 12;
 source ~/turtlebot3_ws/install/setup.bash;
 export ROS_DOMAIN_ID=7;
 ros2 run web_video_server web_video_server;
@@ -49,7 +50,7 @@ echo '🎮 Lanzando Patricio API...';
 source ~/turtlebot3_ws/install/setup.bash;
 export ROS_DOMAIN_ID=7;
 cd ~/turtlebot3_ws/src/patricio/patricio_web;
-python3 patricio_api.py;
+./scripts/arrancar_api.sh;
 exec bash"
 
 # TERMINAL 7: Pilla-Pilla node
@@ -69,6 +70,43 @@ source ~/turtlebot3_ws/install/setup.bash;
 export ROS_DOMAIN_ID=7;
 ros2 run patricio_escondite escondite_service;
 exec bash"
+
+# TERMINAL 9: Juego del Calamar node
+gnome-terminal -- bash -c "
+echo '🦑 Lanzando nodo Calamar...';
+sleep 8;
+source ~/turtlebot3_ws/install/setup.bash;
+export ROS_DOMAIN_ID=7;
+ros2 launch patricio_calamar calamar.launch.py;
+exec bash"
+
+# TERMINAL 10: Vision node (procesado de cámara)
+gnome-terminal -- bash -c "
+echo '👁️ Lanzando Vision Node...';
+sleep 5;
+source ~/turtlebot3_ws/install/setup.bash;
+export ROS_DOMAIN_ID=7;
+export TURTLEBOT3_MODEL=burger_cam;
+ros2 launch patricio_captacion vision.launch.py;
+exec bash"
+
+# TERMINAL 11: Webcam publisher Linux
+gnome-terminal -- bash -c "
+echo '📷 Lanzando webcam publisher Linux...';
+sleep 6;
+source ~/turtlebot3_ws/install/setup.bash;
+export ROS_DOMAIN_ID=7;
+ros2 run patricio_captacion webcam_publisher_linux;
+exec bash"
+
+# TERMINAL 12: Vision node
+#gnome-terminal -- bash -c "
+#echo '👁️ Lanzando vision node...';
+#sleep 7;
+#source ~/turtlebot3_ws/install/setup.bash;
+#export ROS_DOMAIN_ID=7;
+#ros2 run patricio_captacion vision_node;
+#exec bash"
 
 sleep 10
 MYIP=$(ip route get 1.1.1.1 | awk '{print $7; exit}')

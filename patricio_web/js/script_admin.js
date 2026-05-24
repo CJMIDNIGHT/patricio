@@ -211,11 +211,22 @@ function navigateTo(targetX, targetY, targetOrientationW = 1.0) {
     rotateToTargetOrientation();
 }
 
+ // Función para activar el stream de la cámara (Santiago Aguirre)
+function activarCamara() {
+    const img = document.getElementById("cameraFeed");
+    if (!img) return;
+    img.src = `http://${localIp}:8080/stream?topic=/patricio/camera_processed&timestamp=${Date.now()}`;
+    console.log("📷 Stream de cámara activado:", img.src);
+}
 
 // ─── Conexión ─────────────────────────────────────────────────────────────────
 
 function connect() {
     console.log("Clic en connect");
+
+    console.log("Activando cámara...");
+    activarCamara()
+
     updateRosBridgeAddress();
     cmdVelTopic = null; // reset al reconectar
 
@@ -224,10 +235,10 @@ function connect() {
     data.ros.on("connection", () => {
         data.connected = true;
         cmdVelTopic = null;
-        initGameTopics(data.ros);
+        initGameTopics(data.ros);  // defined in ros_logic.js — also inits calamar topics
         document.getElementById("estado").textContent = '🔌 Conectado';
         document.getElementById("estado").style.color = 'green';
-        console.log("Conexión con ROSBridge correcta");
+        console.log("Conexión con ROSBridge correcta");;
 
         // ── Mapa ──────────────────────────────────────────────────────────────
         const canvas  = document.getElementById("mapCanvas");
@@ -242,12 +253,19 @@ function connect() {
         };
         image.onerror = () => console.error("Error al cargar imagen del mapa:", image.src);
 
-        fetch(`http://${localIp}:8000/static/farmaciaMapa.yaml`)
+        image.onerror = () => {
+            console.error("Error al cargar la imagen:", image.src);
+        };
+
+        // 加载 YAML 并设置图片路径 Cargar YAML y establecer la ruta de la imagen
+        /*fetch(`http://${localIp}:8000/static/farmaciaMapa.yaml`)
+
             .then(res => res.text())
             .then(text => {
                 mapInfo = jsyaml.load(text);
                 image.src = `http://${localIp}:8000/static/` + mapInfo.image;
-            });
+
+            });*/
 
         // ── /odom ─────────────────────────────────────────────────────────────
         const odomTopic = new ROSLIB.Topic({
@@ -476,22 +494,35 @@ function moveAlmacenToCasa() {
 }
 
 
+/*function updateCameraFeed() {
 // ─── Cámara ───────────────────────────────────────────────────────────────────
-
-function updateCameraFeed() {
     const img = document.getElementById("cameraFeed");
-    img.src = `http://${localIp}:8080/stream?topic=/camera/image_raw&timestamp=${Date.now()}`;
-}
-setInterval(updateCameraFeed, 2000);
+    const timestamp = new Date().getTime(); // Evitar el almacenamiento en caché
+    img.src = `http://${localIp}:8080/stream?topic=/image&timestamp=${timestamp}`;
+  }
+  
+  
+  // 每隔 2 秒刷新一次图像--Actualizar la imagen cada 2 segundos
+  setInterval(updateCameraFeed, 2000);*/
 
-
-// ─── DOMContentLoaded ─────────────────────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener('DOMContentLoaded', event => {
+    
+    // 自动根据页面地址设置 IP     Establecer IP automáticamente según la dirección de la página
     document.getElementById("ipInput").value = `ws://${localIp}:9090`;
-    document.getElementById("cameraFeed").src =
-        `http://${localIp}:8080/stream?topic=/camera/image_raw&timestamp=${Date.now()}`;
+    
+    /*const timestamp = new Date().getTime(); 
+    document.getElementById("cameraFeed").src = `http://${localIp}:8080/stream?topic=/image&timestamp=${timestamp}`;*/
+    
+    document.getElementById("btn_goto_cola").addEventListener("click", () => {
+        sendNavGoal(3.998915, 4.900286, 1.0);
+    });
+    document.getElementById("btn_goto_casa").addEventListener("click", () => {
+        sendNavGoal(4.500114, -8.000002, 1.0);
+    });
+    document.getElementById("btn_goto_almacen").addEventListener("click", () => {
+        sendNavGoal(0.009239, -15.876596, 1.0);
+    });
+    
 
     // Conexión
     document.getElementById("btn_con").addEventListener("click", connect);
@@ -502,16 +533,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("btn_stop").addEventListener("click", stop);
     document.getElementById("btn_reverse").addEventListener("click", reverse);
 
-    // WASD — mousedown/mouseup para movimiento continuo mientras se mantiene pulsado
+    // WASD
     bindMoveButton("btn_wsad_delante",   LINEAR_SPEED,  0.0);
     bindMoveButton("btn_wsad_atras",    -LINEAR_SPEED,  0.0);
     bindMoveButton("btn_wsad_izquierda", 0.0,           ANGULAR_SPEED);
     bindMoveButton("btn_wsad_derecha",   0.0,          -ANGULAR_SPEED);
 
-    // Parada crítica
     document.getElementById("btn_wsad_parar").addEventListener("click", stop);
 
-    // Spin — rotación pura sobre el eje
+    // Spin
     bindMoveButton("btn_spin_left",  0.0,  SPIN_SPEED);
     bindMoveButton("btn_spin_right", 0.0, -SPIN_SPEED);
 
@@ -521,10 +551,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("btn_goto_almacen").addEventListener("click", () => sendNavGoal(0.009239, -15.876596, 1.0));
     document.getElementById("btn_cancelar_nav").addEventListener("click", cancelNavigation);
 
-    // Juegos
+    // Juegos — pilla_pilla y escondite (ros_logic.js)
     document.getElementById('btn_pilla_pilla').addEventListener('click', () => iniciarJuego('pilla_pilla'));
     document.getElementById('btn_escondite').addEventListener('click',   () => iniciarJuego('escondite'));
     document.getElementById('btn_stop_juego').addEventListener('click',  detenerJuego);
+
+    // Juego del Calamar — funciones definidas en ros_logic.js
+    document.getElementById('btn_calamar_auto').addEventListener('click', () => { iniciarCalamarAuto(); window.open('calamar_game.html', '_blank'); });
+    document.getElementById('btn_luz_verde').addEventListener('click',    calamarLuzVerde);
+    document.getElementById('btn_luz_roja').addEventListener('click',     calamarLuzRoja);
+
+    // Mostrar controles manuales del calamar al conectar
+    const calamarControls = document.getElementById('calamar_manual_controls');
+    if (calamarControls) calamarControls.style.display = 'none';
 
     console.log("Página admin cargada");
 });
@@ -541,9 +580,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     btnGuardar.addEventListener("click", function () {
         const canvas = document.createElement("canvas");
-        canvas.width  = cameraFeed.videoWidth  || cameraFeed.naturalWidth;
-        canvas.height = cameraFeed.videoHeight || cameraFeed.naturalHeight;
-        canvas.getContext("2d").drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
+        canvas.width = cameraFeed.videoWidth || 640;
+        canvas.height = cameraFeed.videoHeight || 480;
 
         canvas.toBlob(function (blob) {
             if (blob) {

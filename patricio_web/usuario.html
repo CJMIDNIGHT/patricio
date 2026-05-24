@@ -61,19 +61,75 @@
 
       <div class="perfil-card historico-dia-panel" id="panelHistoricoJuegos">
         <div class="card-body">
-          <h2 class="perfil-title text-center">🎮 Juegos de hoy</h2>
+          <h2 class="perfil-title text-center">🎮 Historial de actividades</h2>
+          <p class="historico-subtitulo text-center">Partidas del día para analizar rendimiento y preferencias del niño/a</p>
           <hr>
+
+          <div id="historico-mas-jugado" class="historico-mas-jugado" aria-live="polite">
+            <span class="historico-mas-jugado__icon">🏆</span>
+            <div class="historico-mas-jugado__texto">
+              <span class="historico-mas-jugado__label">Más jugado hoy</span>
+              <strong id="historico-favorito-nombre">—</strong>
+              <span id="historico-favorito-detalle" class="historico-mas-jugado__detalle"></span>
+            </div>
+          </div>
+
           <p id="historico-dia-resumen" class="historico-resumen">&nbsp;</p>
-          <div id="historico-dia-barras" class="historico-barras" aria-label="Veces jugado por juego"></div>
-          <h3 class="historico-tabla-title">📋 Detalle de hoy</h3>
-          <div class="table-responsive">
-            <table class="receta-tabla historico-mini-tabla">
+          <div id="historico-dia-barras" class="historico-barras" aria-label="Veces jugado por actividad (filtros aplicados)"></div>
+
+          <div class="historico-filtros" role="search">
+            <div class="historico-filtros__grupo">
+              <label class="historico-filtros__label" for="hist-filtro-fecha">Fecha</label>
+              <input type="date" id="hist-filtro-fecha" class="form-control historico-filtros__input">
+            </div>
+            <div class="historico-filtros__grupo">
+              <label class="historico-filtros__label" for="hist-filtro-actividad">Actividad</label>
+              <select id="hist-filtro-actividad" class="form-control historico-filtros__input">
+                <option value="">Todas las actividades</option>
+                <option value="Pilla-Pilla">Pilla-Pilla</option>
+                <option value="Escondite">Escondite</option>
+                <option value="Juego del Calamar">Juego del Calamar</option>
+                <option value="Alfabeto">Alfabeto</option>
+                <option value="Mates">Mates</option>
+                <option value="Cuentos">Cuentos</option>
+                <option value="Chistes">Chistes</option>
+              </select>
+            </div>
+            <div class="historico-filtros__grupo">
+              <label class="historico-filtros__label" for="hist-filtro-orden">Orden / puntos</label>
+              <select id="hist-filtro-orden" class="form-control historico-filtros__input">
+                <option value="fecha_desc">Más recientes primero</option>
+                <option value="puntuacion_desc">Mayor puntuación</option>
+                <option value="puntuacion_asc">Menor puntuación</option>
+                <option value="duracion_desc">Mayor duración</option>
+                <option value="duracion_asc">Menor duración</option>
+              </select>
+            </div>
+            <div class="historico-filtros__grupo">
+              <label class="historico-filtros__label" for="hist-filtro-dur-min">Duración mín. (s)</label>
+              <input type="number" id="hist-filtro-dur-min" class="form-control historico-filtros__input"
+                min="0" step="1" placeholder="Ej. 60">
+            </div>
+            <div class="historico-filtros__grupo">
+              <label class="historico-filtros__label" for="hist-filtro-dur-max">Duración máx. (s)</label>
+              <input type="number" id="hist-filtro-dur-max" class="form-control historico-filtros__input"
+                min="0" step="1" placeholder="Ej. 600">
+            </div>
+            <div class="historico-filtros__grupo historico-filtros__grupo--acciones">
+              <button type="button" class="boton" id="hist-btn-aplicar">Aplicar</button>
+              <button type="button" class="boton historico-btn-sec" id="hist-btn-limpiar">Limpiar</button>
+            </div>
+          </div>
+
+          <h3 class="historico-tabla-title">📋 Partidos registrados</h3>
+          <div class="table-responsive historico-tabla-wrap">
+            <table class="receta-tabla historico-partidas-tabla">
               <thead>
                 <tr>
-                  <th>Juego</th>
-                  <th>Fin / hora</th>
-                  <th>Resultado</th>
-                  <th>Estado</th>
+                  <th scope="col">Actividad</th>
+                  <th scope="col">Puntos acumulados</th>
+                  <th scope="col">Duración</th>
+                  <th scope="col">Fecha</th>
                 </tr>
               </thead>
               <tbody id="historico-dia-tabla-body">
@@ -230,10 +286,10 @@
       <table class="receta-tabla">
         <thead>
           <tr>
-            <th>Nº</th>
-            <th>Hora</th>
             <th>Actividad</th>
-            <th>Resultado</th>
+            <th>Puntos</th>
+            <th>Duración</th>
+            <th>Fecha</th>
           </tr>
         </thead>
         <tbody id="historial-modal-juegos-body">

@@ -74,41 +74,188 @@ body.incidencias-banner-visible main {
     }
 }
 
+/* Tabla de incidencias (admin) */
+.incidencias-tabla-sub {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.incidencias-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+}
+
+.incidencias-filtros__grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 120px;
+}
+
+.incidencias-filtros__grupo--grow {
+    flex: 1 1 180px;
+    min-width: 160px;
+}
+
+.incidencias-filtros__grupo--acciones {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.incidencias-filtros__label {
+    font-size: 0.8rem;
+    color: #ff4da6;
+    font-weight: bold;
+}
+
+.incidencias-filtros__input {
+    min-width: 0;
+}
+
+.incidencias-filtros__label input[type="checkbox"] {
+    margin-right: 0.35rem;
+}
+
+.incidencias-btn-sec {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.incidencias-tabla-resumen {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: #e8eaf6;
+}
+
+.incidencias-tabla-error {
+    color: #fecaca;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.incidencias-tabla-wrap {
+    max-height: 320px;
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 77, 166, 0.35);
+}
+
+.incidencias-tabla {
+    width: 100%;
+    margin-bottom: 0;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.incidencias-tabla thead th {
+    position: sticky;
+    top: 0;
+    background: #4a5d9a;
+    color: #ff4da6;
+    font-weight: bold;
+    padding: 0.65rem 0.75rem;
+    border-bottom: 2px solid #ff4da6;
+    z-index: 1;
+}
+
+.incidencias-tabla tbody td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    vertical-align: middle;
+}
+
+.incidencias-tabla tbody tr:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.incidencias-celda-texto {
+    max-width: 280px;
+    word-break: break-word;
+}
+
+.incidencias-estado {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.incidencias-estado--pendiente {
+    background: rgba(234, 88, 12, 0.35);
+    color: #fed7aa;
+    border: 1px solid #ea580c;
+}
+
+.incidencias-estado--resuelto {
+    background: rgba(34, 197, 94, 0.25);
+    color: #bbf7d0;
+    border: 1px solid #22c55e;
+}
+
+.incidencias-btn-tabla {
+    padding: 0.35rem 0.65rem !important;
+    font-size: 0.8rem !important;
+}
+
+.incidencias-tabla-leyenda {
+    font-size: 0.8rem;
+    opacity: 0.85;
+    margin-top: 0.75rem;
+    margin-bottom: 0;
+}
+
+.incidencias-live--on {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+.incidencias-live--off {
+    color: #94a3b8;
+}
+
 /* General container styling */
 .container {
     margin-top: 2rem;
     color: white;
-    font-family: 'Arial', sans-serif; /* Fuente más legible */
+    font-family: 'Arial', sans-serif;
 }
 
 /* Card styling */
 .card {
-    background-color: #5a6fae; /* Azul más oscuro para mayor contraste */
+    background-color: #5a6fae;
     border: none;
     border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     margin-bottom: 1.5rem;
 }
 
 .card-body {
-    padding: 2rem; /* Más espacio interno */
+    padding: 2rem;
 }
 
 /* Titles */
 h2, h3 {
-    color: #ff4da6; /* Rosa más brillante para destacar */
+    color: #ff4da6;
     font-weight: bold;
     margin-bottom: 1rem;
-    text-align: center; /* Centrar los títulos */
+    text-align: center;
 }
 
 h3.text-center {
-    font-size: 1.8rem; /* Tamaño de fuente más grande */
+    font-size: 1.8rem;
 }
 
 /* Buttons */
 button {
-    background-color: #ff4da6; /* Rosa brillante */
+    background-color: #ff4da6;
     color: white;
     border: none;
     border-radius: 5px;
@@ -119,15 +266,15 @@ button {
 }
 
 button:hover {
-    transform: scale(1.1); /* Efecto de zoom más notable */
-    background-color: #e6398f; /* Rosa más oscuro al pasar el ratón */
+    transform: scale(1.1);
+    background-color: #e6398f;
 }
 
 /* Input styling */
 input.form-control {
-    background-color: #5a6fae; /* Azul oscuro */
+    background-color: #5a6fae;
     color: white;
-    border: 1px solid #ff4da6; /* Borde rosa brillante */
+    border: 1px solid #ff4da6;
     border-radius: 5px;
     padding: 0.5rem;
     font-size: 1rem;
@@ -136,7 +283,7 @@ input.form-control {
 input.form-control:focus {
     outline: none;
     border-color: #ff4da6;
-    box-shadow: 0 0 8px #ff4da6; /* Efecto de brillo rosa */
+    box-shadow: 0 0 8px #ff4da6;
 }
 
 /* Status text */
@@ -151,7 +298,7 @@ input.form-control:focus {
 .d-flex {
     display: flex;
     justify-content: center;
-    gap: 1.5rem; /* Más espacio entre botones */
+    gap: 1.5rem;
     flex-wrap: wrap;
 }
 
@@ -160,11 +307,11 @@ footer {
     margin-top: 2rem;
     text-align: center;
     font-size: 0.9rem;
-    color: #ccc; /* Gris claro */
+    color: #ccc;
 }
 
 footer a {
-    color: white; /* Rosa brillante */
+    color: white;
     text-decoration: none;
 }
 
@@ -175,15 +322,15 @@ footer a:hover {
 /* Coordenadas */
 p {
     font-size: 1rem;
-    color: white; /* Gris claro */
+    color: white;
 }
 
 p span {
     font-weight: bold;
-    color: #ff4da6; /* Rosa brillante */
+    color: #ff4da6;
 }
 
-/*CSS Sección panel de juegos*/
+/* ── Panel de juegos ──────────────────────────────────────────────────────── */
 .game-btn {
   display: flex;
   flex-direction: column;
@@ -194,9 +341,9 @@ p span {
   min-width: 140px;
   transition: background 0.3s, border-color 0.3s;
 }
-.game-icon { font-size: 2rem; line-height: 1; }
+.game-icon  { font-size: 2rem; line-height: 1; }
 .game-label { font-size: 1rem; font-weight: 500; }
-.game-sub { font-size: 0.75rem; opacity: 0.7; }
+.game-sub   { font-size: 0.75rem; opacity: 0.7; }
 
 .game-btn.juego-activo { background: #3a7d44 !important; border-color: #3a7d44 !important; }
 .game-btn.juego-exito  { background: #2e7d32 !important; border-color: #2e7d32 !important; }
@@ -213,4 +360,29 @@ p span {
   font-size: 0.95rem;
   font-style: italic;
   min-height: 52px;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+
+/* ── Juego del Calamar — estados visuales de la burbuja ─────────────────── */
+
+.juego-bubble.calamar-verde {
+  background: rgba(46, 125, 50, 0.35);
+  border-color: #4caf50;
+}
+
+.juego-bubble.calamar-roja {
+  background: rgba(198, 40, 40, 0.35);
+  border-color: #ef5350;
+}
+
+/* Infracción: fondo rojo parpadeante */
+.juego-bubble.calamar-infraccion {
+  background: rgba(198, 40, 40, 0.6);
+  border-color: #ff1744;
+  animation: calamar-parpadeo 0.5s ease-in-out infinite;
+}
+
+@keyframes calamar-parpadeo {
+  0%,  100% { opacity: 1; }
+  50%        { opacity: 0.2; }
 }
