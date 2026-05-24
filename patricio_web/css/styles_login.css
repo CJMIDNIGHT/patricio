@@ -5,7 +5,7 @@
 /* ── Body background ── */
 .login-body {
   background-color: #F5EDD6;
-  background-image: url('../images/doodle_bg.png');
+  background-image: url('../images/polkadot_back.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -68,7 +68,7 @@
   max-width: 460px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px #444444;
 }
 
 /* Card title bar — darker olive green */
@@ -92,7 +92,7 @@
   padding: 28px 32px 28px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
 }
 
 /* ── Field ── */
@@ -105,7 +105,7 @@
 
 .login-field label {
   font-family: 'DM Sans', 'Nunito', sans-serif;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #ffffff;
 }
@@ -154,7 +154,7 @@
 .login-submit {
   margin-top: 1.8rem;
   padding: 18px 60px;
-  background: #F97316;
+  background: #F08C21;
   color: #ffffff;
   border: none;
   border-radius: 14px;
@@ -163,7 +163,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: transform 0.3s ease, background 0.2s;
-  box-shadow: 0 4px 16px rgba(249,115,22,0.35);
+  box-shadow: 0 4px 12px #444444;
 }
 
 .login-submit:hover {
@@ -180,7 +180,7 @@
   font-family: 'DM Sans', 'Nunito', sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
-  color: #F97316;
+  color: #F08C21;
   text-decoration: underline;
   transition: color 0.2s;
 }

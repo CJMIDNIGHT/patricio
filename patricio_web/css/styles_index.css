@@ -22,7 +22,7 @@ body {
   width: 100%;
   z-index: 9999;
   padding: 8px 32px;
-  background-color: #F97316;
+  background-color: #F08C21;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -189,7 +189,7 @@ body {
 .doodle-divider1 {
   width: 100%;
   height: 80px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='80'%3E%3Cpath d='M0 40 Q 60 10 120 40 Q 180 70 240 40 Q 300 10 360 40 Q 420 70 480 40 Q 540 10 600 40 Q 660 70 720 40 Q 780 10 840 40 Q 900 70 960 40 Q 1020 10 1080 40 Q 1140 70 1200 40' fill='none' stroke='%23F97316' stroke-width='3' opacity='0.3'/%3E%3Ccircle cx='100' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='300' cy='60' r='4' fill='%23A7C575' opacity='0.6'/%3E%3Ccircle cx='500' cy='15' r='7' fill='%23CBCBF3' opacity='0.7'/%3E%3Ccircle cx='700' cy='65' r='5' fill='%23F97316' opacity='0.5'/%3E%3Ccircle cx='900' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='1100' cy='55' r='4' fill='%23A7C575' opacity='0.6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='80'%3E%3Cpath d='M0 40 Q 60 10 120 40 Q 180 70 240 40 Q 300 10 360 40 Q 420 70 480 40 Q 540 10 600 40 Q 660 70 720 40 Q 780 10 840 40 Q 900 70 960 40 Q 1020 10 1080 40 Q 1140 70 1200 40' fill='none' stroke='%23F08C21' stroke-width='3' opacity='0.3'/%3E%3Ccircle cx='100' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='300' cy='60' r='4' fill='%23A7C575' opacity='0.6'/%3E%3Ccircle cx='500' cy='15' r='7' fill='%23CBCBF3' opacity='0.7'/%3E%3Ccircle cx='700' cy='65' r='5' fill='%23F08C21' opacity='0.5'/%3E%3Ccircle cx='900' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='1100' cy='55' r='4' fill='%23A7C575' opacity='0.6'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-size: 1200px 80px;
   margin-top: 100vh;
@@ -197,7 +197,7 @@ body {
 .doodle-divider {
   width: 100%;
   height: 80px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='80'%3E%3Cpath d='M0 40 Q 60 10 120 40 Q 180 70 240 40 Q 300 10 360 40 Q 420 70 480 40 Q 540 10 600 40 Q 660 70 720 40 Q 780 10 840 40 Q 900 70 960 40 Q 1020 10 1080 40 Q 1140 70 1200 40' fill='none' stroke='%23F97316' stroke-width='3' opacity='0.3'/%3E%3Ccircle cx='100' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='300' cy='60' r='4' fill='%23A7C575' opacity='0.6'/%3E%3Ccircle cx='500' cy='15' r='7' fill='%23CBCBF3' opacity='0.7'/%3E%3Ccircle cx='700' cy='65' r='5' fill='%23F97316' opacity='0.5'/%3E%3Ccircle cx='900' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='1100' cy='55' r='4' fill='%23A7C575' opacity='0.6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='80'%3E%3Cpath d='M0 40 Q 60 10 120 40 Q 180 70 240 40 Q 300 10 360 40 Q 420 70 480 40 Q 540 10 600 40 Q 660 70 720 40 Q 780 10 840 40 Q 900 70 960 40 Q 1020 10 1080 40 Q 1140 70 1200 40' fill='none' stroke='%23F08C21' stroke-width='3' opacity='0.3'/%3E%3Ccircle cx='100' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='300' cy='60' r='4' fill='%23A7C575' opacity='0.6'/%3E%3Ccircle cx='500' cy='15' r='7' fill='%23CBCBF3' opacity='0.7'/%3E%3Ccircle cx='700' cy='65' r='5' fill='%23F08C21' opacity='0.5'/%3E%3Ccircle cx='900' cy='20' r='6' fill='%23FFD966' opacity='0.6'/%3E%3Ccircle cx='1100' cy='55' r='4' fill='%23A7C575' opacity='0.6'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-size: 1200px 80px;
 }
@@ -250,7 +250,7 @@ body {
   margin-bottom: 25px;
 }
 .section-title.center { text-align: center; }
-.section-title.orange { color: #F97316; }
+.section-title.orange { color: #F08C21; }
 
 .producto-desc {
   font-family: 'DM Sans', 'Nunito', sans-serif;
@@ -368,11 +368,11 @@ body {
   box-shadow: 0 4px 12px #F08C21;
 }
 .nosotros-card-item:hover { transform: translateY(-5px); }
-.nosotros-card-item:hover .icon-feature { transform: scale(1.15); color: #F97316; }
+.nosotros-card-item:hover .icon-feature { transform: scale(1.15); color: #F08C21; }
 
 .nosotros-card-item .icon-feature {
   font-size: 2rem;
-  color: #F97316;
+  color: #F08C21;
   margin: 0;
   flex-shrink: 0;
 }
@@ -409,7 +409,7 @@ a.nosotros-card-item {
   font-size: 20px;
   font-family: 'DM Sans', 'Nunito', sans-serif;
   border-radius: 16px;
-  background-color: #F97316;
+  background-color: #F08C21;
   transition: transform 0.3s ease, background-color 0.2s;
   cursor: pointer;
   border: none;
