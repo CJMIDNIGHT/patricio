@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>patricio_db_interface</name>
+  <version>0.0.0</version>
+  <description>
+    Paquete de conexión a Base de Datos para Patricio.
+    Expone servicios ROS 2 (GuardarPartida, RegistrarIncidencia) que centralizan
+    el envío de información del robot hacia la BBDD SQL a través del cliente
+    HTTP integrado, realizando las peticiones POST correspondientes a
+    patricio_api.py. Garantiza que el robot reciba confirmación (success=True)
+    sólo cuando la API y la BBDD han guardado correctamente los datos.
+  </description>
+
+  <maintainer email="juan@todo.todo">juan</maintainer>
+  <license>TODO: License declaration</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>patricio_interfaces</exec_depend>
+  <exec_depend>python3-requests</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

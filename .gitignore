@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Variables de entorno (con credenciales) — NUNCA commitear
+.env
+*.env.local
+
+# Build de ROS 2 / colcon
+build/
+install/
+log/
+
+# IDE / editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs y caches diversos
+*.log

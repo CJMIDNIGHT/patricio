@@ -1,0 +1,21 @@
+# RegistrarIncidencia.srv
+# Servicio ROS 2 para registrar una incidencia del robot en la BBDD SQL
+# a través del cliente HTTP del paquete patricio_db_interface.
+#
+# El nodo servidor (db_interface_node) traduce esta petición en un
+# POST /api/incidencias contra patricio_api.py y devuelve success=True
+# únicamente cuando la API confirma el guardado (ok=true).
+#
+# Colocar en: patricio_interfaces/srv/RegistrarIncidencia.srv
+
+# ── REQUEST ──────────────────────────────────────────────────────────────────
+string tipo                 # Obligatorio. Ej: "Caida", "Bateria baja", "Error sensor"
+string descripcion          # Opcional. Texto libre, máx 255 chars (se trunca en la API).
+                            # Si está vacío, la API usa "<tipo>: Sin detalle adicional".
+string severidad            # Opcional: "info" | "aviso" | "critico". Default "aviso".
+int32  usuario_id           # Opcional. 0 o negativo = sin usuario asociado.
+---
+# ── RESPONSE ─────────────────────────────────────────────────────────────────
+bool   success              # true sólo si la API y la BBDD confirman el guardado
+string message              # Mensaje descriptivo (OK o motivo del error)
+int64  id_incidencia        # ID de la incidencia creada en la tabla `incidencias` (0 si fallo)
