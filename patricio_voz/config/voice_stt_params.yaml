@@ -1,0 +1,21 @@
+voice_stt_node:
+  ros__parameters:
+    # Konobo USB 2.0 Mini — listar con: ros2 run patricio_voz list_audio_devices
+    microphone_device_index: -1
+    microphone_name_contains: "konobo"
+
+    language: "es-ES"
+    recognition_engine: "google"   # google | whisper (whisper requiere modelo/ffmpeg)
+
+    wake_phrases:
+      - "hola patricio"
+      - "patricio"
+    require_wake_word: true
+
+    wake_listen_seconds: 2.5
+    command_listen_seconds: 10.0
+    listen_timeout_sec: 1.0
+    ambient_calibration_sec: 1.0
+    energy_threshold: 300
+    dynamic_energy_threshold: true
+    publish_partial_status: true

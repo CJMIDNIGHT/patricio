@@ -1,0 +1,5 @@
+# Instalar en el entorno del robot (además de colcon build):
+#   pip install -r requirements.txt
+# En Ubuntu suele hacer falta antes: sudo apt install portaudio19-dev python3-pyaudio
+SpeechRecognition>=3.10.0
+PyAudio>=0.2.14
