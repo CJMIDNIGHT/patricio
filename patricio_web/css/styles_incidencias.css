@@ -171,6 +171,7 @@ body.incidencias-banner-visible main {
   border-bottom: 1px solid rgba(255,255,255,0.1);
   vertical-align: middle;
   background: #E2E1AF;
+  color: black;
 }
 
 .incidencias-tabla tbody tr:hover {
