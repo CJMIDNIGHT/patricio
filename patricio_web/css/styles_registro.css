@@ -238,6 +238,21 @@
   transform: scale(1.05);
 }
 
+/* Update button */
+.btn-submit {
+  margin-top: 1.5rem;
+  padding: 22px 26px;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-family: 'DM Sans', 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.2s;
+  box-shadow: 0 4px 12px #444444;
+}
+
 /* ── Login link ── */
 .reg-login-link {
   margin-top: 1rem;

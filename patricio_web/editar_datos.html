@@ -10,8 +10,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="css/styles_generales.css">
   <link rel="stylesheet" href="css/styles_admin.css">
+  <link rel="stylesheet" href="css/styles_registro.css">
   <link rel="stylesheet" href="css/styles_logout.css">
-  <link rel="stylesheet" href="css/styles_editar_datos.css">
+  <link rel="icon" href="images/logo_patricio.png" type="image/png">
 </head>
 <body class="admin-body">
 
@@ -52,7 +53,6 @@
       <button class="admin-sidebar__toggle" id="sidebarToggle" aria-label="Colapsar menú">
         <i class="bi bi-chevron-right"></i>
       </button>
-      <!-- Cerrar sesión -->
       <div class="admin-sidebar__logout">
         <button class="admin-sidebar__logout-btn" id="logoutButton">
           <i class="bi bi-box-arrow-left"></i>
@@ -62,57 +62,113 @@
     </aside>
 
     <!-- ── MAIN CONTENT ── -->
-    <main class="admin-main editar-main">
+    <main class="admin-main">
+      <div class="registro-main" style="padding-top: 1rem;">
 
-      <div class="editar-card">
-        <div class="editar-card__header">
-          <i class="bi bi-person-fill"></i>
-          <h2>Información del perfil</h2>
+        <!-- Title -->
+        <h1 class="reg-title">Editar perfil</h1>
+
+        <!-- Form sections -->
+        <div class="reg-form-wrap">
+
+          <!-- ── Datos primarios ── -->
+          <div class="reg-section" id="secPrimarios">
+            <button class="reg-section__header" onclick="toggleSection('secPrimarios')" type="button">
+              <span class="reg-section__title">Datos primarios</span>
+              <i class="bi bi-caret-down-fill reg-section__arrow"></i>
+            </button>
+            <div class="reg-section__body">
+              <div class="reg-grid reg-grid--3">
+                <div class="reg-field">
+                  <label for="apellido">* 1er Apellido :</label>
+                  <input type="text" id="apellido" placeholder="Apellido...">
+                </div>
+                <div class="reg-field">
+                  <label for="nombre">* Nombre :</label>
+                  <input type="text" id="nombre" placeholder="Nombre...">
+                </div>
+                <div class="reg-field">
+                  <label for="dni">* DNI/NIE :</label>
+                  <input type="text" id="dni" placeholder="YxxxxxxxxQ...">
+                </div>
+              </div>
+              <div class="reg-grid reg-grid--1">
+                <div class="reg-field">
+                  <label for="apellido2">2o Apellido :</label>
+                  <input type="text" id="apellido2" placeholder="Apellido...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Datos secundarios ── -->
+          <div class="reg-section" id="secSecundarios">
+            <button class="reg-section__header" onclick="toggleSection('secSecundarios')" type="button">
+              <span class="reg-section__title">Datos segundarios</span>
+              <i class="bi bi-caret-down-fill reg-section__arrow"></i>
+            </button>
+            <div class="reg-section__body">
+              <div class="reg-grid reg-grid--1">
+                <div class="reg-field">
+                  <label for="direccion">* Dirección :</label>
+                  <input type="text" id="direccion" placeholder="Calle/Avinguda, Puerta, Piso, Puerta, Codigo postal, Ciudad, País...">
+                </div>
+              </div>
+              <div class="reg-grid reg-grid--2">
+                <div class="reg-field">
+                  <label for="email">* Correo :</label>
+                  <input type="email" id="email" placeholder="nombre@gmail.com...">
+                </div>
+                <div class="reg-field">
+                  <label for="telefono">* Teléfono :</label>
+                  <input type="tel" id="telefono" placeholder="+34 xxx xxx xxx...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Datos del usuario ── -->
+          <div class="reg-section" id="secUsuario">
+            <button class="reg-section__header" onclick="toggleSection('secUsuario')" type="button">
+              <span class="reg-section__title">Datos del usuario</span>
+              <i class="bi bi-caret-down-fill reg-section__arrow"></i>
+            </button>
+            <div class="reg-section__body">
+              <div class="reg-grid reg-grid--3">
+                <div class="reg-field">
+                  <label for="usuario">* Usuario :</label>
+                  <input type="text" id="usuario" placeholder="usuario123...">
+                </div>
+                <div class="reg-field">
+                  <label for="password1">* Contraseña nueva :</label>
+                  <input type="password" id="password1" placeholder="Contraseña...">
+                </div>
+                <div class="reg-field">
+                  <label for="password2">* Confirma Contraseña :</label>
+                  <input type="password" id="password2" placeholder="Repite la contraseña...">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /reg-form-wrap -->
+
+        <!-- Error / feedback messages -->
+        <p id="registroError" class="error-message"></p>
+        <div id="editarFeedback" style="display:none; margin-top:16px; padding:12px 16px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:600; text-align:center;"></div>
+
+        <!-- Actions -->
+        <div style="display:flex; gap:16px; margin-top:1.5rem; flex-wrap:wrap; justify-content:center;">
+          <button type="button" id="guardarDatos" class="btn-submit" style="margin-top:0; background:#28a745;">
+            <i class="bi bi-check-lg"></i> Guardar cambios
+          </button>
+          <button type="button" id="cancelarEdicion" class="btn-submit" style="margin-top:0; background:#6c757d;"
+            onclick="window.history.back()">
+            <i class="bi bi-x-lg"></i> Cancelar
+          </button>
         </div>
-        <div class="editar-card__body">
-          <form id="editarDatosForm">
 
-            <div class="editar-form-group">
-              <label for="popupNombre" class="editar-label">Nombre</label>
-              <input id="popupNombre" class="editar-input" placeholder="Nombre" />
-            </div>
-
-            <div class="editar-form-group">
-              <label for="popupApellido" class="editar-label">Apellido</label>
-              <input id="popupApellido" class="editar-input" placeholder="Apellido" />
-            </div>
-
-            <div class="editar-form-group">
-              <label for="popupCodigoAula" class="editar-label">Código de grupo o aula</label>
-              <input id="popupCodigoAula" class="editar-input" placeholder="Código" />
-            </div>
-
-            <div class="editar-form-group">
-              <label for="popupCorreo" class="editar-label">Correo Electrónico</label>
-              <input id="popupCorreo" class="editar-input" type="email" placeholder="Correo Electrónico" />
-            </div>
-
-            <div class="editar-form-group">
-              <label for="popupTelefono" class="editar-label">Teléfono</label>
-              <input id="popupTelefono" class="editar-input" type="tel" placeholder="Teléfono" />
-            </div>
-
-            <div class="editar-actions">
-              <button type="button" id="guardarDatos" class="editar-btn editar-btn--guardar">
-                <i class="bi bi-check-lg"></i> Guardar
-              </button>
-              <button type="button" id="cancelarEdicion" class="editar-btn editar-btn--cancelar"
-                onclick="window.history.back()">
-                <i class="bi bi-x-lg"></i> Cancelar
-              </button>
-            </div>
-
-            <div class="editar-feedback" id="editarFeedback"></div>
-
-          </form>
-        </div>
       </div>
-
     </main>
   </div><!-- /admin-layout -->
 
@@ -146,7 +202,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/script_singup_login_logout.js"></script>
-  <script src="js/script_usuario.js"></script>
+  <!--script src="js/script_usuario.js"></script-->
   <script>
     // Sidebar toggle
     const sidebar = document.getElementById('adminSidebar');
@@ -156,14 +212,115 @@
       this.querySelector('i').classList.toggle('bi-chevron-left');
     });
 
-    // Save feedback
-    document.getElementById('guardarDatos').addEventListener('click', function () {
+    // Section collapse toggle
+    function toggleSection(id) {
+      const sec = document.getElementById(id);
+      sec.classList.toggle('collapsed');
+    }
+
+    // Red highlight on empty required fields
+    function highlightEmpty() {
+      const requiredFields = [
+        'nombre', 'apellido', 'email', 'password1', 'password2',
+        'dni', 'direccion', 'telefono', 'usuario'
+      ];
+      let allFilled = true;
+      requiredFields.forEach(function (fieldId) {
+        const input = document.getElementById(fieldId);
+        if (!input) return;
+        if (!input.value.trim()) {
+          input.classList.add('input-error');
+          allFilled = false;
+        } else {
+          input.classList.remove('input-error');
+        }
+        input.addEventListener('input', function () {
+          if (this.value.trim()) this.classList.remove('input-error');
+        });
+      });
+      return allFilled;
+    }
+
+    // Save — validate then call update API
+    document.getElementById('guardarDatos').addEventListener('click', async function () {
       const feedback = document.getElementById('editarFeedback');
-      // Hook your actual save logic here (Firebase, API, etc.)
-      feedback.textContent = '✅ Datos guardados correctamente.';
-      feedback.className = 'editar-feedback editar-feedback--success';
-      feedback.style.display = 'block';
-      setTimeout(() => { feedback.style.display = 'none'; }, 3000);
+
+      if (!highlightEmpty()) {
+        feedback.textContent = '⚠️ Por favor rellena todos los campos obligatorios.';
+        feedback.style.background = 'rgba(220,53,69,0.15)';
+        feedback.style.color = '#721c24';
+        feedback.style.border = '1px solid #dc3545';
+        feedback.style.display = 'block';
+        return;
+      }
+
+      const nombre    = document.getElementById('nombre').value.trim();
+      const apellido  = document.getElementById('apellido').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const telefono  = document.getElementById('telefono').value.trim();
+      const dni       = document.getElementById('dni').value.trim();
+      const direccion = document.getElementById('direccion').value.trim();
+      const pass1     = document.getElementById('password1').value;
+      const pass2     = document.getElementById('password2').value;
+      const errorMsg  = document.getElementById('registroError');
+
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+      if (pass1 !== pass2) {
+        errorMsg.textContent = 'Las contraseñas no coinciden.';
+        return;
+      }
+
+      if (pass1 && !regex.test(pass1)) {
+        errorMsg.textContent = 'La contraseña no cumple los requisitos (8 caracteres, mayúscula, minúscula, número).';
+        return;
+      }
+
+      errorMsg.textContent = '';
+      this.disabled = true;
+
+      try {
+        const base = `http://${window.location.hostname}:5000`;
+        const res = await fetch(`${base}/api/auth/update`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            nombre,
+            apellido,
+            correo: email,
+            telefono,
+            dni,
+            direccion,
+            ...(pass1 ? { contrasena: pass1 } : {})
+          }),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!data.ok) {
+          feedback.textContent = data.error || '❌ No se pudieron guardar los cambios.';
+          feedback.style.background = 'rgba(220,53,69,0.15)';
+          feedback.style.color = '#721c24';
+          feedback.style.border = '1px solid #dc3545';
+        } else {
+          feedback.textContent = '✅ Datos guardados correctamente.';
+          feedback.style.background = 'rgba(40,167,69,0.2)';
+          feedback.style.color = '#155724';
+          feedback.style.border = '1px solid #28a745';
+          setTimeout(() => { feedback.style.display = 'none'; }, 3000);
+        }
+        feedback.style.display = 'block';
+
+      } catch (e) {
+        console.warn(e);
+        feedback.textContent = '❌ Sin conexión con la API (¿servidor en :5000 encendido?).';
+        feedback.style.background = 'rgba(220,53,69,0.15)';
+        feedback.style.color = '#721c24';
+        feedback.style.border = '1px solid #dc3545';
+        feedback.style.display = 'block';
+      } finally {
+        this.disabled = false;
+      }
     });
   </script>
 
