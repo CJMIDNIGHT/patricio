@@ -2,112 +2,196 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Patricio: robot educativo para niños y niñas de 4 a 6 años.">
   <title>Patricio | Inicio</title>
+
   <link rel="stylesheet" href="css/styles_generales.css">
   <link rel="stylesheet" href="css/styles_index.css">
-  <link rel="stylesheet" href="css/styles_login.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="images/logo_patricio.png" type="image/png">
 </head>
 <body>
-  <header>
-    <a href="index.html">
-  <img src="images/logo_patricio.png" alt="Patricio" class="logo">
-</a>
-    <div class="user-icon" id="userIcon">
-      <i class="bi bi-person-circle"></i>
+
+  <!-- ── NAVBAR ── -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="index.html">
+        <img src="images/logo_patricio.png" class="logo-circle" alt="Patricio logo">
+      </a>
+    </div>
+
+    <nav class="nav-links">
+      <a href="#producto" onclick="event.preventDefault(); document.getElementById('producto').scrollIntoView({behavior: 'smooth'})">Nuestro Producto</a>
+      <a href="#sobre" onclick="event.preventDefault(); document.getElementById('sobre').scrollIntoView({behavior: 'smooth'})">Sobre nosotros</a>
+      <a href="#contacto" onclick="event.preventDefault(); document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})">Contacto</a>
+    </nav>
+
+    <div class="nav-right">
+      <a class="login" href="login.html">Login ›</a>
+      <a class="btn-signup" href="registro.html">Apúntate!</a>
     </div>
   </header>
 
-  <main>
-    <section class="content">
-      <h1>Patricio</h1>
-      <p>
-        El compañero robot del aula: juega, aprende y explora con actividades pensadas para
-        niños y niñas de 4 a 6 años. Las familias y el equipo educativo pueden seguir el progreso
-        y vivir la experiencia con seguridad y diversión.
-      </p>
-      <a  class="btn-registrate" id="openRegister">REGÍSTRATE</a>
-      <p class="login-text">¿Ya tienes cuenta? <br> <a id="loginLink">Iniciar sesión</a></p>
-    </section>
 
-    <img src="images/robot.png" alt="Patricio, robot educativo" class="robot-img">
-  </main>
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <img src="images/children.png" class="hero-bg" alt="Niños jugando con Patricio">
+    <div class="hero-content">
+      <h1>Con Patricio,<br>Todos tienen un<br>amigo para<br><span>Aprender,<br>Jugar y<br>Crecer</span></h1>
+    </div>
+    <a href="#producto" class="hero-scroll-btn" onclick="event.preventDefault(); document.getElementById('producto').scrollIntoView({behavior: 'smooth'})">
+      <i class="fa-solid fa-chevron-down"></i>
+    </a>
+  </section>
 
-  <footer>
-    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
-    <span>Patricio 2026 ®</span>
-    <a href="contacto.html" class="contact-link">CONTACTO</a>
-  </footer>
 
-  <!-- Modal de Registro -->
-  <div class="modal" id="registerModal">
-    <div class="modal-content">
-      <span class="close" id="closeRegister">&times;</span>
-      <h2>Registrarse</h2>
-      <div class="form-grid">
-        <div class="nombre">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" placeholder="Nombre (tutor o centro)*">
+  <!-- ── DECORATIVE DOODLES DIVIDER ── -->
+  <div class="doodle-divider1"></div>
+
+
+  <!-- ── NUESTRO PRODUCTO ── -->
+  <section id="producto" class="section-producto">
+    <div class="producto-card">
+      <div class="producto-inner">
+
+        <div class="producto-img-col">
+          <img src="images/bot 1.png" alt="Robot Patricio" class="producto-robot">
         </div>
 
-        <div class="apellido">
-          <label for="apellido">Apellido</label>
-          <input type="text" id="apellido" placeholder="Apellido*">
+        <div class="producto-text-col">
+          <h2 class="section-title center">Nuestro Producto</h2>
+          <p class="producto-desc">
+            Patricio es un robot educativo digital que combina juego, aprendizaje y seguimiento del progreso
+            para que niños y niñas de 4 a 6 años exploren el mundo con curiosidad, seguridad y diversión.
+            Familias y equipos educativos acompañan cada paso.
+          </p>
+
+          <div class="producto-grid1">
+            <div class="feature-v">
+              <img src="images/icons8-graduation-cap-100.png" alt="Robot Patricio" class="icon-feature">
+              <h4>Currículum adaptado</h4>
+              <p>Actividades alineadas con las etapas del desarrollo de 4 a 6 años para un aprendizaje significativo.</p>
+            </div>
+            <div class="feature-v">
+              <img src="images/icons8-game-100.png" alt="Robot Patricio" class="icon-feature">
+              <h4>Aprendizaje jugando</h4>
+              <p>Juegos interactivos que mantienen la atención y refuerzan conceptos clave de forma natural.</p>
+            </div>
+          </div>
+          <div class="producto-grid2">
+            <div class="feature-v">
+              <img src="images/icons8-child-100.png" alt="Robot Patricio" class="icon-feature">
+              <h4>Robot compañero</h4>
+              <p>Patricio guía cada sesión con una personalidad cercana, motivadora y adaptada a cada niño.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="email full-width">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Email*">
-        </div>
-
-        <div class="sip">
-          <label for="codigo_aula">Código de grupo o aula</label>
-          <input type="text" id="codigo_aula" placeholder="Ej. AULA-AZUL-01*">
-        </div>
-
-        <div class="telefono">
-          <label for="telefono">Teléfono</label>
-          <input type="tel" id="telefono" placeholder="Teléfono (opcional)">
-        </div>
-
-        <div class="password1">
-          <label for="password1">Contraseña</label>
-          <input type="password" id="password1" placeholder="Contraseña*">
-        </div>
-
-        <div class="password2">
-          <label for="password2">Repite la contraseña</label>
-          <input type="password" id="password2" placeholder="Repite la contraseña*">
-        </div>
       </div>
-      <ul class="password-requirements">
-        <li>➤ Mínimo 8 caracteres</li>
-        <li>➤ Una letra mayúscula</li>
-        <li>➤ Una letra minúscula</li>
-        <li>➤ Un número</li>
-      </ul>
-      <p id="registroError" class="error-message"></p>
-      <button id="registerBtn">Enviar</button>
     </div>
-  </div>
+  </section>
 
-  <!-- Modal de Login -->
-  <div class="modal" id="loginModal">
-    <div class="modal-content">
-      <span class="close" id="closeModal">&times;</span>
-      <h2>Iniciar sesión</h2>
-      <img src="images/robot_login.png" alt="Patricio"><br><br>
-      <label for="username">Email</label>
-      <input type="text" id="username" placeholder="Email (ej. admin@patricio.local)">
-      <label for="password">Contraseña</label>
-      <input type="password" id="password" placeholder="Contraseña">
-      <p id="errorMessage" class="error-message"></p>
-      <button id="loginBtn">Entrar</button>
+
+  <!-- ── DECORATIVE DOODLES DIVIDER ── -->
+  <div class="doodle-divider doodle-divider--flip"></div>
+
+
+  <!-- ── SOBRE NOSOTROS ── -->
+  <section id="sobre" class="section-nosotros">
+    <div class="nosotros-card">
+
+      <h2 class="section-title orange">Sobre nosotros...</h2>
+      <p class="nosotros-desc">
+        Somos un equipo apasionado por la educación temprana y la tecnología, comprometidos con crear
+        herramientas que pongan a los niños en el centro. Diseñamos experiencias seguras, divertidas
+        y pedagógicamente sólidas para familias y centros educativos.
+      </p>
+      <div class="nosotros-grid">
+        <a href="https://github.com/Saac04" class="nosotros-card-item">
+          <i class="fa-solid fa-user icon-feature"></i>
+          <p>Santiago Alejandro Aguirre Crespo</p>
+        </a>
+        <a href="https://github.com/CJMIDNIGHT" class="nosotros-card-item">
+          <i class="fa-solid fa-user icon-feature"></i>
+          <p>Adenor Michele Jacqueline Buret</p>
+        </a>
+        <a href="https://github.com/ohmarimari" class="nosotros-card-item">
+          <i class="fa-solid fa-user icon-feature"></i>
+          <p>Mari Rosenova Dapcheva</p>
+        </a>
+        <a href="https://github.com/ElCesarEse" class="nosotros-card-item">
+          <i class="fa-solid fa-user icon-feature"></i>
+          <p>Cesar Herrero San Juan</p>
+        </a>
+        <a href="https://github.com/jbperfon" class="nosotros-card-item">
+          <i class="fa-solid fa-user icon-feature"></i>
+          <p>Juan Bautista Peris Fontestad</p>
+        </a>
+        <a href="https://github.com/Meana13" class="nosotros-card-item">
+          <i class="fa-solid fa-user icon-feature"></i>
+          <p>Pablo Meana Gonzalez</p>
+        </a>
+      </div>
+      <div class="nosotros-cta">
+        <p><strong>Confíanos con el desarrollo social de tu hijo!</strong></p>
+        <a class="btn-signup btn-cta-large" href="registro.html">Apúntate!</a>
+      </div>
+
     </div>
-  </div>
+  </section>
 
-  <script src="js/script_singup_login_logout.js"></script>
+
+<!-- ── CONTACTO ── -->
+  <section id="contacto" class="contact-section">
+    <div class="contact-wrapper">
+
+      <div class="contact-left">
+        <h2 class="contact-title">¡Contáctanos!</h2>
+        <p class="contact-phone">Tel : +34 965 258 736</p>
+        <p class="contact-text">Puedes escribirnos desde aquí :</p>
+        <ul class="contact-list">
+          <li>info@patricio.edu</li>
+          <li>soporte@patricio.edu</li>
+          <li>centros@patricio.edu</li>
+        </ul>
+        
+      </div>
+
+      <div class="contact-right">
+        <p class="map-label">Nos puedes encontrar aquí :</p>
+        <div class="contact-map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3100.8475289909725!2d-0.16830862347939268!3d38.99597604088049!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd61c2a3069621fd%3A0xdb8ad87b84df4b24!2sUPV%20Campus%20de%20Gandia%20-%20Escola%20Polit%C3%A8cnica%20Superior%20de%20Gandia!5e0!3m2!1ses!2ses!4v1779482753357!5m2!1ses!2ses"
+            width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen>
+          </iframe>
+        </div>
+        
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <img src="images/logo_patricio.png" class="footer-logo" alt="Patricio logo">
+    <div class="legal-links">
+      <span>©2026 Patricio</span>
+      <a href="#">Aviso legal</a>
+      <a href="#">Política de cookies</a>
+      <a href="politica_privacidad.html">Política de privacidad</a>
+      <a href="#">Gestión de Cookies</a>
+    </div>
+    <button class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Volver arriba">
+      <i class="fa-solid fa-chevron-up"></i>
+    </button>
+  </div>
+</footer>
+
 </body>
 </html>
