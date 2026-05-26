@@ -72,7 +72,8 @@ body.incidencias-banner-visible main {
 
 /* ── Card subtitle ── */
 .incidencias-tabla-sub {
-  font-size: 0.9rem;
+    font-weight: 500;
+  font-size: 1rem;
   margin-bottom: 1rem;
   color: rgba(255,255,255,0.85);
 }
@@ -135,8 +136,8 @@ body.incidencias-banner-visible main {
 }
 
 .incidencias-tabla-error {
-  color: #fecaca;
-  font-size: 0.9rem;
+  color: #F08C21;
+  font-size: 1.05rem;
   margin-bottom: 0.5rem;
 }
 
@@ -151,18 +152,17 @@ body.incidencias-banner-visible main {
 .incidencias-tabla {
   width: 100%;
   margin-bottom: 0;
-  color: #fff;
   font-size: 0.9rem;
 }
 
 .incidencias-tabla thead th {
   position: sticky;
   top: 0;
-  background: #4a5d9a;
+  background: #B4B534;
   color: #fff;
   font-weight: bold;
   padding: 0.65rem 0.75rem;
-  border-bottom: 2px solid rgba(255,255,255,0.3);
+  border-bottom: 1px solid rgba(255,255,255,0.3);
   z-index: 1;
 }
 
@@ -170,6 +170,7 @@ body.incidencias-banner-visible main {
   padding: 0.55rem 0.75rem;
   border-bottom: 1px solid rgba(255,255,255,0.1);
   vertical-align: middle;
+  background: #E2E1AF;
 }
 
 .incidencias-tabla tbody tr:hover {
@@ -204,11 +205,11 @@ body.incidencias-banner-visible main {
 
 /* ── Footer legend ── */
 .incidencias-tabla-leyenda {
-  font-size: 0.8rem;
-  opacity: 0.85;
+  font-size: 0.99rem;
+  /*opacity: 0.85;*/
   margin-top: 0.75rem;
   margin-bottom: 0;
-  color: #fff;
+  color: white;
 }
 
 .incidencias-live--on  { color: #4ade80; font-weight: bold; }
