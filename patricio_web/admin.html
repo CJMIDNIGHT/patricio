@@ -99,8 +99,8 @@
                 </div>
               </div>
               <div class="admin-card__actions">
-                <button class="admin-btn admin-btn--orange" id="btn_move">Empezar visión</button>
-                <button class="admin-btn admin-btn--orange" id="btn_stop">Detener visión</button>
+                <button class="admin-btn admin-btn--orange" id="btn_move">Empezar movimiento</button>
+                <button class="admin-btn admin-btn--orange" id="btn_stop">Detener movimiento</button>
               </div>
               <div class="admin-status-bar">
                 <input type="text" id="juego_status_text_vision" placeholder="Mensaje del estado de robot..." readonly class="admin-status-input">
@@ -115,15 +115,15 @@
             </div>
             <div class="admin-card__body">
               <div class="admin-games-grid">
-                <button class="admin-game-btn" id="btn_pilla_pilla">
+                <button class="admin-game-btn boton game-btn" id="btn_pilla_pilla">
                   <img src="images/icons8-run-100.png" alt="Pilla-pilla" class="pilla-icon" />
                   <span>Pilla-Pilla</span>
                 </button>
-                <button class="admin-game-btn" id="btn_escondite">
+                <button class="admin-game-btn boton game-btn" id="btn_escondite">
                   <i class="bi bi-eye-fill admin-game-btn__icon"></i>
                   <span>Escondite</span>
                 </button>
-                <button class="admin-game-btn" id="btn_calamar_auto">
+                <button class="admin-game-btn boton game-btn" id="btn_calamar_auto">
                   <i class="bi bi-stoplights-fill admin-game-btn__icon"></i>
                   <span>Pollito Inglés</span>
                 </button>
@@ -138,9 +138,10 @@
                 <button class="admin-btn admin-btn--olive" id="btn_stop_juego">Detener juego</button>
               </div>
 
+              <!-- change this in admin.html -->
               <div id="juego_bubble" class="juego-bubble mt-4">
                 <span id="juego_status_icon">🤖</span>
-                <input type="text" id="juego_status_text" placeholder="Patricio está esperando instrucciones..." readonly class="admin-status-input">
+                <span id="juego_status_text" class="admin-status-input">Patricio está esperando instrucciones...</span>
               </div>
             </div>
           </div>
@@ -210,7 +211,6 @@
               </div>
               <div class="admin-card__actions admin-card__actions--row mt-4">
                 <button class="admin-btn admin-btn--olive" id="btn_guardar_imagen">Tomar foto</button>
-                <button class="admin-btn admin-btn--olive" id="btn_descargar_imagen">Descargar foto</button>
               </div>
             </div>
           </div>

@@ -213,5 +213,5 @@ body.incidencias-banner-visible main {
   color: white;
 }
 
-.incidencias-live--on  { color: #4ade80; font-weight: bold; }
+.incidencias-live--on  { color: var(--admin-olive); font-weight: bold; }
 .incidencias-live--off { color: #94a3b8; }
