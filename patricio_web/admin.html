@@ -11,10 +11,22 @@
   <link rel="stylesheet" href="css/styles_generales.css">
   <link rel="stylesheet" href="css/styles_admin.css">
   <link rel="stylesheet" href="css/styles_logout.css">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body class="admin-body">
+
+  <!-- Alertas robot -->
+  <div id="incidencias-banner" class="incidencias-banner--hidden" role="alert" aria-live="assertive" aria-hidden="true"></div>
+
+  <!-- Hidden elements required by script_admin.js but not shown in new UI -->
+  <canvas id="mapCanvas" style="display:none;"></canvas>
+  <button id="btn_reverse" style="display:none;"></button>
+  <button id="btn_wsad_parar" style="display:none;"></button>
+  <button id="btn_goto_cola" style="display:none;"></button>
+  <button id="btn_goto_casa" style="display:none;"></button>
+  <button id="btn_goto_almacen" style="display:none;"></button>
+  <button id="btn_cancelar_nav" style="display:none;"></button>
+  <span id="patricio-ultimo-id" style="display:none;"></span>
 
   <!-- ── TOP NAVBAR ── -->
   <header class="admin-navbar">
@@ -53,7 +65,6 @@
       <button class="admin-sidebar__toggle" id="sidebarToggle" aria-label="Colapsar menú">
         <i class="bi bi-chevron-right"></i>
       </button>
-      <!-- Cerrar sesión -->
       <div class="admin-sidebar__logout">
         <button class="admin-sidebar__logout-btn" id="logoutButton">
           <i class="bi bi-box-arrow-left"></i>
@@ -65,7 +76,6 @@
     <!-- ── MAIN CONTENT ── -->
     <main class="admin-main">
       
-      <!-- ── TWO-COLUMN GRID ── -->
       <div class="admin-grid">
 
         <!-- LEFT COLUMN -->
@@ -75,25 +85,22 @@
           <div class="admin-card admin-card--orange">
             <div class="admin-card__header">
               <h3>Visión del robot</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-camera-wrap">
                 <img id="cameraFeed" src="" alt="Camera feed" class="admin-camera-feed">
-                <!-- stats overlay -->
                 <div class="admin-camera-stats">
                   <p>Ultima actualización : <span id="timestamp">--/--/--</span></p>
                   <p>Velocidad : <span id="velocidad">---</span></p>
                   <p>Bateria : <span id="bateria">---</span></p>
                 </div>
-                <!-- loading spinner -->
                 <div class="admin-camera-spinner" id="cameraSpinner">
                   <div class="spinner"></div>
                 </div>
               </div>
               <div class="admin-card__actions">
-                <button class="admin-btn admin-btn--orange" id="btn_move">Empezar visión</button>
-                <button class="admin-btn admin-btn--orange" id="btn_stop">Detener visión</button>
+                <button class="admin-btn admin-btn--orange" id="btn_move">Empezar movimiento</button>
+                <button class="admin-btn admin-btn--orange" id="btn_stop">Detener movimiento</button>
               </div>
               <div class="admin-status-bar">
                 <input type="text" id="juego_status_text_vision" placeholder="Mensaje del estado de robot..." readonly class="admin-status-input">
@@ -105,37 +112,36 @@
           <div class="admin-card admin-card--pink">
             <div class="admin-card__header">
               <h3>Juegos</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-games-grid">
-                <button class="admin-game-btn" id="btn_pilla_pilla">
+                <button class="admin-game-btn boton game-btn" id="btn_pilla_pilla">
                   <img src="images/icons8-run-100.png" alt="Pilla-pilla" class="pilla-icon" />
                   <span>Pilla-Pilla</span>
                 </button>
-                <button class="admin-game-btn" id="btn_escondite">
+                <button class="admin-game-btn boton game-btn" id="btn_escondite">
                   <i class="bi bi-eye-fill admin-game-btn__icon"></i>
                   <span>Escondite</span>
                 </button>
-                <button class="admin-game-btn" id="btn_calamar_auto">
+                <button class="admin-game-btn boton game-btn" id="btn_calamar_auto">
                   <i class="bi bi-stoplights-fill admin-game-btn__icon"></i>
-                  <span>Pollito Ingles</span>
+                  <span>Pollito Inglés</span>
                 </button>
               </div>
 
-              <!-- Calamar manual controls (hidden by default) -->
               <div id="calamar_manual_controls" style="display:none;" class="d-flex justify-content-center gap-3 flex-wrap mt-4">
                 <button class="admin-btn admin-btn--green" id="btn_luz_verde">🟢 Luz Verde</button>
-                <button class="admin-btn admin-btn--red"   id="btn_luz_roja">🔴 Luz Roja</button>
+                <button class="admin-btn admin-btn--red" id="btn_luz_roja">🔴 Luz Roja</button>
               </div>
 
               <div class="d-flex justify-content-center mt-4">
                 <button class="admin-btn admin-btn--olive" id="btn_stop_juego">Detener juego</button>
               </div>
 
+              <!-- change this in admin.html -->
               <div id="juego_bubble" class="juego-bubble mt-4">
                 <span id="juego_status_icon">🤖</span>
-                <input type="text" id="juego_status_text" placeholder="Mensaje del estado de robot..." readonly class="admin-status-input">
+                <span id="juego_status_text" class="admin-status-input">Patricio está esperando instrucciones...</span>
               </div>
             </div>
           </div>
@@ -149,13 +155,12 @@
           <div class="admin-card admin-card--blue">
             <div class="admin-card__header">
               <h3>Menu</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <p class="admin-card__subtitle">Configuración de conexión</p>
               <label for="ipInput" class="admin-label">Dirección del servidor :</label>
               <input type="text" id="ipInput" class="admin-input form-control">
-              <p class="mt-2 admin-connection-status" id="estado">(Indicacción de conexión o no)</p>
+              <p class="mt-2 admin-connection-status" id="estado">🔌 Sin conexión</p>
               <div class="admin-card__actions admin-card__actions--row mt-4">
                 <button class="admin-btn admin-btn--blue" id="btn_con">Conectar</button>
                 <button class="admin-btn admin-btn--blue" id="btn_dis">Desconectar</button>
@@ -167,7 +172,6 @@
           <div class="admin-card admin-card--pink">
             <div class="admin-card__header">
               <h3>Movimiento manual</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-dpad">
@@ -176,7 +180,6 @@
                 </div>
                 <div class="admin-dpad__row admin-dpad__row--mid">
                   <button class="admin-dpad__btn" id="btn_wsad_izquierda"><i class="bi bi-chevron-left"></i></button>
-                  <!--button class="admin-dpad__btn admin-dpad__btn--center" id="btn_wsad_parar"><i class="bi bi-keyboard"></i></button-->
                   <button class="admin-dpad__btn" id="btn_wsad_derecha"><i class="bi bi-chevron-right"></i></button>
                 </div>
                 <div class="admin-dpad__row">
@@ -184,18 +187,11 @@
                 </div>
               </div>
 
-              <!-- Spin buttons -->
               <div class="d-flex justify-content-center gap-3 mt-4">
                 <button class="admin-btn admin-btn--pink" id="btn_spin_left">↺ Izquierda</button>
                 <button class="admin-btn admin-btn--pink" id="btn_spin_right">↻ Derecha</button>
               </div>
 
-              <!-- Circular motion -->
-              <!--div class="d-flex justify-content-center gap-3 mt-2">
-                <button class="admin-btn admin-btn--pink" id="btn_reverse">Cambiar sentido</button>
-              </div-->
-
-              <!-- Coordinates -->
               <div class="admin-coords mt-4">
                 <p>X: <span id="pos_x">0.00</span> &nbsp; Y: <span id="pos_y">0.00</span> &nbsp; Z: <span id="pos_z">0.00</span> &nbsp; W: <span id="pos_w">0.00</span></p>
                 <div class="metric">🧭 Orientación: <span id="orientacion_cmd">—</span></div>
@@ -208,7 +204,6 @@
           <div class="admin-card admin-card--olive">
             <div class="admin-card__header">
               <h3>Captura de imagen</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-capture-preview" id="divCamera">
@@ -216,10 +211,10 @@
               </div>
               <div class="admin-card__actions admin-card__actions--row mt-4">
                 <button class="admin-btn admin-btn--olive" id="btn_guardar_imagen">Tomar foto</button>
-                <button class="admin-btn admin-btn--olive" id="btn_descargar_imagen">Descargar foto</button>
               </div>
             </div>
           </div>
+
         </div><!-- /admin-col-right -->
       </div><!-- /admin-grid -->
 
@@ -255,7 +250,8 @@
   </div>
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+  <script src="js/admin_incidencias.js"></script>
   <script src="js/script_monitor.js"></script>
   <script src="js/script_admin.js"></script>
   <script src="js/script_singup_login_logout.js"></script>

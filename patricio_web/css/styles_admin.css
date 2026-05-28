@@ -353,6 +353,11 @@
   to { transform: rotate(360deg); }
 }
 
+/* Hide spinner as soon as the feed has a src assigned */
+#cameraFeed:not([src=""]) ~ .admin-camera-spinner {
+    display: none;
+}
+
 /* ── Status bar input ── */
 .admin-status-input {
   width: 100%;
@@ -378,7 +383,8 @@
   margin: 10px 170px;
 }
 
-.admin-game-btn {
+.admin-game-btn,
+.game-btn {
   background: var(--admin-blue);
   border: none;
   border-radius: 14px;
@@ -395,7 +401,8 @@
   transition: transform 0.2s ease, filter 0.2s;
 }
 
-.admin-game-btn:hover { transform: translateY(-4px); filter: brightness(1.1); }
+.admin-game-btn:hover { transform: translateY(-4px); background: var(--admin-olive); filter: brightness(1.1); }
+
 
 .admin-game-btn__icon {
   font-size: 2rem;

@@ -223,12 +223,12 @@ function activarCamara() {
 
 function connect() {
     console.log("Clic en connect");
-
     console.log("Activando cámara...");
-    activarCamara()
+    activarCamara();
 
     updateRosBridgeAddress();
-    cmdVelTopic = null; // reset al reconectar
+    localStorage.setItem('ros_address', data.rosbridge_address); // ← add this
+    cmdVelTopic = null;
 
     data.ros = new ROSLIB.Ros({ url: data.rosbridge_address });
 
@@ -324,6 +324,7 @@ function connect() {
 
     data.ros.on("error", (error) => {
         console.error("Error de conexión:", error);
+        localStorage.removeItem('ros_address'); // ← add: stop auto-reconnecting if rosbridge is down
         document.getElementById("estado").textContent = 'Error de conexión';
         document.getElementById("estado").style.color = 'red';
     });
@@ -345,8 +346,10 @@ function disconnect() {
         data.ros.close();
         data.connected = false;
         cmdVelTopic = null;
+        localStorage.removeItem('ros_address'); // ← add this
         document.getElementById("estado").textContent = '🔌 Desconectado';
         document.getElementById("estado").style.color = 'red';
+        document.getElementById("cameraFeed").src = '';
         console.log("Clic en desconectar");
     }
 }
@@ -507,8 +510,18 @@ function moveAlmacenToCasa() {
 
 document.addEventListener('DOMContentLoaded', event => {
     
-    // 自动根据页面地址设置 IP     Establecer IP automáticamente según la dirección de la página
+    //Establecer IP automáticamente según la dirección de la página
     document.getElementById("ipInput").value = `ws://${localIp}:9090`;
+
+    // Auto-reconnect if a previous session was active
+    const savedAddress = localStorage.getItem('ros_address');
+    console.log('[auto-reconnect] saved address:', savedAddress);
+    if (savedAddress) {
+        document.getElementById("ipInput").value = savedAddress;
+        connect();
+    } else {
+        console.log('[auto-reconnect] nothing in localStorage, manual connect needed');
+    }
     
     /*const timestamp = new Date().getTime(); 
     document.getElementById("cameraFeed").src = `http://${localIp}:8080/stream?topic=/image&timestamp=${timestamp}`;*/
