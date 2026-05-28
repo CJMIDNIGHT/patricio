@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patricio | Incidencias</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/styles_generales.css">
+  <link rel="stylesheet" href="css/styles_admin.css">
+  <link rel="stylesheet" href="css/styles_incidencias.css">
+  <link rel="stylesheet" href="css/styles_logout.css">
+</head>
+<body class="admin-body">
+
+  <!-- ── INCIDENCIAS BANNER ── -->
+  <div id="incidencias-banner" class="incidencias-banner--hidden" role="alert" aria-live="assertive" aria-hidden="true"></div>
+
+  <!-- ── TOP NAVBAR ── -->
+  <header class="admin-navbar">
+    <a href="index.html" class="admin-navbar__logo-link">
+      <img src="images/logo_patricio.png" alt="Patricio" class="admin-navbar__logo">
+    </a>
+    <div class="admin-navbar__user">
+      <span class="admin-navbar__greeting">Hola, Usuario</span>
+      <i class="bi bi-person-circle admin-navbar__avatar"></i>
+    </div>
+  </header>
+
+  <!-- ── LAYOUT WRAPPER ── -->
+  <div class="admin-layout">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-sidebar__nav">
+        <a href="admin.html" class="admin-sidebar__item">
+          <i class="bi bi-grid-1x2-fill"></i>
+          <span>Panel de control</span>
+        </a>
+        <a href="historico.html" class="admin-sidebar__item">
+          <i class="fa fa-gamepad" aria-hidden="true" style="font-size: 28px;"></i>
+          <span>Partidos</span>
+        </a>
+        <a href="incidencias.html" class="admin-sidebar__item admin-sidebar__item--active">
+          <i class="bi bi-bell-fill"></i>
+          <span>Notificaciones</span>
+        </a>
+        <a href="editar_datos.html" class="admin-sidebar__item">
+          <i class="bi bi-gear-fill"></i>
+          <span>Perfil</span>
+        </a>
+      </nav>
+      <button class="admin-sidebar__toggle" id="sidebarToggle" aria-label="Colapsar menú">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <!-- Cerrar sesión -->
+      <div class="admin-sidebar__logout">
+        <button class="admin-sidebar__logout-btn" id="logoutButton">
+          <i class="bi bi-box-arrow-left"></i>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="admin-main">
+
+      <!-- ── INCIDENCIAS CARD (full width) ── -->
+      <div class="incidencias-page-wrap">
+        <div class="admin-card admin-card--pink incidencias-tabla-card">
+          <div class="admin-card__header">
+            <h3>Incidencias del robot</h3>
+          </div>
+          <div class="admin-card__body">
+            <p class="text-center incidencias-tabla-sub">
+              Estado del niño en tiempo real (caídas, batería, alertas). Los datos se cargan desde la API.
+            </p>
+
+            <div class="incidencias-filtros" role="search">
+              <div class="incidencias-filtros__grupo">
+                <label class="incidencias-filtros__label" for="filtro_solo_hoy">
+                  <input type="checkbox" id="filtro_solo_hoy" checked> Solo hoy
+                </label>
+              </div>
+              <div class="incidencias-filtros__grupo">
+                <label class="incidencias-filtros__label" for="filtro_fecha_desde">Desde</label>
+                <input type="date" id="filtro_fecha_desde" class="form-control incidencias-filtros__input" disabled>
+              </div>
+              <div class="incidencias-filtros__grupo">
+                <label class="incidencias-filtros__label" for="filtro_fecha_hasta">Hasta</label>
+                <input type="date" id="filtro_fecha_hasta" class="form-control incidencias-filtros__input" disabled>
+              </div>
+              <div class="incidencias-filtros__grupo">
+                <label class="incidencias-filtros__label" for="filtro_estado">Estado</label>
+                <select id="filtro_estado" class="form-control incidencias-filtros__input">
+                  <option value="">Todas</option>
+                  <option value="pendiente">No resueltas</option>
+                  <option value="resuelta">Resueltas</option>
+                </select>
+              </div>
+              <div class="incidencias-filtros__grupo incidencias-filtros__grupo--grow">
+                <label class="incidencias-filtros__label" for="filtro_busqueda">Buscar</label>
+                <input type="search" id="filtro_busqueda" class="form-control incidencias-filtros__input"
+                  placeholder="Tipo o descripción (ej. Caída)" autocomplete="off">
+              </div>
+              <div class="incidencias-filtros__grupo incidencias-filtros__grupo--acciones">
+                <button type="button" class="admin-btn admin-btn--blue" id="btn_incidencias_aplicar">Aplicar filtros</button>
+                <button type="button" class="admin-btn incidencias-btn-sec" id="btn_incidencias_limpiar">Limpiar</button>
+              </div>
+            </div>
+
+            <p id="incidencias-tabla-resumen" class="incidencias-tabla-resumen" aria-live="polite"></p>
+            <p id="incidencias-tabla-error" class="incidencias-tabla-error" hidden></p>
+
+            <div class="table-responsive incidencias-tabla-wrap">
+              <table class="table incidencias-tabla" id="tabla_incidencias">
+                <thead>
+                  <tr>
+                    <th scope="col">Incidencia</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="incidencias-tabla-body">
+                  <tr><td colspan="4">Cargando incidencias…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="incidencias-tabla-leyenda">
+              <span id="incidencias-live-indicator" class="incidencias-live--off" title="Actualización automática"></span>
+              Actualización automática cada 15 s y al recibir alertas nuevas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- /admin-layout -->
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <img src="images/logo_patricio.png" alt="Patricio" class="footer-logo">
+      <div class="legal-links">
+        <span>©2026 Patricio</span>
+        <a href="#">Aviso legal</a>
+        <a href="#">Política de cookies</a>
+        <a href="politica_privacidad.html">Política de privacidad</a>
+        <a href="#">Gestión de Cookies</a>
+      </div>
+      <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">
+        <i class="bi bi-chevron-up"></i>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ── LOGOUT POPUP ── -->
+  <div id="logoutPopup" class="popup-overlay" style="display:none;">
+    <div class="popup-content">
+      <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
+      <div class="popup-buttons">
+        <button id="confirmLogout" class="btn boton">Sí</button>
+        <button id="cancelLogout" class="btn boton">No</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" crossorigin="anonymous"></script>
+  <script src="js/admin_incidencias.js"></script>
+  <script src="js/script_singup_login_logout.js"></script>
+  <script>
+    const sidebar = document.getElementById('adminSidebar');
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      sidebar.classList.toggle('collapsed');
+      this.querySelector('i').classList.toggle('bi-chevron-right');
+      this.querySelector('i').classList.toggle('bi-chevron-left');
+    });
+  </script>
+</body>
+</html>
