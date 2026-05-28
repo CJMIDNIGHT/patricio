@@ -241,8 +241,8 @@ function connect() {
         console.log("Conexión con ROSBridge correcta");;
 
         // ── Mapa ──────────────────────────────────────────────────────────────
-        const canvas  = document.getElementById("mapCanvas");
-        const ctx     = canvas.getContext("2d");
+        const canvas = document.getElementById("mapCanvas");
+        const ctx    = canvas ? canvas.getContext("2d") : null;
         const image   = new Image();
         let   mapInfo = null;
 
@@ -252,7 +252,6 @@ function connect() {
             ctx.drawImage(image, 0, 0);
         };
         image.onerror = () => console.error("Error al cargar imagen del mapa:", image.src);
-
         image.onerror = () => {
             console.error("Error al cargar la imagen:", image.src);
         };
@@ -506,62 +505,36 @@ function moveAlmacenToCasa() {
   setInterval(updateCameraFeed, 2000);*/
 
 document.addEventListener('DOMContentLoaded', event => {
-    
-    // 自动根据页面地址设置 IP     Establecer IP automáticamente según la dirección de la página
     document.getElementById("ipInput").value = `ws://${localIp}:9090`;
-    
-    /*const timestamp = new Date().getTime(); 
-    document.getElementById("cameraFeed").src = `http://${localIp}:8080/stream?topic=/image&timestamp=${timestamp}`;*/
-    
-    document.getElementById("btn_goto_cola").addEventListener("click", () => {
-        sendNavGoal(3.998915, 4.900286, 1.0);
-    });
-    document.getElementById("btn_goto_casa").addEventListener("click", () => {
-        sendNavGoal(4.500114, -8.000002, 1.0);
-    });
-    document.getElementById("btn_goto_almacen").addEventListener("click", () => {
-        sendNavGoal(0.009239, -15.876596, 1.0);
-    });
-    
 
     // Conexión
     document.getElementById("btn_con").addEventListener("click", connect);
     document.getElementById("btn_dis").addEventListener("click", disconnect);
 
-    // Movimiento circular
-    document.getElementById("btn_move").addEventListener("click", move);
+    // Visión
+    document.getElementById("btn_move").addEventListener("click", activarCamara);
     document.getElementById("btn_stop").addEventListener("click", stop);
-    document.getElementById("btn_reverse").addEventListener("click", reverse);
 
     // WASD
-    bindMoveButton("btn_wsad_delante",   LINEAR_SPEED,  0.0);
-    bindMoveButton("btn_wsad_atras",    -LINEAR_SPEED,  0.0);
-    bindMoveButton("btn_wsad_izquierda", 0.0,           ANGULAR_SPEED);
-    bindMoveButton("btn_wsad_derecha",   0.0,          -ANGULAR_SPEED);
-
-    document.getElementById("btn_wsad_parar").addEventListener("click", stop);
+    bindMoveButton("btn_wsad_delante",    LINEAR_SPEED,  0.0);
+    bindMoveButton("btn_wsad_atras",     -LINEAR_SPEED,  0.0);
+    bindMoveButton("btn_wsad_izquierda",  0.0,           ANGULAR_SPEED);
+    bindMoveButton("btn_wsad_derecha",    0.0,          -ANGULAR_SPEED);
 
     // Spin
     bindMoveButton("btn_spin_left",  0.0,  SPIN_SPEED);
     bindMoveButton("btn_spin_right", 0.0, -SPIN_SPEED);
 
-    // Navegación predefinida
-    document.getElementById("btn_goto_cola").addEventListener("click",    () => sendNavGoal(3.998915,  4.900286,  1.0));
-    document.getElementById("btn_goto_casa").addEventListener("click",    () => sendNavGoal(4.500114, -8.000002,  1.0));
-    document.getElementById("btn_goto_almacen").addEventListener("click", () => sendNavGoal(0.009239, -15.876596, 1.0));
-    document.getElementById("btn_cancelar_nav").addEventListener("click", cancelNavigation);
-
-    // Juegos — pilla_pilla y escondite (ros_logic.js)
+    // Juegos
     document.getElementById('btn_pilla_pilla').addEventListener('click', () => iniciarJuego('pilla_pilla'));
     document.getElementById('btn_escondite').addEventListener('click',   () => iniciarJuego('escondite'));
     document.getElementById('btn_stop_juego').addEventListener('click',  detenerJuego);
 
-    // Juego del Calamar — funciones definidas en ros_logic.js
+    // Calamar
     document.getElementById('btn_calamar_auto').addEventListener('click', () => { iniciarCalamarAuto(); window.open('calamar_game.html', '_blank'); });
-    document.getElementById('btn_luz_verde').addEventListener('click',    calamarLuzVerde);
-    document.getElementById('btn_luz_roja').addEventListener('click',     calamarLuzRoja);
+    document.getElementById('btn_luz_verde').addEventListener('click', calamarLuzVerde);
+    document.getElementById('btn_luz_roja').addEventListener('click',  calamarLuzRoja);
 
-    // Mostrar controles manuales del calamar al conectar
     const calamarControls = document.getElementById('calamar_manual_controls');
     if (calamarControls) calamarControls.style.display = 'none';
 

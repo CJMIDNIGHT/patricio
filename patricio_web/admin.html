@@ -75,7 +75,6 @@
           <div class="admin-card admin-card--orange">
             <div class="admin-card__header">
               <h3>Visión del robot</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-camera-wrap">
@@ -105,7 +104,6 @@
           <div class="admin-card admin-card--pink">
             <div class="admin-card__header">
               <h3>Juegos</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-games-grid">
@@ -149,7 +147,6 @@
           <div class="admin-card admin-card--blue">
             <div class="admin-card__header">
               <h3>Menu</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <p class="admin-card__subtitle">Configuración de conexión</p>
@@ -167,7 +164,6 @@
           <div class="admin-card admin-card--pink">
             <div class="admin-card__header">
               <h3>Movimiento manual</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-dpad">
@@ -208,7 +204,6 @@
           <div class="admin-card admin-card--olive">
             <div class="admin-card__header">
               <h3>Captura de imagen</h3>
-              <i class="bi bi-info-circle admin-card__info"></i>
             </div>
             <div class="admin-card__body">
               <div class="admin-capture-preview" id="divCamera">
@@ -255,19 +250,12 @@
   </div>
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+  <!--script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script-->
+  <script src="js/admin_incidencias.js"></script>
   <script src="js/script_monitor.js"></script>
   <script src="js/script_admin.js"></script>
   <script src="js/script_singup_login_logout.js"></script>
   <script src="js/draw_occupancy_grid.js"></script>
   <script src="js/ros_logic.js"></script>
-  <script>
-    const sidebar = document.getElementById('adminSidebar');
-    document.getElementById('sidebarToggle').addEventListener('click', function () {
-      sidebar.classList.toggle('collapsed');
-      this.querySelector('i').classList.toggle('bi-chevron-right');
-      this.querySelector('i').classList.toggle('bi-chevron-left');
-    });
-  </script>
 </body>
 </html>
