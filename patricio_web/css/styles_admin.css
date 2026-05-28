@@ -401,7 +401,7 @@
   transition: transform 0.2s ease, filter 0.2s;
 }
 
-.admin-game-btn:hover { transform: translateY(-4px); background: var(--admin-olive); filter: brightness(1.1); }
+.game-btn:hover { transform: translateY(-4px); background: var(--admin-olive); filter: brightness(1.1); }
 
 
 .admin-game-btn__icon {
