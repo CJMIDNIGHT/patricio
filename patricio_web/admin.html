@@ -153,9 +153,14 @@
               <button class="mt-2 boton" id="btn_dis">Desconectar</button>
               <hr>
               <h5>Vista de cámara</h5>
-              <div id="divCamera" style="margin-top: 10px;">
-                <img id="cameraFeed" src="" style="width: 100%; height: auto; border-radius: 10px;" />
-                <button id="btn_guardar_imagen" class="mt-2 boton" type="button">Capturar imagen</button>
+              <div id="divCamera" class="camera-capture-wrap">
+                <img id="cameraFeed" class="camera-feed" src="" alt="Stream de cámara del robot" crossorigin="anonymous" />
+                <canvas id="captureCanvas" hidden aria-hidden="true"></canvas>
+                <button id="btn_guardar_imagen" class="mt-2 boton btn-captura-foto" type="button"
+                  title="Guardar el frame actual en tu dispositivo">
+                  📷 Capturar y descargar
+                </button>
+                <p id="captura-feedback" class="captura-feedback" hidden aria-live="polite"></p>
               </div>
               <hr>
               <h5>Vista del mapa</h5>
@@ -267,6 +272,7 @@
   <script src="js/admin_incidencias.js"></script>
   <script src="js/script_monitor.js"></script>
   <script src="js/script_admin.js"></script>
+  <script src="js/captura_camara.js"></script>
   <script src="js/script_singup_login_logout.js"></script>
   <script src="js/draw_occupancy_grid.js"></script>
   <script src="js/ros_logic.js"></script>

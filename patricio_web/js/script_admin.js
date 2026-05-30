@@ -215,6 +215,7 @@ function navigateTo(targetX, targetY, targetOrientationW = 1.0) {
 function activarCamara() {
     const img = document.getElementById("cameraFeed");
     if (!img) return;
+    img.crossOrigin = 'anonymous';
     img.src = `http://${localIp}:8080/stream?topic=/patricio/camera_processed&timestamp=${Date.now()}`;
     console.log("📷 Stream de cámara activado:", img.src);
 }
@@ -569,35 +570,10 @@ document.addEventListener('DOMContentLoaded', event => {
 });
 
 
-// ─── Captura de imagen ────────────────────────────────────────────────────────
+// ─── Último identificador (ROS) — captura de foto en captura_camara.js ───────
 
 document.addEventListener("DOMContentLoaded", function () {
-    const btnGuardar  = document.getElementById("btn_guardar_imagen");
-    const cameraFeed  = document.getElementById("cameraFeed");
-    const idSpan      = document.getElementById("patricio-ultimo-id");
-
-    if (!btnGuardar || !cameraFeed) return;
-
-    btnGuardar.addEventListener("click", function () {
-        const canvas = document.createElement("canvas");
-        canvas.width = cameraFeed.videoWidth || 640;
-        canvas.height = cameraFeed.videoHeight || 480;
-
-        canvas.toBlob(function (blob) {
-            if (blob) {
-                const url = URL.createObjectURL(blob);
-                const a   = document.createElement("a");
-                a.href     = url;
-                a.download = "robot_camera.jpg";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } else {
-                alert("No se pudo capturar la imagen.");
-            }
-        }, "image/jpeg");
-    });
+    const idSpan = document.getElementById("patricio-ultimo-id");
 
     if (typeof data !== 'undefined' && data.ros) {
         const ultimoSipTopic = new ROSLIB.Topic({
