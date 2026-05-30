@@ -220,6 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     confirmLogout.addEventListener("click", () => {
       try {
         sessionStorage.removeItem(PATRICIO_USER_KEY);
+        localStorage.removeItem('ros_address');  // ← add this
       } catch (_) {}
       window.location.href = "index.html";
     });

@@ -787,6 +787,90 @@ def auth_register():
         return jsonify({'ok': False, 'error': str(e)}), 500
 
 
+@app.route('/api/auth/update', methods=['PUT'])
+def auth_update():
+    """
+    Updates user profile data.
+    JSON: nombre, apellido, correo, telefono, dni, direccion,
+          contrasena (optional — only updated if provided).
+    Identifies the user by correo (email) from the body.
+    """
+    body = request.get_json(force=True, silent=True) or {}
+
+    nombre    = (body.get('nombre') or '').strip()[:20]
+    apellido  = (body.get('apellido') or body.get('apellidos') or '').strip()[:40]
+    correo    = (body.get('correo') or body.get('email') or '').strip()[:255]
+    telefono  = (body.get('telefono') or '').strip()[:20] or None
+    dni       = (body.get('dni') or '').strip()[:9] or None
+    direccion = (body.get('direccion') or '').strip()[:255] or None
+    contrasena = body.get('contrasena') or body.get('password') or ''
+
+    if not correo or '@' not in correo:
+        return jsonify({'ok': False, 'error': 'Correo electrónico requerido para identificar al usuario'}), 400
+
+    # Validate password if provided
+    if contrasena:
+        if not _RE_PASS_STRONG.match(contrasena):
+            return jsonify({
+                'ok': False,
+                'error': 'La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula y un número',
+            }), 400
+
+    try:
+        with get_engine().begin() as conn:
+            # Check user exists
+            row = conn.execute(
+                text('SELECT id_usuario FROM users WHERE email = :e LIMIT 1'),
+                {'e': correo},
+            ).first()
+
+            if row is None:
+                return jsonify({'ok': False, 'error': 'Usuario no encontrado'}), 404
+
+            uid = int(row[0])
+
+            # Build dynamic SET clause based on what was provided
+            sets = []
+            params = {'uid': uid}
+
+            if nombre:
+                sets.append('nombre = :nombre')
+                params['nombre'] = nombre
+            if apellido:
+                sets.append('apellidos = :apellido')
+                params['apellido'] = apellido
+            if telefono is not None:
+                sets.append('telefono = :telefono')
+                params['telefono'] = telefono
+            if dni is not None:
+                sets.append('dni = :dni')
+                params['dni'] = dni
+            if direccion is not None:
+                sets.append('direccion = :direccion')
+                params['direccion'] = direccion
+            if contrasena:
+                sets.append('contrasenya = :hpw')
+                params['hpw'] = _hash_password_bcrypt(contrasena)
+
+            if not sets:
+                return jsonify({'ok': False, 'error': 'No se proporcionaron campos para actualizar'}), 400
+
+            conn.execute(
+                text(f"UPDATE users SET {', '.join(sets)} WHERE id_usuario = :uid"),
+                params,
+            )
+
+            # Return updated user
+            updated = conn.execute(
+                text('SELECT id_usuario, nombre, apellidos, email FROM users WHERE id_usuario = :uid'),
+                {'uid': uid},
+            ).mappings().one()
+
+        return jsonify({'ok': True, 'usuario': _usuario_session_dict(updated)})
+
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)}), 500
+
 # ── Persistencia MySQL (SQLAlchemy) ───────────────────────
 
 

@@ -12,18 +12,18 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory('patricio_nav_punto')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
-    map_file = os.path.join(pkg_dir, 'map', 'my_map.yaml')
-    params_file = os.path.join(pkg_dir, 'param', 'burger.yaml')
+    map_file = os.path.join(pkg_dir, 'map', 'map4.yaml')
+    params_file = os.path.join(pkg_dir, 'param', 'burger_cam.yaml')
     rviz_config = os.path.join(pkg_dir, 'rviz', 'tb3_navigation2.rviz')
 
     # --- Argumentos ---
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')  # Gazebo = true
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')  # Gazebo = true
 
     return LaunchDescription([
 
         DeclareLaunchArgument(
             'use_sim_time',
-            default_value='true',
+            default_value='false',
             description='Usar reloj de Gazebo'),
 
         # --- Nav2 completo ---
@@ -43,7 +43,7 @@ def generate_launch_description():
             executable='rviz2',
             name='rviz2',
             arguments=['-d', rviz_config],
-            parameters=[{'use_sim_time': True}],
+            parameters=[{'use_sim_time': use_sim_time}],
             output='screen'
         ),
     ])

@@ -2,261 +2,247 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Patricio | Administración</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles_generales.css">
   <link rel="stylesheet" href="css/styles_admin.css">
+  <link rel="stylesheet" href="css/styles_incidencias.css">
   <link rel="stylesheet" href="css/styles_logout.css">
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
-<body>
-  <!-- Alertas robot: visible si hay incidencias con resuelto=0 -->
+<body class="admin-body">
+
+  <!-- Alertas robot -->
   <div id="incidencias-banner" class="incidencias-banner--hidden" role="alert" aria-live="assertive" aria-hidden="true"></div>
 
-  <header>
-    <a href="index.html">
-      <img src="images/logo_patricio.png" alt="Patricio" class="logo">
+  <!-- Hidden elements required by script_admin.js but not shown in new UI -->
+  <canvas id="mapCanvas" style="display:none;"></canvas>
+  <button id="btn_reverse" style="display:none;"></button>
+  <button id="btn_wsad_parar" style="display:none;"></button>
+  <button id="btn_goto_cola" style="display:none;"></button>
+  <button id="btn_goto_casa" style="display:none;"></button>
+  <button id="btn_goto_almacen" style="display:none;"></button>
+  <button id="btn_cancelar_nav" style="display:none;"></button>
+  <span id="patricio-ultimo-id" style="display:none;"></span>
+
+  <!-- ── TOP NAVBAR ── -->
+  <header class="admin-navbar">
+    <a href="index.html" class="admin-navbar__logo-link">
+      <img src="images/logo_patricio.png" alt="Patricio" class="admin-navbar__logo">
     </a>
-    <div class="logout-button">
-      <button class="btn boton" id="logoutButton">Cerrar Sesión</button>
+    <div class="admin-navbar__user">
+      <span class="admin-navbar__greeting">Hola, Usuario</span>
+      <i class="bi bi-person-circle admin-navbar__avatar"></i>
     </div>
   </header>
 
-  <main>
-    <div class="container">
-      <div class="row">
+  <!-- ── LAYOUT WRAPPER ── -->
+  <div class="admin-layout">
 
-        <!-- PANEL DE JUEGOS -->
-        <div class="col-12 mb-3">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="text-center">Panel de juegos</h3>
-              <div class="d-flex justify-content-center gap-4 flex-wrap mt-3">
-                <button class="boton game-btn" id="btn_pilla_pilla">
-                  <span class="game-icon">🏃</span>
-                  <span class="game-label">Pilla-Pilla</span>
-                  <span class="game-sub">Juego de persecución</span>
-                </button>
-                <button class="boton game-btn" id="btn_escondite">
-                  <span class="game-icon">👁️</span>
-                  <span class="game-label">Escondite</span>
-                  <span class="game-sub">Búsqueda y detección</span>
-                </button>
-
-                <!-- ── JUEGO DEL CALAMAR ── -->
-                <button class="boton game-btn" id="btn_calamar_auto">
-                  <span class="game-icon">🦑</span>
-                  <span class="game-label">Juego del Calamar</span>
-                  <span class="game-sub">Luz Roja / Luz Verde</span>
-                </button>
-              </div>
-
-              <!-- Controles manuales del Calamar — visibles sólo cuando el juego está activo -->
-              <div id="calamar_manual_controls" class="d-flex justify-content-center gap-3 flex-wrap mt-3" style="display:none;">
-                <button class="boton" id="btn_luz_verde">🟢 Luz Verde</button>
-                <button class="boton" id="btn_luz_roja">🔴 Luz Roja</button>
-              </div>
-
-              <div class="d-flex justify-content-center mt-3">
-                <button class="boton" id="btn_stop_juego">Detener juego</button>
-              </div>
-              <div id="juego_bubble" class="juego-bubble mt-3">
-                <span id="juego_status_icon">🤖</span>
-                <span id="juego_status_text">Patricio está esperando instrucciones...</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- TABLA DE INCIDENCIAS (API + filtros + tiempo real) -->
-        <div class="col-12 mb-3">
-          <div class="card incidencias-tabla-card">
-            <div class="card-body">
-              <h3 class="text-center">📋 Incidencias del robot</h3>
-              <p class="text-center text-muted incidencias-tabla-sub">
-                Estado del niño en tiempo real (caídas, batería, alertas). Los datos se cargan desde la API.
-              </p>
-
-              <div class="incidencias-filtros" role="search">
-                <div class="incidencias-filtros__grupo">
-                  <label class="incidencias-filtros__label" for="filtro_solo_hoy">
-                    <input type="checkbox" id="filtro_solo_hoy" checked>
-                    Solo hoy
-                  </label>
-                </div>
-                <div class="incidencias-filtros__grupo">
-                  <label class="incidencias-filtros__label" for="filtro_fecha_desde">Desde</label>
-                  <input type="date" id="filtro_fecha_desde" class="form-control incidencias-filtros__input" disabled>
-                </div>
-                <div class="incidencias-filtros__grupo">
-                  <label class="incidencias-filtros__label" for="filtro_fecha_hasta">Hasta</label>
-                  <input type="date" id="filtro_fecha_hasta" class="form-control incidencias-filtros__input" disabled>
-                </div>
-                <div class="incidencias-filtros__grupo">
-                  <label class="incidencias-filtros__label" for="filtro_estado">Estado</label>
-                  <select id="filtro_estado" class="form-control incidencias-filtros__input">
-                    <option value="">Todas</option>
-                    <option value="pendiente">No resueltas</option>
-                    <option value="resuelta">Resueltas</option>
-                  </select>
-                </div>
-                <div class="incidencias-filtros__grupo incidencias-filtros__grupo--grow">
-                  <label class="incidencias-filtros__label" for="filtro_busqueda">Buscar</label>
-                  <input type="search" id="filtro_busqueda" class="form-control incidencias-filtros__input"
-                    placeholder="Tipo o descripción (ej. Caída)" autocomplete="off">
-                </div>
-                <div class="incidencias-filtros__grupo incidencias-filtros__grupo--acciones">
-                  <button type="button" class="boton" id="btn_incidencias_aplicar">Aplicar filtros</button>
-                  <button type="button" class="boton incidencias-btn-sec" id="btn_incidencias_limpiar">Limpiar</button>
-                </div>
-              </div>
-
-              <p id="incidencias-tabla-resumen" class="incidencias-tabla-resumen" aria-live="polite"></p>
-              <p id="incidencias-tabla-error" class="incidencias-tabla-error" hidden></p>
-
-              <div class="table-responsive incidencias-tabla-wrap">
-                <table class="table incidencias-tabla" id="tabla_incidencias">
-                  <thead>
-                    <tr>
-                      <th scope="col">Incidencia</th>
-                      <th scope="col">Fecha</th>
-                      <th scope="col">Estado</th>
-                      <th scope="col">Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody id="incidencias-tabla-body">
-                    <tr><td colspan="4">Cargando incidencias…</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="incidencias-tabla-leyenda">
-                <span id="incidencias-live-indicator" class="incidencias-live--off" title="Actualización automática"></span>
-                Actualización automática cada 15 s y al recibir alertas nuevas.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- MENÚ IZQUIERDO -->
-        <div class="col-4">
-          <div class="card">
-            <div class="card-body">
-              <h3 class="text-center">Menú</h3>
-              <p class="text-center">Configuración de conexión</p>
-              <hr>
-              <label for="ipInput">Dirección del servidor:</label>
-              <input type="text" id="ipInput" class="form-control" />
-              <p class="mt-2" id="estado">🔌 Sin conexión</p>
-              <button class="mt-2 boton" id="btn_con">Conectar</button>
-              <button class="mt-2 boton" id="btn_dis">Desconectar</button>
-              <hr>
-              <h5>Vista de cámara</h5>
-              <div id="divCamera" class="camera-capture-wrap">
-                <img id="cameraFeed" class="camera-feed" src="" alt="Stream de cámara del robot" crossorigin="anonymous" />
-                <canvas id="captureCanvas" hidden aria-hidden="true"></canvas>
-                <button id="btn_guardar_imagen" class="mt-2 boton btn-captura-foto" type="button"
-                  title="Guardar el frame actual en tu dispositivo">
-                  📷 Capturar y descargar
-                </button>
-                <p id="captura-feedback" class="captura-feedback" hidden aria-live="polite"></p>
-              </div>
-              <hr>
-              <h5>Vista del mapa</h5>
-              <canvas id="mapCanvas" style="width: 100%; border: 1px solid white; border-radius: 10px;"></canvas>
-              <hr>
-              <h5>Último identificador (niño / grupo)</h5>
-              <span id="patricio-ultimo-id" style="font-weight:bold; font-size:1.2em;">—</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- CONTENIDO DERECHO -->
-        <div class="col-8">
-          <div class="card">
-            <div class="card-body">
-
-              <h2 class="text-center" id="title">Controles de movimiento circular</h2>
-              <div class="d-flex justify-content-center gap-5">
-                <button class="mt-2 boton" id="btn_move">Mover</button>
-                <button class="mt-2 boton" id="btn_stop">Parar</button>
-                <button class="mt-2 boton" id="btn_reverse">Cambiar sentido</button>
-              </div>
-              <hr>
-
-              <!-- Controles WASD -->
-              <h3 class="text-center">Controles WSAD</h3>
-              <p class="text-center text-muted" style="font-size:0.85em;">
-                Mantén pulsado para mover · Suelta para parar
-              </p>
-              <div class="wsad">
-                <button class="mt-2 boton" id="btn_wsad_delante">▲ Delante</button>
-                <button class="mt-2 boton" id="btn_wsad_atras">▼ Atrás</button>
-                <button class="mt-2 boton" id="btn_wsad_izquierda">◀ Izquierda</button>
-                <button class="mt-2 boton" id="btn_wsad_derecha">Derecha ▶</button>
-                <button class="mt-2 boton" id="btn_wsad_parar">⏹ Parar</button>
-              </div>
-              <hr>
-
-              <!-- Rotación pura (Spin) -->
-              <h3 class="text-center">Rotación sobre el eje (Spin)</h3>
-              <p class="text-center text-muted" style="font-size:0.85em;">
-                Mantén pulsado · El robot gira sin desplazarse
-              </p>
-              <div class="d-flex justify-content-center gap-4 mt-2">
-                <button class="mt-2 boton" id="btn_spin_left">↺ Girar izquierda</button>
-                <button class="mt-2 boton" id="btn_spin_right">↻ Girar derecha</button>
-              </div>
-              <hr>
-
-              <!-- Coordenadas -->
-              <p>Coordenadas de la ubicación del robot</p>
-              <p>
-                <span>Coordenada X: <span id="pos_x">0.00</span></span><br>
-                <span>Coordenada Y: <span id="pos_y">0.00</span></span><br>
-                <span>Coordenada Z: <span id="pos_z">0.00</span></span><br>
-                <span>Orientación W: <span id="pos_w">0.00</span></span>
-              </p>
-              <hr>
-
-              <!-- Monitor -->
-              <h4>📡 Monitor de Patricio</h4>
-              <div class="metric">🔋 Batería: <span id="bateria">No disponible</span></div>
-              <div class="metric">🚶 Velocidad lineal: <span id="velocidad">—</span></div>
-              <div class="metric">🧭 Orientación (cmd): <span id="orientacion_cmd">—</span></div>
-              <div class="metric">🌡 Temperatura: <span id="temperatura">Cargando...</span></div>
-              <div class="metric">📅 Última actualización: <span id="timestamp">--</span></div>
-
-            </div>
-          </div>
-
-          <!-- Ubicaciones predefinidas -->
-          <div class="card mt-3">
-            <div class="card-body">
-              <h3 class="text-center">Ubicaciones predeterminadas</h3>
-              <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <button class="mt-3 boton" id="btn_goto_cola">Ir a zona de espera</button>
-                <button class="mt-3 boton" id="btn_goto_casa">Ir a base / inicio</button>
-                <button class="mt-3 boton" id="btn_goto_almacen">Ir a taller / material</button>
-                <button class="mt-3 boton" id="btn_cancelar_nav">Cancelar navegación</button>
-              </div>
-            </div>
-          </div>
-
-        </div>
+    <!-- ── LEFT SIDEBAR ── -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <nav class="admin-sidebar__nav">
+        <a href="admin.html" class="admin-sidebar__item admin-sidebar__item--active">
+          <i class="bi bi-grid-1x2-fill"></i>
+          <span>Panel de control</span>
+        </a>
+        <a href="historico.html" class="admin-sidebar__item">
+          <i class="fa fa-gamepad" aria-hidden="true" style="font-size: 28px;"></i>
+          <span>Partidos</span>
+        </a>
+        <a href="incidencias.html" class="admin-sidebar__item">
+          <i class="bi bi-bell-fill"></i>
+          <span>Notificaciones</span>
+        </a>
+        <a href="editar_datos.html" class="admin-sidebar__item">
+          <i class="bi bi-gear-fill"></i>
+          <span>Perfil</span>
+        </a>
+      </nav>
+      <button class="admin-sidebar__toggle" id="sidebarToggle" aria-label="Colapsar menú">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+      <div class="admin-sidebar__logout">
+        <button class="admin-sidebar__logout-btn" id="logoutButton">
+          <i class="bi bi-box-arrow-left"></i>
+          <span>Cerrar sesión</span>
+        </button>
       </div>
-    </div>
-  </main>
+    </aside>
 
-  <footer>
-    <a href="politica_privacidad.html">POLÍTICA PRIVACIDAD</a>
-    <span>Patricio 2026 ®</span>
-    <a href="contacto.html" class="contact-link">CONTACTO</a>
+    <!-- ── MAIN CONTENT ── -->
+    <main class="admin-main">
+      
+      <div class="admin-grid">
+
+        <!-- LEFT COLUMN -->
+        <div class="admin-col-left">
+
+          <!-- VISIÓN DEL ROBOT -->
+          <div class="admin-card admin-card--orange">
+            <div class="admin-card__header">
+              <h3>Visión del robot</h3>
+            </div>
+            <div class="admin-card__body">
+              <div class="admin-camera-wrap">
+                <img id="cameraFeed" src="" alt="Camera feed" class="admin-camera-feed" crossorigin="anonymous">
+                <canvas id="captureCanvas" hidden aria-hidden="true"></canvas>
+                <div class="admin-camera-stats">
+                  <p>Ultima actualización : <span id="timestamp">--/--/--</span></p>
+                  <p>Velocidad : <span id="velocidad">---</span></p>
+                  <p>Bateria : <span id="bateria">---</span></p>
+                </div>
+                <div class="admin-camera-spinner" id="cameraSpinner">
+                  <div class="spinner"></div>
+                </div>
+              </div>
+              <div class="admin-card__actions">
+                <button class="admin-btn admin-btn--orange" id="btn_move">Empezar movimiento</button>
+                <button class="admin-btn admin-btn--orange" id="btn_stop">Detener movimiento</button>
+              </div>
+              <div class="admin-status-bar">
+                <input type="text" id="juego_status_text_vision" placeholder="Mensaje del estado de robot..." readonly class="admin-status-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- JUEGOS -->
+          <div class="admin-card admin-card--pink">
+            <div class="admin-card__header">
+              <h3>Juegos</h3>
+            </div>
+            <div class="admin-card__body">
+              <div class="admin-games-grid">
+                <button class="admin-game-btn boton game-btn" id="btn_pilla_pilla">
+                  <img src="images/icons8-run-100.png" alt="Pilla-pilla" class="pilla-icon" />
+                  <span>Pilla-Pilla</span>
+                </button>
+                <button class="admin-game-btn boton game-btn" id="btn_escondite">
+                  <i class="bi bi-eye-fill admin-game-btn__icon"></i>
+                  <span>Escondite</span>
+                </button>
+                <button class="admin-game-btn boton game-btn" id="btn_calamar_auto">
+                  <i class="bi bi-stoplights-fill admin-game-btn__icon"></i>
+                  <span>Pollito Inglés</span>
+                </button>
+              </div>
+
+              <div id="calamar_manual_controls" style="display:none;" class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                <button class="admin-btn admin-btn--green" id="btn_luz_verde">🟢 Luz Verde</button>
+                <button class="admin-btn admin-btn--red" id="btn_luz_roja">🔴 Luz Roja</button>
+              </div>
+
+              <div class="d-flex justify-content-center mt-4">
+                <button class="admin-btn admin-btn--olive" id="btn_stop_juego">Detener juego</button>
+              </div>
+
+              <!-- change this in admin.html -->
+              <div id="juego_bubble" class="juego-bubble mt-4">
+                <span id="juego_status_icon">🤖</span>
+                <span id="juego_status_text" class="admin-status-input">Patricio está esperando instrucciones...</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /admin-col-left -->
+
+        <!-- RIGHT COLUMN -->
+        <div class="admin-col-right">
+
+          <!-- MENU / CONEXIÓN -->
+          <div class="admin-card admin-card--blue">
+            <div class="admin-card__header">
+              <h3>Menu</h3>
+            </div>
+            <div class="admin-card__body">
+              <p class="admin-card__subtitle">Configuración de conexión</p>
+              <label for="ipInput" class="admin-label">Dirección del servidor :</label>
+              <input type="text" id="ipInput" class="admin-input form-control">
+              <p class="mt-2 admin-connection-status" id="estado">🔌 Sin conexión</p>
+              <div class="admin-card__actions admin-card__actions--row mt-4">
+                <button class="admin-btn admin-btn--blue" id="btn_con">Conectar</button>
+                <button class="admin-btn admin-btn--blue" id="btn_dis">Desconectar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MOVIMIENTO MANUAL -->
+          <div class="admin-card admin-card--pink">
+            <div class="admin-card__header">
+              <h3>Movimiento manual</h3>
+            </div>
+            <div class="admin-card__body">
+              <div class="admin-dpad">
+                <div class="admin-dpad__row">
+                  <button class="admin-dpad__btn" id="btn_wsad_delante"><i class="bi bi-chevron-up"></i></button>
+                </div>
+                <div class="admin-dpad__row admin-dpad__row--mid">
+                  <button class="admin-dpad__btn" id="btn_wsad_izquierda"><i class="bi bi-chevron-left"></i></button>
+                  <button class="admin-dpad__btn" id="btn_wsad_derecha"><i class="bi bi-chevron-right"></i></button>
+                </div>
+                <div class="admin-dpad__row">
+                  <button class="admin-dpad__btn" id="btn_wsad_atras"><i class="bi bi-chevron-down"></i></button>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-center gap-3 mt-4">
+                <button class="admin-btn admin-btn--pink" id="btn_spin_left">↺ Izquierda</button>
+                <button class="admin-btn admin-btn--pink" id="btn_spin_right">↻ Derecha</button>
+              </div>
+
+              <div class="admin-coords mt-4">
+                <p>X: <span id="pos_x">0.00</span> &nbsp; Y: <span id="pos_y">0.00</span> &nbsp; Z: <span id="pos_z">0.00</span> &nbsp; W: <span id="pos_w">0.00</span></p>
+                <div class="metric">🧭 Orientación: <span id="orientacion_cmd">—</span></div>
+                <div class="metric">🌡 Temperatura: <span id="temperatura">Cargando...</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CAPTURA DE IMAGEN -->
+          <div class="admin-card admin-card--olive">
+            <div class="admin-card__header">
+              <h3>Captura de imagen</h3>
+            </div>
+            <div class="admin-card__body">
+              <div class="admin-capture-preview" id="divCamera">
+                <img id="capturePreview" src="" alt="" style="width:100%; height:100%; object-fit:cover; border-radius:8px; display:none;">
+              </div>
+              <p id="captura-feedback" class="captura-feedback" hidden aria-live="polite"></p>
+              <div class="admin-card__actions admin-card__actions--row mt-4">
+                <button class="admin-btn admin-btn--olive" id="btn_guardar_imagen">Tomar foto</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /admin-col-right -->
+      </div><!-- /admin-grid -->
+
+    </main>
+  </div><!-- /admin-layout -->
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <img src="images/logo_patricio.png" alt="Patricio" class="footer-logo">
+      <div class="legal-links">
+        <span>©2026 Patricio</span>
+        <a href="#">Aviso legal</a>
+        <a href="#">Política de cookies</a>
+        <a href="politica_privacidad.html">Política de privacidad</a>
+        <a href="#">Gestión de Cookies</a>
+      </div>
+      <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">
+        <i class="bi bi-chevron-up"></i>
+      </button>
+    </div>
   </footer>
 
-  <!-- Popup cerrar sesión -->
-  <div id="logoutPopup" class="popup-overlay" style="display: none;">
+  <!-- ── LOGOUT POPUP ── -->
+  <div id="logoutPopup" class="popup-overlay" style="display:none;">
     <div class="popup-content">
       <h3>¿Estás seguro de que quieres cerrar sesión?</h3>
       <div class="popup-buttons">
@@ -267,7 +253,7 @@
   </div>
 
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
   <script src="js/fecha_util.js"></script>
   <script src="js/admin_incidencias.js"></script>
   <script src="js/script_monitor.js"></script>
@@ -276,6 +262,13 @@
   <script src="js/script_singup_login_logout.js"></script>
   <script src="js/draw_occupancy_grid.js"></script>
   <script src="js/ros_logic.js"></script>
-
+  <script>
+    const sidebar = document.getElementById('adminSidebar');
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+      sidebar.classList.toggle('collapsed');
+      this.querySelector('i').classList.toggle('bi-chevron-right');
+      this.querySelector('i').classList.toggle('bi-chevron-left');
+    });
+  </script>
 </body>
 </html>

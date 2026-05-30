@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Iniciar sesión en Patricio: robot educativo para niños y niñas de 4 a 6 años.">
+  <title>Patricio | Iniciar sesión</title>
+  <link rel="stylesheet" href="css/styles_generales.css">
+  <link rel="stylesheet" href="css/styles_login.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="images/logo_patricio.png" type="image/png">
+</head>
+<body class="login-body">
+
+  <!-- ── HEADER ── -->
+  <header class="reg-header">
+    <a href="index.html" class="reg-back">
+      <i class="bi bi-chevron-left"></i> Volver a inicio
+    </a>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <main class="login-main">
+
+    <!-- Logo -->
+    <div class="reg-logo-wrap">
+      <img src="images/logo_patricio.png" alt="Patricio" class="reg-logo">
+    </div>
+
+    <!-- Card -->
+    <div class="login-card">
+
+      <!-- Card header bar -->
+      <div class="login-card__header">
+        <h1>Login</h1>
+      </div>
+
+      <!-- Card body -->
+      <div class="login-card__body">
+
+        <div class="login-field">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" placeholder="Usuario">
+        </div>
+
+        <div class="login-field">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" placeholder="Contraseña">
+        </div>
+
+        <p id="errorMessage" class="error-message"></p>
+
+      </div>
+    </div>
+
+    <!-- Login button (outside card, below it) -->
+    <button class="login-submit" id="loginBtn">Login</button>
+
+    <!-- Register link -->
+    <p class="login-register-link">
+      <a href="registro.html">¿No tienes cuenta? ¡Regístrate!</a>
+    </p>
+
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <img src="images/logo_patricio.png" alt="Patricio" class="footer-logo">
+      <div class="legal-links">
+        <span>©2026 Patricio</span>
+        <a href="#">Aviso legal</a>
+        <a href="#">Política de cookies</a>
+        <a href="politica_privacidad.html">Política de privacidad</a>
+        <a href="#">Gestión de Cookies</a>
+      </div>
+      <button class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Volver arriba">
+        <i class="bi bi-chevron-up"></i>
+      </button>
+    </div>
+  </footer>
+
+  <script src="js/script_singup_login_logout.js"></script>
+<script>
+  document.getElementById('loginBtn').addEventListener('click', function () {
+    const fields = ['username', 'password'];
+
+    fields.forEach(function (fieldId) {
+      const input = document.getElementById(fieldId);
+      if (!input) return;
+      if (!input.value.trim()) {
+        input.classList.add('input-error');
+      } else {
+        input.classList.remove('input-error');
+      }
+
+      input.addEventListener('input', function () {
+        if (this.value.trim()) this.classList.remove('input-error');
+      });
+    });
+  });
+</script>
+</body>
+</html>
