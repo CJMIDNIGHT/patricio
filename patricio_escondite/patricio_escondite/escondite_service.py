@@ -50,9 +50,13 @@ class EsconditoServiceNode(Node):
         # EsconditoLogic recibe el navigator, una función para obtener
         # el timestamp actual y el callback de publicación de estado.
         self._logic = EsconditoLogic(
-            navigator    = self._navigator,
-            get_stamp_fn = lambda: self.get_clock().now().to_msg(),
-            on_status_cb = self._publicar_status,
+            navigator             = self._navigator,
+            get_stamp_fn          = lambda: self.get_clock().now().to_msg(),
+            on_status_cb          = self._publicar_status,
+            node                  = self,          # ← AÑADIR
+            vision_confirm_sec    = 1.5,           # ajustable
+            vision_timeout_sec    = 5.0,           # ajustable
+            vision_confidence_min = 0.5,           # ajustable
         )
 
         # ── Servidor de servicio ─────────────────────────────────────────────

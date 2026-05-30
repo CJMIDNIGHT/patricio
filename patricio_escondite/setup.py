@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             #"escondite_node = patricio_escondite.escondite_node:main",
             "escondite_service = patricio_escondite.escondite_service:main",
+            "escondite_real = patricio_escondite.escondite_real:main",
         ],
     },
 )
