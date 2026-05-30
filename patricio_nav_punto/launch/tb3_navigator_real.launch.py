@@ -1,4 +1,4 @@
-#my_tb3_navigator.launch.py
+#tb3_navigator_real.launch.py
 import os
 
 from ament_index_python.packages import get_package_share_directory
