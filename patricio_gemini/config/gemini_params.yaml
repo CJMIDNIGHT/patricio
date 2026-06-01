@@ -1,0 +1,12 @@
+patricio_gemini_node:
+  ros__parameters:
+    voice_input_topic: /patricio/voice_input
+    voice_output_topic: /patricio/voice_output
+    face_text_topic: /patricio/face_text
+    status_topic: /patricio/gemini_status
+    model_name: meta/llama-3.1-8b-instruct
+    api_key_env_var: NIM_API_KEY
+    verify_connection: true
+    verify_prompt: "Hola Patricio, cuéntame algo corto y feliz."
+    response_max_tokens: 512
+    response_temperature: 0.8
