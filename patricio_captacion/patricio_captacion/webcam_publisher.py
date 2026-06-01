@@ -9,7 +9,7 @@ import urllib.request
 class WebcamPublisher(Node):
     def __init__(self):
         super().__init__('webcam_publisher')
-        self.declare_parameter('windows_ip', '192.168.2.145')  # IP de Windows
+        self.declare_parameter('windows_ip', 'localhost')  # IP de Windows
         self.windows_ip = self.get_parameter('windows_ip').get_parameter_value().string_value
         self.url = f'http://{self.windows_ip}:8888/frame'
 

@@ -280,8 +280,9 @@ class MediaPipeNode(Node):
         msg.bbox_width     = float(x_max - x_min)
         msg.bbox_height    = float(y_max - y_min)
         # Usamos la visibilidad media de hombros como proxy de confianza
-        shoulder_vis = (lm[11].visibility + lm[12].visibility) / 2.0
-        msg.confidence     = float(min(shoulder_vis, 1.0))
+        visibilities = [lm[0].visibility, lm[11].visibility, lm[12].visibility]
+        visible = [v for v in visibilities if v > 0.1]
+        msg.confidence = float(sum(visible) / len(visible)) if visible else 0.0
         msg.movement_score = float(movement_score)
 
         self._pub_detection.publish(msg)
