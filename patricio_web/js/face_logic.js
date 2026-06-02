@@ -19,8 +19,10 @@ let screenTextTimeout = null;
 // ==========================
 // ROSBRIDGE
 // ==========================
+// En Raspberry Pi + LCD: face_config.js define PATRICIO_ROSBRIDGE_URL.
+// Si el rosbridge está en el PC del robot: face_screen.html?ros_host=IP_DEL_ROBOT
 
-const ROSBRIDGE_URL = "ws://10.0.2.15:9090";
+const ROSBRIDGE_URL = window.PATRICIO_ROSBRIDGE_URL || "ws://10.0.2.15:9090";
 
 // ==========================
 // ESTADO ACTUAL

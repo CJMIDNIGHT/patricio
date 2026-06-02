@@ -239,8 +239,64 @@ body {
         font-size: 1.5rem;
     }
 
+    .emotion-text.speech-bubble {
+
+        font-size: 1.25rem;
+
+        padding: 14px 20px;
+    }
+
     .game-indicator {
 
         font-size: 1.2rem;
+    }
+}
+
+/* Raspberry Pi LCD típico (800×480, 7") */
+
+@media (max-width: 800px), (max-height: 480px) {
+
+    .face-screen-container {
+
+        gap: 12px;
+    }
+
+    .robot-face {
+
+        width: 220px;
+        height: 220px;
+    }
+
+    .face-glow {
+
+        width: 200px;
+        height: 200px;
+    }
+
+    .emotion-text {
+
+        font-size: 1.1rem;
+    }
+
+    .emotion-text.speech-bubble {
+
+        font-size: 1rem;
+
+        padding: 10px 16px;
+
+        max-width: 92vw;
+    }
+
+    .game-indicator {
+
+        font-size: 0.95rem;
+
+        padding: 8px 16px;
+    }
+
+    .game-icon {
+
+        width: 40px;
+        height: 40px;
     }
 }
