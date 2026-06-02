@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-escondite.py
+escondite_real.py
 Lógica pura del juego del escondite.
 
 Cambio respecto a la versión anterior:

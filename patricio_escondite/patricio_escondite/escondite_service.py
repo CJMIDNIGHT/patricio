@@ -21,7 +21,7 @@ from nav2_simple_commander.robot_navigator import BasicNavigator
 from std_msgs.msg import String
 
 from patricio_interfaces.srv import IniciarEscondite
-from .escondite import EsconditoLogic
+from .escondite_real import EsconditoLogic
 
 
 class EsconditoServiceNode(Node):
