@@ -24,6 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'juego_calamar_node = patricio_calamar.juego_calamar_node:main',
+            'juego_calamar_real_node = patricio_calamar.juego_calamar_real_node:main',
         ],
     },
 )
