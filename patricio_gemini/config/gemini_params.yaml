@@ -6,6 +6,10 @@ patricio_gemini_node:
     status_topic: /patricio/gemini_status
     model_name: meta/llama-3.1-8b-instruct
     api_key_env_var: NIM_API_KEY
+    # Déjalo vacío y exporta la clave en el entorno (export NIM_API_KEY=nvapi-...).
+    # Solo rellénalo si necesitas inyectar la clave sin variable de entorno
+    # (NO subas el secreto a un repositorio público).
+    api_key: ""
     verify_connection: true
     verify_prompt: "Hola Patricio, cuéntame algo corto y feliz."
     response_max_tokens: 512
