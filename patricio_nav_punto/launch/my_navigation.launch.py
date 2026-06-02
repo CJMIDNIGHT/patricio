@@ -12,7 +12,7 @@ def generate_launch_description():
     pkg_dir = get_package_share_directory('patricio_nav_punto')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
 
-    map_file = os.path.join(pkg_dir, 'map', 'map4.yaml')
+    map_file = os.path.join(pkg_dir, 'map', 'house_map.yaml')
     params_file = os.path.join(pkg_dir, 'param', 'burger_cam.yaml')
     rviz_config = os.path.join(pkg_dir, 'rviz', 'tb3_navigation2.rviz')
 

@@ -1,1 +1,4 @@
+# NVIDIA NIM se usa vía API REST (formato OpenAI), solo requiere requests.
+requests>=2.25.0
+# Opcional: solo si se quiere usar Google Gemini en lugar de NIM.
 google-generativeai>=0.1.0
