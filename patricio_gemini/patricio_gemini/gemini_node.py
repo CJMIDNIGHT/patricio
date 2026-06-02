@@ -10,6 +10,7 @@ Nodo ROS 2 para integrar Google Gemini con Patricio como personalidad infantil.
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import sys
@@ -17,6 +18,8 @@ from typing import Any
 
 import requests
 import rclpy
+from geometry_msgs.msg import PoseArray
+from patricio_interfaces.srv import GuardarPartida, IniciarEscondite, StartGame
 from rclpy.node import Node
 from std_msgs.msg import String
 
@@ -41,8 +44,76 @@ SYSTEM_PROMPT = (
     'No termines las respuestas con puntos suspensivos ni frases incompletas; entrega la respuesta completa. '
     'Mantén un tono amistoso y entusiasta, pero evita respuestas vagas. '
     'Si no conoces algo con certeza, dilo con honestidad y ofrece una alternativa útil. '
-    'Si el usuario pide noticias o temas interesantes, da una respuesta actual, bien conectada y con sentido.'
+    'Si el usuario pide noticias o temas interesantes, da una respuesta actual, bien conectada y con sentido. '
+    'Si quieres iniciar un juego o registrar una actividad, responde con un JSON exacto del tipo '
+    '{"function":"<nombre>","arguments":{...}} y no agregues texto adicional. '
+    'Si no es una llamada de función, responde normalmente en texto.'
 )
+
+FUNCTIONS_SCHEMA = [
+    {
+        'name': 'iniciar_juego',
+        'description': 'Inicia un juego local en el robot: pilla_pilla, escondite o calamar.',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'game_name': {
+                    'type': 'string',
+                    'enum': ['pilla_pilla', 'escondite', 'calamar'],
+                    'description': 'Nombre del juego a iniciar.',
+                },
+                'usuario_id': {
+                    'type': 'integer',
+                    'description': 'ID de usuario opcional para registro en BBDD.',
+                },
+                'motivo': {
+                    'type': 'string',
+                    'description': 'Razón o contexto para el inicio del juego.',
+                },
+            },
+            'required': ['game_name'],
+        },
+    },
+    {
+        'name': 'registrar_actividad',
+        'description': 'Registra la actividad o partida en la BBDD local a través de /patricio/db/guardar_partida.',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'nombre_juego': {
+                    'type': 'string',
+                    'enum': ['pilla_pilla', 'escondite', 'calamar'],
+                    'description': 'Nombre del juego registrado.',
+                },
+                'usuario_id': {
+                    'type': 'integer',
+                    'description': 'ID de usuario; 0 o negativo para anónimo.',
+                },
+                'puntuacion': {
+                    'type': 'number',
+                    'description': 'Puntuación final, o NaN si no aplica.',
+                },
+                'duracion': {
+                    'type': 'integer',
+                    'description': 'Duración en segundos.',
+                },
+                'resultado': {
+                    'type': 'string',
+                    'description': 'Resultado de la partida: victoria, derrota, abortado.',
+                },
+                'estado': {
+                    'type': 'string',
+                    'description': 'Estado del registro: en_curso, finalizado_ok, abortado.',
+                },
+                'detalles_json': {
+                    'type': 'string',
+                    'description': 'JSON con metadatos extra (poses, eventos, etc.).',
+                },
+            },
+            'required': ['nombre_juego'],
+        },
+    },
+]
 
 DEFAULT_PROMPT = 'Hola Patricio, cuéntame algo corto y feliz.'
 
@@ -96,10 +167,15 @@ class GeminiClient:
         else:
             raise RuntimeError('SDK Gemini inválido o no compatible.')
 
-    def generate_reply(self, user_prompt: str, temperature: float, max_tokens: int) -> str:
+    def generate_reply(self, user_prompt: str, temperature: float, max_tokens: int) -> dict[str, Any]:
         prompt = _clean_text(user_prompt)
         if not prompt:
-            return ''
+            return {'text': '', 'function_call': None}
+
+        messages = [
+            {'role': 'system', 'content': SYSTEM_PROMPT},
+            {'role': 'user', 'content': prompt},
+        ]
 
         if self.service == 'nim':
             headers = {
@@ -108,30 +184,36 @@ class GeminiClient:
             }
             payload = {
                 'model': self.model_name,
-                'messages': [
-                    {'role': 'system', 'content': SYSTEM_PROMPT},
-                    {'role': 'user', 'content': prompt},
-                ],
+                'messages': messages,
                 'temperature': float(temperature),
                 'max_tokens': int(max_tokens),
+                'functions': FUNCTIONS_SCHEMA,
+                'function_call': 'auto',
             }
             response = requests.post(self._nim_url, headers=headers, json=payload, timeout=30)
             if response.status_code != 200:
                 raise RuntimeError(f'NIM API error: {response.status_code} {response.text}')
-            return self._extract_text(response.json())
+            return self._parse_response(response.json())
 
         if self.sdk == 'google.generativeai':
-            payload = [
-                {'role': 'system', 'content': SYSTEM_PROMPT},
-                {'role': 'user', 'content': prompt},
-            ]
+            payload = messages
             if hasattr(genai, 'chat'):
-                response = genai.chat.create(
-                    model=self.model_name,
-                    messages=payload,
-                    temperature=float(temperature),
-                    max_output_tokens=int(max_tokens),
-                )
+                try:
+                    response = genai.chat.create(
+                        model=self.model_name,
+                        messages=payload,
+                        temperature=float(temperature),
+                        max_output_tokens=int(max_tokens),
+                        functions=FUNCTIONS_SCHEMA,
+                        function_call='auto',
+                    )
+                except TypeError:
+                    response = genai.chat.create(
+                        model=self.model_name,
+                        messages=payload,
+                        temperature=float(temperature),
+                        max_output_tokens=int(max_tokens),
+                    )
             else:
                 response = genai.generate_text(
                     model=self.model_name,
@@ -150,51 +232,103 @@ class GeminiClient:
                 max_output_tokens=int(max_tokens),
             )
 
-        return self._extract_text(response)
+        return self._parse_response(response)
 
     @staticmethod
-    def _extract_text(response: Any) -> str:
+    def _parse_json_from_text(text: str) -> Any | None:
+        if not isinstance(text, str) or not text.strip():
+            return None
+        text = text.strip()
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            decoder = json.JSONDecoder()
+            for match in re.finditer(r'\{', text):
+                try:
+                    obj, _ = decoder.raw_decode(text[match.start():])
+                    return obj
+                except json.JSONDecodeError:
+                    continue
+        return None
+
+    @staticmethod
+    def _extract_raw_function_call(message: Any) -> dict[str, Any] | None:
+        if not isinstance(message, dict):
+            return None
+        function_call = message.get('function_call') or message.get('tool') or message.get('tool_call')
+        if isinstance(function_call, dict):
+            arguments = function_call.get('arguments')
+            if isinstance(arguments, str):
+                parsed = GeminiClient._parse_json_from_text(arguments)
+                if isinstance(parsed, dict):
+                    function_call['arguments'] = parsed
+            return function_call if function_call.get('name') else None
+        if isinstance(function_call, str):
+            parsed = GeminiClient._parse_json_from_text(function_call)
+            if isinstance(parsed, dict) and parsed.get('function'):
+                return parsed
+        return None
+
+    @staticmethod
+    def _parse_response(response: Any) -> dict[str, Any]:
         if response is None:
-            return ''
+            return {'text': '', 'function_call': None}
+
+        if hasattr(response, 'to_dict'):
+            try:
+                response = response.to_dict()
+            except Exception:
+                pass
+
+        text = ''
+        function_call = None
 
         if isinstance(response, dict):
             choices = response.get('choices')
-            if choices and isinstance(choices, list) and len(choices) > 0:
-                message = choices[0].get('message')
-                if message and isinstance(message, dict):
+            if choices and isinstance(choices, list) and choices:
+                message = choices[0].get('message') or choices[0]
+                if isinstance(message, dict):
+                    function_call = GeminiClient._extract_raw_function_call(message)
                     content = message.get('content')
                     if isinstance(content, str):
-                        return _clean_text(content)
-            text = response.get('text')
-            if isinstance(text, str):
-                return _clean_text(text)
-            return ''
+                        text = content
+            if not text:
+                text = response.get('text') or response.get('output')
+                if isinstance(text, dict):
+                    text = text.get('content')
+            if isinstance(text, list) and text:
+                text = text[0]
+            if not isinstance(text, str):
+                text = str(text) if text is not None else ''
 
-        if hasattr(response, 'last'):
+        elif hasattr(response, 'last'):
             last = getattr(response, 'last')
-            if last is None:
-                return ''
-            return _clean_text(getattr(last, 'content', str(last)))
-
-        if hasattr(response, 'output'):
+            text = getattr(last, 'content', str(last)) if last is not None else ''
+        elif hasattr(response, 'output'):
             output = getattr(response, 'output')
-            if output is None:
-                return ''
-            return _clean_text(getattr(output, 'content', str(output)))
-
-        if hasattr(response, 'candidates'):
+            if isinstance(output, dict):
+                text = output.get('content', '')
+            elif isinstance(output, list) and output:
+                text = getattr(output[0], 'content', str(output[0]))
+            else:
+                text = str(output)
+        elif hasattr(response, 'candidates'):
             candidates = getattr(response, 'candidates')
             if candidates:
-                return _clean_text(getattr(candidates[0], 'content', str(candidates[0])))
+                text = getattr(candidates[0], 'content', str(candidates[0]))
+        else:
+            text = getattr(response, 'text', None)
+            if not isinstance(text, str):
+                text = str(response)
 
-        text = getattr(response, 'text', None)
-        if isinstance(text, str):
-            return _clean_text(text)
+        text = _clean_text(text)
+        if function_call is None:
+            parsed_json = GeminiClient._parse_json_from_text(text)
+            if isinstance(parsed_json, dict) and parsed_json.get('function'):
+                function_call = parsed_json
+                text = ''
 
-        try:
-            return _clean_text(str(response))
-        except Exception:
-            return ''
+        return {'text': text, 'function_call': function_call}
 
 
 class GeminiNode(Node):
@@ -226,6 +360,10 @@ class GeminiNode(Node):
         self._pub_voice = self.create_publisher(String, self.voice_output_topic, 10)
         self._pub_face = self.create_publisher(String, self.face_text_topic, 10)
         self._pub_status = self.create_publisher(String, self.status_topic, 10)
+        self._start_game_client = self.create_client(StartGame, '/start_game')
+        self._escondite_client = self.create_client(IniciarEscondite, '/patricio/escondite/iniciar')
+        self._db_client = self.create_client(GuardarPartida, '/patricio/db/guardar_partida')
+        self._calamar_pub = self.create_publisher(String, '/patricio/calamar/cmd', 10)
         self.create_subscription(String, self.voice_input_topic, self._on_input, 10)
 
         self.get_logger().info('Inicializando nodo de Patricio con IA...')
@@ -269,10 +407,11 @@ class GeminiNode(Node):
                 temperature=self.temperature,
                 max_tokens=self.max_tokens,
             )
-            if response:
-                self.get_logger().info(f'Respuesta de verificación: "{response}"')
+            text = response.get('text') if isinstance(response, dict) else ''
+            if text:
+                self.get_logger().info(f'Respuesta de verificación: "{text}"')
                 self._publish_status('verificado')
-                self._publish_faces_and_voice(response)
+                self._publish_faces_and_voice(text)
             else:
                 self.get_logger().warn('Gemini devolvió respuesta vacía en la verificación.')
                 self._publish_status('verificacion_fallida')
@@ -291,7 +430,7 @@ class GeminiNode(Node):
         self.get_logger().info(f'Recibido prompt de voz: "{prompt}"')
 
         try:
-            answer = self._client.generate_reply(
+            result = self._client.generate_reply(
                 prompt,
                 temperature=self.temperature,
                 max_tokens=self.max_tokens,
@@ -301,8 +440,22 @@ class GeminiNode(Node):
             self._publish_status('error_api')
             return
 
+        if not result or not isinstance(result, dict):
+            self.get_logger().warn('Gemini devolvió respuesta vacía o inesperada.')
+            self._publish_status('respuesta_vacia')
+            return
+
+        function_call = result.get('function_call')
+        if function_call:
+            self.get_logger().info(f'Función solicitada por IA: {function_call.get("name")}.')
+            response_text = self._handle_function_call(function_call)
+            self._publish_faces_and_voice(response_text)
+            self._publish_status('funcion_ejecutada')
+            return
+
+        answer = result.get('text', '')
         if not answer:
-            self.get_logger().warn('Gemini devolvió respuesta vacía.')
+            self.get_logger().warn('Gemini devolvió una respuesta sin texto.')
             self._publish_status('respuesta_vacia')
             return
 
@@ -330,6 +483,134 @@ class GeminiNode(Node):
         msg = String()
         msg.data = status
         self._pub_status.publish(msg)
+
+    def _handle_function_call(self, function_call: dict[str, Any]) -> str:
+        name = (function_call.get('name') or '').strip()
+        arguments = function_call.get('arguments') or {}
+        if isinstance(arguments, str):
+            parsed_args = GeminiClient._parse_json_from_text(arguments)
+            if isinstance(parsed_args, dict):
+                arguments = parsed_args
+        if not isinstance(arguments, dict):
+            arguments = {}
+
+        if name == 'iniciar_juego':
+            return self._execute_iniciar_juego(arguments)
+
+        if name == 'registrar_actividad':
+            return self._execute_registrar_actividad(arguments)
+
+        return f'No conozco la función {name}. Usa iniciar_juego o registrar_actividad.'
+
+    def _execute_iniciar_juego(self, arguments: dict[str, Any]) -> str:
+        game_name = (arguments.get('game_name') or '').strip().lower()
+        if game_name not in ('pilla_pilla', 'escondite', 'calamar'):
+            return (
+                'Nombre de juego inválido. Debe ser uno de: pilla_pilla, escondite, calamar.'
+            )
+
+        if game_name == 'pilla_pilla':
+            return self._call_start_game_service('pilla_pilla')
+
+        if game_name == 'escondite':
+            return self._call_escondite_service()
+
+        return self._publish_calamar_cmd('START_AUTO')
+
+    def _execute_registrar_actividad(self, arguments: dict[str, Any]) -> str:
+        nombre_juego = (arguments.get('nombre_juego') or '').strip().lower()
+        if nombre_juego not in ('pilla_pilla', 'escondite', 'calamar'):
+            return (
+                'Nombre de juego inválido para registro. Usa pilla_pilla, escondite o calamar.'
+            )
+
+        request = GuardarPartida.Request()
+        request.nombre_juego = nombre_juego
+        request.usuario_id = int(arguments.get('usuario_id') or 0)
+
+        puntuacion = arguments.get('puntuacion')
+        if isinstance(puntuacion, str):
+            puntuacion = puntuacion.strip()
+            if puntuacion.lower() in ('nan', 'none', 'null', ''):
+                request.puntuacion = float('nan')
+            else:
+                try:
+                    request.puntuacion = float(puntuacion)
+                except ValueError:
+                    request.puntuacion = float('nan')
+        elif isinstance(puntuacion, (int, float)):
+            request.puntuacion = float(puntuacion)
+        else:
+            request.puntuacion = float('nan')
+
+        request.duracion = int(arguments.get('duracion') or 0)
+        request.resultado = str(arguments.get('resultado') or '').strip()
+        request.estado = str(arguments.get('estado') or 'finalizado_ok').strip()
+        request.detalles_json = str(arguments.get('detalles_json') or '').strip()
+
+        if not self._wait_for_service(self._db_client, '/patricio/db/guardar_partida'):
+            return 'No se pudo conectar al servicio de base de datos para registrar la actividad.'
+
+        future = self._db_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=10.0)
+        if not future.done():
+            return 'El servicio de registro no respondió a tiempo.'
+
+        response = future.result()
+        if not response or not getattr(response, 'success', False):
+            return (
+                'Fallo al registrar la actividad: '
+                + (getattr(response, 'message', 'respuesta inválida') or '')
+            )
+
+        return f'Actividad registrada correctamente (id={getattr(response, "id_partida", 0)}).'
+
+    def _call_start_game_service(self, game_name: str) -> str:
+        if not self._wait_for_service(self._start_game_client, '/start_game'):
+            return 'El servicio de inicio de juego no está disponible en este momento.'
+
+        request = StartGame.Request()
+        request.game_name = game_name
+        future = self._start_game_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=10.0)
+        if not future.done():
+            return 'No se recibió respuesta del juego pilla_pilla a tiempo.'
+
+        response = future.result()
+        if not response or not getattr(response, 'started', False):
+            return f'No se pudo iniciar {game_name} en el robot.'
+
+        return f'Juego {game_name} iniciado correctamente.'
+
+    def _call_escondite_service(self) -> str:
+        if not self._wait_for_service(self._escondite_client, '/patricio/escondite/iniciar'):
+            return 'El servicio de escondite no está disponible en este momento.'
+
+        request = IniciarEscondite.Request()
+        request.command = 'START'
+        request.poses = PoseArray()
+        future = self._escondite_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=10.0)
+        if not future.done():
+            return 'No se recibió respuesta del servicio de escondite a tiempo.'
+
+        response = future.result()
+        if not response or not getattr(response, 'success', False):
+            return 'No se pudo iniciar escondite en el robot.'
+
+        return 'Juego de escondite iniciado correctamente.'
+
+    def _publish_calamar_cmd(self, command: str) -> str:
+        msg = String()
+        msg.data = command
+        self._calamar_pub.publish(msg)
+        return 'Juego del calamar iniciado.'
+
+    def _wait_for_service(self, client, service_name: str, timeout: float = 3.0) -> bool:
+        if client.wait_for_service(timeout_sec=timeout):
+            return True
+        self.get_logger().warn(f'Servicio {service_name} no disponible.')
+        return False
 
 
 def main(args=None) -> None:
