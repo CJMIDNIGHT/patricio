@@ -3,3 +3,6 @@
 # En Ubuntu suele hacer falta antes: sudo apt install portaudio19-dev python3-pyaudio
 SpeechRecognition>=3.10.0
 PyAudio>=0.2.14
+pyttsx3>=2.90
+# Opcional (motor gTTS — requiere Internet y mpg123):
+# gTTS>=2.5.0

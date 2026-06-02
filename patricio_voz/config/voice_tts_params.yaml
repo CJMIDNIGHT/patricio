@@ -1,0 +1,15 @@
+/**:
+  ros__parameters:
+    voice_output_topic: "/patricio/voice_output"
+    screen_text_topic: "/patricio/screen_text"
+    status_topic: "/patricio/tts_status"
+    # pyttsx3 = baja latencia (local). gtts = más natural pero requiere red.
+    tts_engine: "pyttsx3"
+    speech_rate: 178
+    speech_volume: 1.0
+    voice_name_contains: "spanish"
+    gtts_lang: "es"
+    gtts_tld: "com.mx"
+    gtts_player_cmd: "mpg123 -q"
+    max_screen_chars: 160
+    interrupt_on_new: true
