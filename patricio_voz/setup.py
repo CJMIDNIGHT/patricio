@@ -19,12 +19,13 @@ setup(
     zip_safe=True,
     maintainer='adenor',
     maintainer_email='amburet@epsg.upv.es',
-    description='Speech-to-text con palabra clave para Patricio',
+    description='Speech-to-text y text-to-speech para Patricio',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'voice_stt_node = patricio_voz.voice_stt_node:main',
+            'voice_tts_node = patricio_voz.voice_tts_node:main',
             'list_audio_devices = patricio_voz.list_audio_devices:main',
         ],
     },

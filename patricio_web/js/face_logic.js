@@ -8,15 +8,21 @@ let faceSubscriber = null;
 
 let gameSubscriber = null;
 
+let screenTextSubscriber = null;
+
 let inactivityTimeout = null;
 
 let gameTimeout = null;
 
+let screenTextTimeout = null;
+
 // ==========================
 // ROSBRIDGE
 // ==========================
+// En Raspberry Pi + LCD: face_config.js define PATRICIO_ROSBRIDGE_URL.
+// Si el rosbridge está en el PC del robot: face_screen.html?ros_host=IP_DEL_ROBOT
 
-const ROSBRIDGE_URL = "ws://10.0.2.15:9090";
+const ROSBRIDGE_URL = window.PATRICIO_ROSBRIDGE_URL || "ws://10.0.2.15:9090";
 
 // ==========================
 // ESTADO ACTUAL
@@ -50,6 +56,8 @@ function connectROS() {
         subscribeFaceTopic();
 
         subscribeGameTopic();
+
+        subscribeScreenTextTopic();
     });
 
     // --------------------------
@@ -109,6 +117,82 @@ function subscribeFaceTopic() {
 
         }, 5000);
     });
+}
+
+// ==========================
+// TOPIC TEXTO IA (subtítulos / globo)
+// ==========================
+
+function subscribeScreenTextTopic() {
+
+    screenTextSubscriber = new ROSLIB.Topic({
+
+        ros: ros,
+
+        name: '/patricio/screen_text',
+
+        messageType: 'std_msgs/msg/String'
+    });
+
+    screenTextSubscriber.subscribe((message) => {
+
+        const texto = (message.data || '').trim();
+
+        if (!texto) return;
+
+        console.log('Screen text:', texto);
+
+        clearTimeout(screenTextTimeout);
+
+        clearTimeout(inactivityTimeout);
+
+        currentEmotion = 'happy';
+
+        showSpeechBubble(texto);
+
+        const ms = Math.min(15000, Math.max(4000, texto.length * 80));
+
+        screenTextTimeout = setTimeout(() => {
+
+            hideSpeechBubble();
+
+            currentEmotion = 'happy';
+
+            updateUI();
+
+        }, ms);
+    });
+}
+
+function showSpeechBubble(texto) {
+
+    const textEl = document.getElementById('emotion_text');
+
+    const face = document.getElementById('robot_face');
+
+    if (face) {
+
+        face.src = 'assets/faces/cara_feliz.png';
+    }
+
+    if (textEl) {
+
+        textEl.textContent = texto;
+
+        textEl.classList.add('speech-bubble', 'speech-bubble--active');
+    }
+}
+
+function hideSpeechBubble() {
+
+    const textEl = document.getElementById('emotion_text');
+
+    if (textEl) {
+
+        textEl.classList.remove('speech-bubble--active');
+
+        textEl.textContent = 'Patricio está feliz 😊';
+    }
 }
 
 // ==========================

@@ -15,8 +15,12 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/IniciarEscondite.srv"
   "srv/GuardarPartida.srv"
   "srv/RegistrarIncidencia.srv"
+  "msg/PersonDetection.msg"
+  "msg/PoseResult.msg" 
   DEPENDENCIES
     geometry_msgs
+    std_msgs
+    builtin_interfaces
 )
 
 ament_package()

@@ -24,6 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pilla_pilla_node = patricio_pilla_pilla.pilla_pilla_node:main',
+            'vision_follower = patricio_pilla_pilla.vision_follower:main',
         ],
     },
 )

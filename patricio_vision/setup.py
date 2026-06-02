@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'patricio_escondite'
+package_name = 'patricio_vision'
 
 setup(
     name=package_name,
@@ -24,9 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            #"escondite_node = patricio_escondite.escondite_node:main",
-            "escondite_service = patricio_escondite.escondite_service:main",
-            "escondite_real = patricio_escondite.escondite_real:main",
+            'mediapipe_node = patricio_vision.mediapipe_node:main',
         ],
     },
 )
