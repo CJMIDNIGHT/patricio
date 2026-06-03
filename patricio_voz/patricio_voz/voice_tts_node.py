@@ -62,7 +62,14 @@ class Pyttsx3Backend:
             ) from _PYTTSX3_IMPORT_ERROR
         self._logger = logger
         self._lock = threading.Lock()
-        self._engine = pyttsx3.init()
+        try:
+            self._engine = pyttsx3.init()
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(
+                'pyttsx3 no pudo iniciar el motor de voz. En Linux necesita eSpeak-NG: '
+                'instala con "sudo apt install espeak-ng" o cambia tts_engine a "gtts". '
+                f'(detalle: {exc})'
+            ) from exc
         self._engine.setProperty('rate', int(rate))
         self._engine.setProperty('volume', float(volume))
         self._pick_voice(voice_contains)
@@ -99,15 +106,18 @@ class Pyttsx3Backend:
 class GttsBackend:
     """Motor en la nube — más natural, mayor latencia (requiere Internet)."""
 
-    def __init__(self, lang: str, tld: str, player_cmd: str, logger) -> None:
+    def __init__(self, lang: str, tld: str, player_cmd: str, logger, timeout: float = 8.0) -> None:
         if gTTS is None:
             raise RuntimeError('gTTS no instalado. pip install gTTS')
         self._lang = lang
         self._tld = tld
         self._player_cmd = player_cmd.strip() or 'mpg123 -q'
         self._logger = logger
+        self._timeout = float(timeout)
         self._proc: subprocess.Popen | None = None
-        self._lock = threading.Lock()
+        # RLock (reentrante): speak() llama a stop() mientras ya tiene el lock,
+        # por lo que un Lock normal provocaría un interbloqueo.
+        self._lock = threading.RLock()
 
     def stop(self) -> None:
         with self._lock:
@@ -125,7 +135,27 @@ class GttsBackend:
             with tempfile.NamedTemporaryFile(suffix='.mp3', delete=False) as tmp:
                 path = Path(tmp.name)
             try:
-                gTTS(text=text, lang=self._lang, tld=self._tld).save(str(path))
+                # gTTS no expone timeout y puede colgarse si la red falla, así que
+                # generamos el audio en un hilo y lo abandonamos si tarda demasiado.
+                gen_error: dict[str, Exception] = {}
+
+                def _generate() -> None:
+                    try:
+                        gTTS(text=text, lang=self._lang, tld=self._tld).save(str(path))
+                    except Exception as exc:  # noqa: BLE001
+                        gen_error['exc'] = exc
+
+                gen_thread = threading.Thread(target=_generate, daemon=True)
+                gen_thread.start()
+                gen_thread.join(self._timeout)
+                if gen_thread.is_alive():
+                    raise TimeoutError(
+                        f'gTTS no respondió en {self._timeout:.0f}s (¿sin Internet?). '
+                        'Usa el motor pyttsx3 para voz offline.'
+                    )
+                if 'exc' in gen_error:
+                    raise gen_error['exc']
+
                 parts = self._player_cmd.split()
                 self._proc = subprocess.Popen([*parts, str(path)])
                 self._proc.wait()
@@ -149,6 +179,7 @@ class VoiceTtsNode(Node):
         self.declare_parameter('gtts_lang', 'es')
         self.declare_parameter('gtts_tld', 'com.mx')
         self.declare_parameter('gtts_player_cmd', 'mpg123 -q')
+        self.declare_parameter('gtts_timeout', 8.0)
         self.declare_parameter('max_screen_chars', 160)
         self.declare_parameter('interrupt_on_new', True)
 
@@ -165,6 +196,7 @@ class VoiceTtsNode(Node):
                 tld=self.get_parameter('gtts_tld').value,
                 player_cmd=self.get_parameter('gtts_player_cmd').value,
                 logger=self.get_logger(),
+                timeout=self.get_parameter('gtts_timeout').value,
             )
         else:
             self._backend = Pyttsx3Backend(

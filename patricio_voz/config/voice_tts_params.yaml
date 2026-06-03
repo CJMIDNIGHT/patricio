@@ -3,13 +3,22 @@
     voice_output_topic: "/patricio/voice_output"
     screen_text_topic: "/patricio/screen_text"
     status_topic: "/patricio/tts_status"
-    # pyttsx3 = baja latencia (local). gtts = más natural pero requiere red.
-    tts_engine: "pyttsx3"
+    # MOTOR DE VOZ (idea principal = audio nativo):
+    #   pyttsx3 = OFFLINE, baja latencia y fiable. RECOMENDADO.
+    #             Necesita el motor del sistema:  sudo apt install espeak-ng
+    #   gtts    = voz más natural pero ONLINE (Google); puede ir lento o
+    #             cortarse si la red falla. Reproduce con ffplay (ya instalado).
+    # Por defecto gtts porque funciona sin instalar nada en este PC.
+    # Para voz offline/fiable: sudo apt install espeak-ng  y  tts_engine: "pyttsx3".
+    tts_engine: "gtts"
     speech_rate: 178
     speech_volume: 1.0
     voice_name_contains: "spanish"
     gtts_lang: "es"
     gtts_tld: "com.mx"
-    gtts_player_cmd: "mpg123 -q"
+    # ffplay (de ffmpeg) ya está instalado y reproduce por el audio de WSLg.
+    gtts_player_cmd: "ffplay -nodisp -autoexit -loglevel error"
+    # Segundos máximos para que gTTS genere el audio (evita cuelgues si no hay red).
+    gtts_timeout: 8.0
     max_screen_chars: 160
     interrupt_on_new: true
