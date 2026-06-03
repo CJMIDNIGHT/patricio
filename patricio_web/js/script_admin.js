@@ -27,7 +27,7 @@ function getCmdVelTopic() {
         cmdVelTopic = new ROSLIB.Topic({
             ros: data.ros,
             name: '/cmd_vel',
-            messageType: 'geometry_msgs/msg/Twist'
+            messageType: 'geometry_msgs/msg/TwistStamped'
         });
     }
     return cmdVelTopic;
@@ -83,6 +83,8 @@ function stopHold() {
     }
 }
 
+print("Binding move buttons...");
+
 function bindMoveButton(id, linearX, angularZ) {
     const btn = document.getElementById(id);
     if (!btn) return;
@@ -90,6 +92,8 @@ function bindMoveButton(id, linearX, angularZ) {
     btn.addEventListener("mousedown",  () => startMove(linearX, angularZ));
     btn.addEventListener("mouseup",    () => { stopHold(); stop(); });
     btn.addEventListener("mouseleave", () => { stopHold(); stop(); });
+
+    print("Binding button:", id, "with linearX:", linearX, "angularZ:", angularZ);
 
     // Soporte táctil (móvil / tablet)
     btn.addEventListener("touchstart", (e) => { e.preventDefault(); startMove(linearX, angularZ); });
