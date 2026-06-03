@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import threading
+import time
 from typing import Any
 
 import requests
@@ -49,12 +50,14 @@ SYSTEM_PROMPT = (
     'Si no conoces algo con certeza, dilo con honestidad y ofrece una alternativa útil. '
     'Si el usuario pide noticias o temas interesantes, da una respuesta actual, bien conectada y con sentido. '
     'Solo existen DOS herramientas (tools) y no hay ninguna más: iniciar_juego (para empezar '
-    'pilla_pilla, escondite o calamar) y registrar_actividad (para guardar una partida en la base '
-    'de datos). Invoca una herramienta ÚNICAMENTE cuando el niño quiera jugar a uno de esos tres '
-    'juegos o cuando haya que registrar una partida. '
-    'Para CUALQUIER otra cosa (chistes, cuentos, preguntas, saludos, matemáticas, etc.) responde '
-    'SIEMPRE con texto normal y NUNCA inventes funciones que no existen (no uses nombres como '
-    'contar_chiste, contar_cuento, etc.). '
+    'pilla_pilla, escondite o calamar) y registrar_actividad (para guardar en la base de datos el '
+    'RESULTADO de una partida ya terminada). '
+    'Usa iniciar_juego SOLO cuando el niño quiera jugar a uno de esos tres juegos. '
+    'Para CUALQUIER otra cosa (chistes, cuentos, adivinanzas, preguntas, saludos, matemáticas, etc.) '
+    'CUENTA o RESPONDE el contenido SIEMPRE con texto normal (por ejemplo, si te piden un chiste, '
+    'cuéntalo de verdad). NO llames a registrar_actividad para chistes/cuentos/conversaciones: el '
+    'sistema registra esas interacciones automáticamente. Y NUNCA inventes funciones que no existen '
+    '(no uses nombres como contar_chiste, contar_cuento, etc.). '
     'Si tu motor de IA no soporta herramientas nativas, y solo si se trata de uno de los tres juegos, '
     'responde con un JSON exacto del tipo {"function":"<iniciar_juego|registrar_actividad>","arguments":{...}} '
     'y nada más. En el resto de casos, responde normalmente en texto.'
@@ -80,10 +83,6 @@ FUNCTIONS_SCHEMA = [
                     'enum': ['pilla_pilla', 'escondite', 'calamar'],
                     'description': 'Nombre del juego a iniciar.',
                 },
-                'usuario_id': {
-                    'type': 'integer',
-                    'description': 'ID de usuario opcional para registro en BBDD.',
-                },
                 'motivo': {
                     'type': 'string',
                     'description': 'Razón o contexto para el inicio del juego.',
@@ -94,41 +93,40 @@ FUNCTIONS_SCHEMA = [
     },
     {
         'name': 'registrar_actividad',
-        'description': 'Registra la actividad o partida en la BBDD local a través de /patricio/db/guardar_partida.',
+        'description': (
+            'Registra en la base de datos una actividad realizada con el niño a través de '
+            '/patricio/db/guardar_partida. Sirve tanto para partidas de juego como para '
+            'interacciones conversacionales (un chiste contado, un cuento, una conversación, '
+            'una adivinanza, etc.).'
+        ),
         'parameters': {
             'type': 'object',
             'properties': {
-                'nombre_juego': {
+                'tipo': {
                     'type': 'string',
-                    'enum': ['pilla_pilla', 'escondite', 'calamar'],
-                    'description': 'Nombre del juego registrado.',
+                    'description': (
+                        'Tipo o nombre de la actividad. Ej.: "chiste", "cuento", "adivinanza", '
+                        '"conversacion", "pilla_pilla", "escondite", "calamar".'
+                    ),
                 },
-                'usuario_id': {
-                    'type': 'integer',
-                    'description': 'ID de usuario; 0 o negativo para anónimo.',
-                },
-                'puntuacion': {
+                'puntos': {
                     'type': 'number',
-                    'description': 'Puntuación final, o NaN si no aplica.',
+                    'description': 'Puntuación obtenida. 0 si no aplica (p. ej. en conversaciones).',
                 },
                 'duracion': {
                     'type': 'integer',
-                    'description': 'Duración en segundos.',
+                    'description': 'Duración en segundos (0 si no aplica).',
                 },
                 'resultado': {
                     'type': 'string',
-                    'description': 'Resultado de la partida: victoria, derrota, abortado.',
-                },
-                'estado': {
-                    'type': 'string',
-                    'description': 'Estado del registro: en_curso, finalizado_ok, abortado.',
+                    'description': 'Resultado opcional: victoria, derrota, abortado.',
                 },
                 'detalles_json': {
                     'type': 'string',
-                    'description': 'JSON con metadatos extra (poses, eventos, etc.).',
+                    'description': 'JSON opcional con metadatos extra.',
                 },
             },
-            'required': ['nombre_juego'],
+            'required': ['tipo'],
         },
     },
 ]
@@ -421,6 +419,9 @@ class GeminiNode(Node):
         self.declare_parameter('verify_prompt', DEFAULT_PROMPT)
         self.declare_parameter('response_max_tokens', 512)
         self.declare_parameter('response_temperature', 0.8)
+        # Registrar automáticamente en la BBDD las interacciones conversacionales
+        # (chistes, cuentos, conversaciones) que hace la IA.
+        self.declare_parameter('registrar_conversaciones', True)
 
         self.voice_input_topic = self.get_parameter('voice_input_topic').value
         self.voice_output_topic = self.get_parameter('voice_output_topic').value
@@ -433,6 +434,7 @@ class GeminiNode(Node):
         self.verify_prompt = self.get_parameter('verify_prompt').value
         self.max_tokens = self.get_parameter('response_max_tokens').value
         self.temperature = self.get_parameter('response_temperature').value
+        self.registrar_conversaciones = self.get_parameter('registrar_conversaciones').value
 
         # Grupo de callbacks reentrante: permite que las respuestas de los
         # servicios se procesen mientras el callback de voz sigue esperando,
@@ -518,6 +520,7 @@ class GeminiNode(Node):
 
         self._publish_status('procesando')
         self.get_logger().info(f'Recibido prompt de voz: "{prompt}"')
+        t0 = time.monotonic()
 
         try:
             result = self._client.generate_reply(
@@ -553,6 +556,7 @@ class GeminiNode(Node):
             if answer:
                 self._publish_faces_and_voice(answer)
                 self._publish_status('respuesta_publicada')
+                self._auto_registrar_conversacion(prompt, answer, time.monotonic() - t0)
             else:
                 self.get_logger().warn('No se pudo generar respuesta de texto alternativa.')
                 self._publish_status('respuesta_vacia')
@@ -566,6 +570,7 @@ class GeminiNode(Node):
 
         self._publish_faces_and_voice(answer)
         self._publish_status('respuesta_publicada')
+        self._auto_registrar_conversacion(prompt, answer, time.monotonic() - t0)
 
     def _generate_plain_text(self, prompt: str) -> str:
         """Pide a la IA una respuesta de texto puro (sin herramientas).
@@ -638,58 +643,166 @@ class GeminiNode(Node):
             )
 
         if game_name == 'pilla_pilla':
-            return self._call_start_game_service('pilla_pilla')
+            mensaje = self._call_start_game_service('pilla_pilla')
+        elif game_name == 'escondite':
+            mensaje = self._call_escondite_service()
+        else:
+            mensaje = self._publish_calamar_cmd('START_AUTO')
 
-        if game_name == 'escondite':
-            return self._call_escondite_service()
+        # Si el juego arrancó bien, registramos el inicio en la BBDD.
+        low = mensaje.lower()
+        if 'correctamente' in low or 'iniciado' in low:
+            self._registrar_inicio_juego(game_name, arguments)
+        return mensaje
 
-        return self._publish_calamar_cmd('START_AUTO')
+    def _registrar_inicio_juego(self, game_name: str, arguments: dict[str, Any]) -> None:
+        """Registra en la BBDD que se ha iniciado un juego."""
+        detalles = {'evento': 'inicio_juego', 'motivo': str(arguments.get('motivo') or '')}
+        # usuario_id=0 (anónimo): la IA no debe asociar usuarios, y un ID
+        # inventado rompería la clave foránea de la tabla partidas.
+        success, message, id_partida = self._registrar_en_bbdd(
+            tipo=game_name,
+            estado='iniciado',
+            usuario_id=0,
+            detalles=detalles,
+        )
+        if success:
+            self.get_logger().info(
+                f'Inicio del juego "{game_name}" registrado en BBDD (id_partida={id_partida}).'
+            )
+        else:
+            self.get_logger().warn(f'No se registró el inicio del juego: {message}')
 
     def _execute_registrar_actividad(self, arguments: dict[str, Any]) -> str:
-        nombre_juego = (arguments.get('nombre_juego') or '').strip().lower()
-        if nombre_juego not in ('pilla_pilla', 'escondite', 'calamar'):
-            return (
-                'Nombre de juego inválido para registro. Usa pilla_pilla, escondite o calamar.'
+        # Acepta 'tipo' (nuevo, admite juegos y conversaciones) y, por
+        # compatibilidad, 'nombre_juego'. 'puntos' o 'puntuacion'.
+        tipo = (arguments.get('tipo') or arguments.get('nombre_juego') or '').strip().lower()
+        if not tipo:
+            return 'Falta el tipo de actividad a registrar (p. ej. "chiste" o "pilla_pilla").'
+
+        puntos = arguments.get('puntos', arguments.get('puntuacion'))
+        success, message, id_partida = self._registrar_en_bbdd(
+            tipo=tipo,
+            puntos=puntos,
+            duracion=arguments.get('duracion') or 0,
+            # Anónimo: evitamos IDs de usuario inventados por la IA (FK partidas).
+            usuario_id=0,
+            resultado=str(arguments.get('resultado') or '').strip(),
+            estado=str(arguments.get('estado') or 'finalizado_ok').strip(),
+            detalles=arguments.get('detalles_json') or arguments.get('detalles'),
+        )
+        if not success:
+            return f'Fallo al registrar la actividad: {message}'
+        return f'Actividad "{tipo}" registrada correctamente (id={id_partida}).'
+
+    @staticmethod
+    def _clasificar_tipo_conversacion(prompt: str) -> str:
+        """Deduce el 'tipo' de actividad conversacional a partir de la petición."""
+        p = (prompt or '').lower()
+        if 'chiste' in p:
+            return 'chiste'
+        if 'cuento' in p or 'historia' in p:
+            return 'cuento'
+        if 'adivina' in p or 'adivinanza' in p:
+            return 'adivinanza'
+        if 'cancion' in p or 'canción' in p or 'cántame' in p or 'cantame' in p:
+            return 'cancion'
+        return 'conversacion'
+
+    def _auto_registrar_conversacion(self, prompt: str, answer: str, duracion: float) -> None:
+        """Registra automáticamente en la BBDD la interacción conversacional.
+
+        Mapeo conversacional: cuando la IA responde con texto (un chiste, un
+        cuento, una conversación...), se registra la actividad con el tipo
+        correspondiente, sin intervención del usuario.
+        """
+        if not self.registrar_conversaciones:
+            return
+        # Si el servidor de BBDD no está, no penalizamos la conversación.
+        if not self._db_client.service_is_ready():
+            self.get_logger().debug('BBDD no disponible; no se registra la conversación.')
+            return
+
+        tipo = self._clasificar_tipo_conversacion(prompt)
+        detalles = {
+            'categoria': 'conversacion',
+            'pregunta': (prompt or '')[:200],
+            'respuesta_chars': len(answer or ''),
+        }
+        success, message, id_partida = self._registrar_en_bbdd(
+            tipo=tipo,
+            puntos=float('nan'),
+            duracion=int(round(duracion)),
+            detalles=detalles,
+        )
+        if success:
+            self.get_logger().info(
+                f'Actividad conversacional "{tipo}" registrada en BBDD (id_partida={id_partida}).'
             )
+            self._publish_status('actividad_registrada')
+        else:
+            self.get_logger().warn(f'No se registró la conversación: {message}')
 
+    def _registrar_en_bbdd(
+        self,
+        tipo: str,
+        puntos: Any = None,
+        duracion: Any = 0,
+        usuario_id: Any = 0,
+        resultado: str = '',
+        estado: str = 'finalizado_ok',
+        detalles: Any = None,
+    ) -> tuple[bool, str, int]:
+        """Empaqueta los datos de una actividad y llama al servicio de BBDD.
+
+        Reutilizado tanto por la herramienta registrar_actividad como por el
+        registro automático de las interacciones conversacionales.
+        Devuelve (success, message, id_partida).
+        """
         request = GuardarPartida.Request()
-        request.nombre_juego = nombre_juego
-        request.usuario_id = int(arguments.get('usuario_id') or 0)
+        request.nombre_juego = (tipo or '').strip()
+        request.usuario_id = int(usuario_id or 0)
 
-        puntuacion = arguments.get('puntuacion')
-        if isinstance(puntuacion, str):
-            puntuacion = puntuacion.strip()
-            if puntuacion.lower() in ('nan', 'none', 'null', ''):
+        # puntos -> puntuacion (NaN = no aplica).
+        if isinstance(puntos, str):
+            p = puntos.strip().lower()
+            if p in ('', 'nan', 'none', 'null'):
                 request.puntuacion = float('nan')
             else:
                 try:
-                    request.puntuacion = float(puntuacion)
+                    request.puntuacion = float(puntos)
                 except ValueError:
                     request.puntuacion = float('nan')
-        elif isinstance(puntuacion, (int, float)):
-            request.puntuacion = float(puntuacion)
+        elif isinstance(puntos, (int, float)):
+            request.puntuacion = float(puntos)
         else:
             request.puntuacion = float('nan')
 
-        request.duracion = int(arguments.get('duracion') or 0)
-        request.resultado = str(arguments.get('resultado') or '').strip()
-        request.estado = str(arguments.get('estado') or 'finalizado_ok').strip()
-        request.detalles_json = str(arguments.get('detalles_json') or '').strip()
+        request.duracion = int(duracion or 0)
+        request.resultado = str(resultado or '')
+        request.estado = str(estado or 'finalizado_ok')
+        if detalles is None:
+            request.detalles_json = ''
+        elif isinstance(detalles, str):
+            request.detalles_json = detalles
+        else:
+            try:
+                request.detalles_json = json.dumps(detalles, ensure_ascii=False)
+            except (TypeError, ValueError):
+                request.detalles_json = ''
 
         if not self._wait_for_service(self._db_client, '/patricio/db/guardar_partida'):
-            return 'No se pudo conectar al servicio de base de datos para registrar la actividad.'
+            return False, 'servicio de base de datos no disponible', 0
 
         response = self._call_service_sync(self._db_client, request, timeout=10.0)
         if response is None:
-            return 'El servicio de registro no respondió a tiempo.'
+            return False, 'el servicio de registro no respondió a tiempo', 0
 
-        if not getattr(response, 'success', False):
-            return (
-                'Fallo al registrar la actividad: '
-                + (getattr(response, 'message', 'respuesta inválida') or '')
-            )
-
-        return f'Actividad registrada correctamente (id={getattr(response, "id_partida", 0)}).'
+        return (
+            bool(getattr(response, 'success', False)),
+            str(getattr(response, 'message', '') or 'respuesta inválida'),
+            int(getattr(response, 'id_partida', 0) or 0),
+        )
 
     def _call_start_game_service(self, game_name: str) -> str:
         if not self._wait_for_service(self._start_game_client, '/start_game'):

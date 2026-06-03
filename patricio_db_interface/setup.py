@@ -29,6 +29,7 @@ setup(
     entry_points={
         'console_scripts': [
             'db_interface_node = patricio_db_interface.db_interface_node:main',
+            'registrar_actividad = patricio_db_interface.actividad_client:main',
         ],
     },
 )
