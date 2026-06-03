@@ -96,6 +96,11 @@ pip install dotenv --user --break-system-packages
 
 > ⚠️ `sqlalchemy` y `dotenv` son necesarios para el funcionamiento de la base de datos de la API Flask.
 
+> 🧠🔊🗄️ Para el **asistente IA (NVIDIA NIM) + voz (TTS) + registro en BBDD** mira la
+> sección dedicada al final del README ("Asistente IA + Voz + Registro en BBDD"),
+> que lista todos sus paquetes (`requests`, `gTTS`, `pyttsx3`, `ffmpeg`, ...) y el
+> arranque completo paso a paso.
+
 ### Base de datos — MySQL
 ```bash
 sudo apt update && sudo apt install -y mysql-server
@@ -433,6 +438,179 @@ ros2 launch patricio_voz voice_stt.launch.py
 ```bash
 ros2 topic echo /patricio/voice_status
 ```
+
+---
+
+## 🧠🔊🗄️ Asistente IA (NVIDIA NIM) + Voz (TTS) + Registro en BBDD — guía completa desde 0
+
+Flujo: un mensaje de texto (como si viniera del *speech-to-text*) llega a la IA →
+la IA lo interpreta → **activa un juego** o **responde** (chiste, cuento, etc.) →
+la respuesta **se reproduce por voz (TTS)** → y la actividad **se guarda en la
+base de datos SQL** (`partidas`) con su fecha.
+
+```
+/patricio/voice_input  →  IA (patricio_gemini, NVIDIA NIM)
+        ├── juego        → servicio del juego (/start_game, ...) + registro en BBDD
+        ├── conversación → texto → registro automático en BBDD
+        └── salida texto → /patricio/voice_output → TTS (patricio_voz) → altavoz
+                                                   → /patricio/screen_text (subtítulo)
+```
+
+> ℹ️ La IA **no usa Google Gemini**: usa **NVIDIA NIM** (API compatible con OpenAI)
+> aunque el paquete se llame `patricio_gemini`. Necesita una clave `nvapi-...`.
+
+### 📦 Paquetes necesarios (este flujo)
+
+**Sistema (apt):**
+```bash
+sudo apt update
+sudo apt install -y mysql-server ffmpeg
+# (opcional, voz OFFLINE con pyttsx3 en vez de gTTS):
+sudo apt install -y espeak-ng
+```
+
+**Python (pip, usuario):**
+```bash
+# IA + base de datos
+/usr/bin/python3 -m pip install --user --break-system-packages \
+  requests flask flask-cors python-dotenv SQLAlchemy PyMySQL \
+  flask-socketio python-socketio websocket-client bcrypt
+
+# Voz (TTS): gTTS (online, por defecto) y/o pyttsx3 (offline, necesita espeak-ng)
+/usr/bin/python3 -m pip install --user --break-system-packages gTTS pyttsx3
+```
+> `ffplay` (de `ffmpeg`) es el reproductor de audio usado por el TTS.
+
+### 🗄️ Base de datos desde cero (MySQL)
+
+```bash
+# 1) Arrancar el servidor (activa el puerto 3306)
+sudo service mysql start
+sudo ss -tlnp | grep 3306          # comprobar que escucha en 3306
+
+# 2) Crear la base con tablas + datos semilla
+sudo mysql < ~/turtlebot3_ws/src/patricio/patricio_web/patricio_import_completo.sql
+
+# 3) Crear el usuario que usa la API
+sudo mysql <<'SQL'
+CREATE USER IF NOT EXISTS 'patricio'@'localhost' IDENTIFIED BY 'Patricio_local1!';
+GRANT ALL PRIVILEGES ON patricio_db.* TO 'patricio'@'localhost';
+FLUSH PRIVILEGES;
+SQL
+
+# 4) Fichero .env de la API
+cp ~/turtlebot3_ws/src/patricio/patricio_web/.env.example ~/turtlebot3_ws/src/patricio/patricio_web/.env
+
+# 5) Comprobar
+mysql -u patricio -p'Patricio_local1!' patricio_db -e "SHOW TABLES;"
+#  → actividades, incidencias, partidas, users
+```
+
+### 🛠️ Compilar el workspace
+```bash
+cd ~/turtlebot3_ws
+source /opt/ros/jazzy/setup.bash
+colcon build
+source install/setup.bash
+```
+
+### ▶️ Arranque (un terminal por bloque, EN ORDEN)
+
+> Si reinicias el PC: `sudo service mysql start` antes de nada.
+
+**Terminal 1 — API Flask** (necesita MySQL ya arrancado)
+```bash
+cd ~/turtlebot3_ws/src/patricio/patricio_web
+/usr/bin/python3 patricio_api.py
+# ✅ Starting Patricio API + Socket.IO on http://0.0.0.0:5000
+```
+
+**Terminal 2 — Servidor BBDD ROS (db_interface) — UNO solo**
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
+ros2 run patricio_db_interface db_interface_node
+# ✅ patricio_db_interface listo — API=http://localhost:5000
+```
+
+**Terminal 3 — Nodo de un juego (ej. pilla_pilla)**
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
+export TURTLEBOT3_MODEL=burger_cam
+ros2 launch patricio_pilla_pilla pilla_pilla.launch.py
+# ✅ Servicio disponible en /start_game
+```
+
+**Terminal 4 — Voz (TTS) — UNO solo**
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
+ros2 launch patricio_voz voice_tts.launch.py
+# ✅ TTS listo (motor=gtts)
+```
+
+**Terminal 5 — La IA (con la API key de NVIDIA NIM)**
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
+export NIM_API_KEY=nvapi-TU_CLAVE_AQUI
+ros2 launch patricio_gemini gemini.launch.py
+# ✅ Gemini listo con modelo=...
+```
+
+### 🎤 Activar todo con un mensaje (STT simulado)
+
+**Terminal 6 — Enviar el texto de entrada**
+```bash
+source /opt/ros/jazzy/setup.bash
+source ~/turtlebot3_ws/install/setup.bash
+
+# Activar un juego (se inicia + habla + se guarda en BBDD):
+ros2 topic pub --once /patricio/voice_input std_msgs/msg/String "{data: 'Patricio vamos a jugar al pilla pilla'}"
+
+# Un chiste (habla + se registra como conversación):
+ros2 topic pub --once /patricio/voice_input std_msgs/msg/String "{data: 'cuentame un chiste'}"
+```
+
+Juegos disponibles por voz: **pilla_pilla**, **escondite**, **calamar**
+(la IA los detecta por la palabra: "pilla", "escondite", "calamar").
+
+### 🗄️ Ver la base de datos
+
+**Actividades / partidas registradas (juegos + conversaciones):**
+```bash
+mysql -u patricio -p'Patricio_local1!' patricio_db -e "SELECT p.id_partida, a.nombre, p.duracion, p.detalles_json, p.fecha FROM partidas p JOIN actividades a ON a.id_actividad=p.id_actividad ORDER BY p.id_partida DESC LIMIT 10;"
+```
+
+**Incidencias generadas:**
+```bash
+mysql -u patricio -p'Patricio_local1!' patricio_db -e "SELECT id_incidencia, id_usuario, tipo, descripcion, severidad, fecha FROM incidencias ORDER BY id_incidencia DESC LIMIT 10;"
+```
+
+**Resumen (cuántas veces cada actividad):**
+```bash
+mysql -u patricio -p'Patricio_local1!' patricio_db -e "SELECT a.nombre, COUNT(*) AS veces, MAX(p.fecha) AS ultima FROM partidas p JOIN actividades a ON a.id_actividad=p.id_actividad GROUP BY a.nombre ORDER BY veces DESC;"
+```
+
+**Probar el cliente de BBDD directamente (sin IA):**
+```bash
+ros2 run patricio_db_interface registrar_actividad --tipo chiste --puntos 0 --duracion 8
+```
+
+### ⚠️ Notas importantes
+- **Un solo** `db_interface_node` y **un solo** `voice_tts_node`. Si hay varios, los
+  registros se **duplican** y el audio se oye **doble**:
+  `pkill -9 -f db_interface_node` / `pkill -9 -f voice_tts_node` y deja uno.
+- **TTS:** por defecto `gtts` (online). Para voz **offline** instala `espeak-ng` y
+  pon `tts_engine: "pyttsx3"` en `patricio_voz/config/voice_tts_params.yaml`.
+- **escondite:** su servicio necesita **Nav2 activo** (poner la *2D Pose Estimate*
+  en RViz); si no, no arranca ni se registra. **pilla_pilla** y **calamar** se
+  activan y registran sin Gazebo/Nav2.
+- La IA registra como **usuario anónimo** (`id_usuario` NULL); no inventa IDs de
+  usuario (evita romper la clave foránea de `partidas`).
+- La columna `estado` (ej. `iniciado`) no es una columna de `partidas`: va dentro
+  de `detalles_json`.
 
 ---
 
