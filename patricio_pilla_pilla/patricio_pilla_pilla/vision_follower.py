@@ -33,6 +33,7 @@ Todos los umbrales son parámetros ROS2 ajustables en caliente vía
 """
 import threading
 import time
+import json
 
 import rclpy
 from rclpy.node import Node
@@ -102,6 +103,9 @@ class VisionFollowerNode(Node):
         # ── Publishers ────────────────────────────────────────────────────
         self._cmd_vel_pub = self.create_publisher(Twist,  '/cmd_vel', 10)
         self._status_pub  = self.create_publisher(String, '/patricio/pilla_pilla/status', 10)
+        
+        self._resultado_pub = self.create_publisher(
+            String, '/patricio/resultado_juego', 10)
 
         # ── Subscribers ───────────────────────────────────────────────────
         self.create_subscription(
@@ -284,6 +288,16 @@ class VisionFollowerNode(Node):
             duracion_seg=duration,
             motivo=reason,
         )
+        
+            # Publicar resultado en topic dedicado
+        msg = String()
+        msg.data = json.dumps({
+            'juego':    'calamar',   # o 'pilla_pilla' / 'escondite'
+            'resultado': resultado,  # 'WIN' o 'LOSE'
+            'motivo':    motivo,
+            'duracion':  round(duracion or 0.0, 1),
+        })
+        self._resultado_pub.publish(msg)
 
     def _guardar_resultado_bbdd(
         self,
@@ -296,7 +310,6 @@ class VisionFollowerNode(Node):
             self.get_logger().warn('[BBDD] Servicio /patricio/db/guardar_partida no disponible.')
             return
 
-        import json
         req = GuardarPartida.Request()
         req.nombre_juego  = juego
         req.resultado     = resultado

@@ -63,7 +63,7 @@ class EsconditoServiceNode(Node):
             get_stamp_fn          = lambda: self.get_clock().now().to_msg(),
             on_status_cb          = self._publicar_status,
             node                  = self,
-            vision_confirm_sec    = 1.5,
+            vision_confirm_sec    = 2.5,
             vision_timeout_sec    = 5.0,
             vision_confidence_min = 0.5,
             db_client             = self._db_client,   # ← AÑADIR

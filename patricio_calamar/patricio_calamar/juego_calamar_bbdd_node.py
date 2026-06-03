@@ -109,6 +109,10 @@ class JuegoCalamarNode(Node):
 
         self.publish_status(ESTADO_ESPERA)
         self.get_logger().info('juego_calamar_node listo (modo: MediaPipe Pose).')
+        
+        
+        self._resultado_pub = self.create_publisher(
+            String, '/patricio/resultado_juego', 10)
 
     # ────────────────────────────────────────────────────
     # Image pipeline  (sin cambios)
@@ -449,6 +453,15 @@ class JuegoCalamarNode(Node):
             duracion_seg=duracion or 0.0,
             motivo=motivo,
         )
+        
+        msg = String()
+        msg.data = json.dumps({
+            'juego':    'calamar',   # o 'pilla_pilla' / 'escondite'
+            'resultado': resultado,  # 'WIN' o 'LOSE'
+            'motivo':    motivo,
+            'duracion':  round(duracion or 0.0, 1),
+        })
+        self._resultado_pub.publish(msg)
 
     def _guardar_resultado_bbdd(
         self,

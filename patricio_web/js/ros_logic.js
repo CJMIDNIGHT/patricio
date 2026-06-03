@@ -537,3 +537,18 @@ function detenerPollCalamar() {
         calamarPollInterval = null;
     }
 }
+
+const resultadoSub = new ROSLIB.Topic({
+    ros: rosInstance,
+    name: '/patricio/resultado_juego',
+    messageType: 'std_msgs/msg/String'
+});
+
+resultadoSub.subscribe(function(message) {
+    const data = JSON.parse(message.data);
+    if (data.resultado === 'WIN') {
+        updateBubble(`🎉 ¡${data.juego} — GANASTE! (${data.duracion}s)`);
+    } else {
+        updateBubble(`😔 ${data.juego} — PERDISTE. Motivo: ${data.motivo}`);
+    }
+});
