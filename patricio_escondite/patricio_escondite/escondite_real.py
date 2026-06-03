@@ -129,8 +129,21 @@ class EsconditoLogic:
         with self._lock:
             if not self._navigating:
                 return False
-        self._navigator.cancelTask()
+            self._navigating = False  # ← marcar como no navegando primero
+
+        # Cancelar en hilo separado para no chocar con el executor
+        threading.Thread(
+            target=self._cancelar_tarea,
+            daemon=True,
+        ).start()
         return True
+    
+    def _cancelar_tarea(self) -> None:
+        """Cancela Nav2 en hilo separado para evitar 'Executor already spinning'."""
+        try:
+            self._navigator.cancelTask()
+        except Exception as e:
+            self._node.get_logger().warn(f'Error cancelando tarea: {e}')
 
     @property
     def esta_navegando(self) -> bool:
