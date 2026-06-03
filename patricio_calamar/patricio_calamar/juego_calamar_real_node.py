@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-juego_calamar_node.py  —  patricio_calamar
+juego_calamar_real_node.py  —  patricio_calamar
 
 Nodo ROS2 para el juego del Calamar — "Luz Roja, Luz Verde".
 
@@ -29,6 +29,8 @@ from sensor_msgs.msg import Image
 from std_msgs.msg import String
 
 from patricio_interfaces.msg import PoseResult
+from patricio_interfaces.srv import GuardarPartida
+
 
 
 # ── Constantes de estado ─────────────────────────────────────────────────────
@@ -136,6 +138,11 @@ class JuegoCalamarNode(Node):
             '  Fuente prioritaria : /patricio/vision/pose_landmarks\n'
             f'  Timeout fallback   : {self._vision_timeout}s\n'
             '  Fallback           : MediaPipe interno'
+        )
+        
+        self._db_client = self.create_client(
+            GuardarPartida,
+            '/patricio/db/guardar_partida',
         )
 
     # ── Watchdog ─────────────────────────────────────────────────────────────

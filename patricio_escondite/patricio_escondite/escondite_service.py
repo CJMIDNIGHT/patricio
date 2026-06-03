@@ -23,6 +23,9 @@ from std_msgs.msg import String
 from patricio_interfaces.srv import IniciarEscondite
 from .escondite_real import EsconditoLogic
 
+from patricio_interfaces.srv import GuardarPartida
+
+
 
 class EsconditoServiceNode(Node):
 
@@ -45,6 +48,12 @@ class EsconditoServiceNode(Node):
             "/patricio/escondite/status",
             10,
         )
+        
+        self._db_client = self.create_client(
+            GuardarPartida,
+            '/patricio/db/guardar_partida',
+        )
+
 
         # ── Lógica del juego ─────────────────────────────────────────────────
         # EsconditoLogic recibe el navigator, una función para obtener
@@ -53,10 +62,11 @@ class EsconditoServiceNode(Node):
             navigator             = self._navigator,
             get_stamp_fn          = lambda: self.get_clock().now().to_msg(),
             on_status_cb          = self._publicar_status,
-            node                  = self,          # ← AÑADIR
-            vision_confirm_sec    = 1.5,           # ajustable
-            vision_timeout_sec    = 5.0,           # ajustable
-            vision_confidence_min = 0.5,           # ajustable
+            node                  = self,
+            vision_confirm_sec    = 1.5,
+            vision_timeout_sec    = 5.0,
+            vision_confidence_min = 0.5,
+            db_client             = self._db_client,   # ← AÑADIR
         )
 
         # ── Servidor de servicio ─────────────────────────────────────────────

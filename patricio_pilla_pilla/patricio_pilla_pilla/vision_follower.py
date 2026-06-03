@@ -41,6 +41,8 @@ from std_msgs.msg import String
 
 from patricio_interfaces.msg import PersonDetection
 from patricio_interfaces.srv import StartGame
+from patricio_interfaces.srv import GuardarPartida
+
 
 
 STATE_IDLE    = 'ESPERA'
@@ -117,6 +119,11 @@ class VisionFollowerNode(Node):
 
         self._publish_status(STATE_IDLE)
         self.get_logger().info('VisionFollowerNode listo.')
+
+        self._db_client = self.create_client(
+            GuardarPartida,
+            '/patricio/db/guardar_partida',
+        )
 
     # ── Callbacks ────────────────────────────────────────────────────────────
 
@@ -285,39 +292,32 @@ class VisionFollowerNode(Node):
         duracion_seg: float,
         motivo: str,
     ) -> None:
-        """
-        TODO: Conectar con el servicio de BBDD.
-        Sustituir el contenido de esta función con la llamada real.
+        if not self._db_client.wait_for_service(timeout_sec=2.0):
+            self.get_logger().warn('[BBDD] Servicio /patricio/db/guardar_partida no disponible.')
+            return
 
-        Parámetros disponibles:
-          juego        : 'pilla_pilla'
-          resultado    : 'WIN' | 'LOSE'
-          duracion_seg : duración de la partida en segundos
-          motivo       : 'pillado' | 'timeout'
-        """
-        self.get_logger().info(
-            f'[BBDD] TODO: guardar resultado '
-            f'juego={juego}, resultado={resultado}, '
-            f'duracion={duracion_seg:.1f}s, motivo={motivo}'
-        )
-        # ── INSERTAR AQUÍ LA LLAMADA A LA BBDD ──────────────────────────────
-        # Ejemplo si es API REST:
-        #   import requests
-        #   requests.post('http://localhost:XXXX/api/resultado', json={
-        #       'juego': juego,
-        #       'resultado': resultado,
-        #       'duracion': duracion_seg,
-        #       'motivo': motivo,
-        #   })
-        #
-        # Ejemplo si es servicio ROS2:
-        #   client = self.create_client(TuServicio, '/tu_servicio_bbdd')
-        #   req = TuServicio.Request()
-        #   req.juego = juego
-        #   ...
-        #   client.call_async(req)
-        # ────────────────────────────────────────────────────────────────────
+        import json
+        req = GuardarPartida.Request()
+        req.nombre_juego  = juego
+        req.resultado     = resultado
+        req.estado        = 'finalizado_ok' if resultado == RESULT_WIN else 'timeout'
+        req.duracion      = int(duracion_seg)
+        req.puntuacion    = 100.0 if resultado == RESULT_WIN else 0.0
+        req.id_actividad  = 1   # Pilla-Pilla
+        req.detalles_json = json.dumps({'motivo': motivo})
 
+        future = self._db_client.call_async(req)
+        future.add_done_callback(self._db_callback)
+
+    def _db_callback(self, future) -> None:
+        try:
+            resp = future.result()
+            if resp.success:
+                self.get_logger().info(f'[BBDD] Partida guardada id={resp.id_partida}')
+            else:
+                self.get_logger().warn(f'[BBDD] Error guardando: {resp.message}')
+        except Exception as e:
+            self.get_logger().error(f'[BBDD] Excepción: {e}')
     # ── Helpers ──────────────────────────────────────────────────────────────
 
     def _stop_game(self) -> None:

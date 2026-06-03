@@ -30,6 +30,8 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from builtin_interfaces.msg import Time
 
 from patricio_interfaces.msg import PersonDetection
+from patricio_interfaces.srv import GuardarPartida
+
 
 RESULT_WIN  = 'WIN'
 RESULT_LOSE = 'LOSE'
@@ -88,6 +90,10 @@ class EsconditoLogic:
         
         self._game_timeout   = game_timeout_sec
         self._game_start     = None 
+        self._db_client = self.create_client(
+            GuardarPartida,
+            '/patricio/db/guardar_partida',
+        )
 
     # ── Callback de visión ───────────────────────────────────────────────────
 
@@ -257,23 +263,38 @@ class EsconditoLogic:
         duracion_seg: float,
         motivo: str,
     ) -> None:
-        """
-        TODO: Conectar con el servicio de BBDD.
-        Sustituir el contenido de esta función con la llamada real.
+        if not hasattr(self, '_db_client'):
+            self._node.get_logger().warn('[BBDD] Cliente BBDD no inicializado.')
+            return
 
-        Parámetros disponibles:
-        juego        : 'escondite'
-        resultado    : 'WIN' | 'LOSE'
-        duracion_seg : duración de la partida en segundos
-        motivo       : 'found_early' | 'found_objective' | 'not_found' | 'timeout'
-        """
-        self._node.get_logger().info(
-            f'[BBDD] TODO: guardar resultado '
-            f'juego={juego}, resultado={resultado}, '
-            f'duracion={duracion_seg:.1f}s, motivo={motivo}'
-        )
-        # ── INSERTAR AQUÍ LA LLAMADA A LA BBDD ──────────────────────────────────
-        
+        if not self._db_client.wait_for_service(timeout_sec=2.0):
+            self._node.get_logger().warn('[BBDD] Servicio no disponible.')
+            return
+
+        import json
+        from patricio_interfaces.srv import GuardarPartida
+
+        req = GuardarPartida.Request()
+        req.nombre_juego  = juego
+        req.resultado     = resultado
+        req.estado        = 'finalizado_ok' if resultado == RESULT_WIN else 'perdido'
+        req.duracion      = int(duracion_seg)
+        req.puntuacion    = 100.0 if resultado == RESULT_WIN else 0.0
+        req.id_actividad  = 2   # Escondite
+        req.detalles_json = json.dumps({'motivo': motivo})
+
+        future = self._db_client.call_async(req)
+        future.add_done_callback(self._db_callback)
+
+    def _db_callback(self, future) -> None:
+        try:
+            resp = future.result()
+            if resp.success:
+                self._node.get_logger().info(f'[BBDD] Partida guardada id={resp.id_partida}')
+            else:
+                self._node.get_logger().warn(f'[BBDD] Error: {resp.message}')
+        except Exception as e:
+            self._node.get_logger().error(f'[BBDD] Excepción: {e}')
 
     # ── Validación visual ────────────────────────────────────────────────────
 
