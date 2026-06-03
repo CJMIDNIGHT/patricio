@@ -59,7 +59,7 @@ echo '🏃 Lanzando nodo Pilla-Pilla (vision follower)...';
 sleep 5;
 source ~/turtlebot3_ws/install/setup.bash;
 export ROS_DOMAIN_ID=7;
-ros2 launch patricio_pilla_pilla pilla_pilla.launch.py;
+ros2 launch patricio_pilla_pilla pilla_pilla_vision.launch.py;
 exec bash"
 
 # TERMINAL 8: Escondite node
@@ -77,7 +77,7 @@ echo '🦑 Lanzando nodo Calamar...';
 sleep 8;
 source ~/turtlebot3_ws/install/setup.bash;
 export ROS_DOMAIN_ID=7;
-ros2 run patricio_calamar juego_calamar_real_node;
+ros2 run patricio_calamar juego_calamar_node;
 exec bash"
 
 # TERMINAL 10: Vision node (procesado de cámara)

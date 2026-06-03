@@ -31,6 +31,8 @@ from builtin_interfaces.msg import Time
 
 from patricio_interfaces.msg import PersonDetection
 
+RESULT_WIN  = 'WIN'
+RESULT_LOSE = 'LOSE'
 
 class EsconditoLogic:
     """
@@ -56,6 +58,8 @@ class EsconditoLogic:
         vision_confirm_sec:    float = 1.5,
         vision_timeout_sec:    float = 5.0,
         vision_confidence_min: float = 0.5,
+        game_timeout_sec:      float = 120.0,   # ← NUEVO: 2 min por defecto
+
     ):
         self._navigator   = navigator
         self._get_stamp   = get_stamp_fn
@@ -81,6 +85,9 @@ class EsconditoLogic:
             self._detection_callback,
             10,
         )
+        
+        self._game_timeout   = game_timeout_sec
+        self._game_start     = None 
 
     # ── Callback de visión ───────────────────────────────────────────────────
 
@@ -131,30 +138,39 @@ class EsconditoLogic:
 
     # ── Lógica interna ───────────────────────────────────────────────────────
 
-    def _run(self, falsas: list[Pose], objetivo: Pose) -> None:
+    def _run(self, falsas: list, objetivo) -> None:
 
-        # ── Fase 1: puntos falsos ─────────────────────────────────────
+        self._game_start = time.monotonic()
+
+        # ── Fase 1: puntos falsos ─────────────────────────────────────────
         for i, pose in enumerate(falsas, start=1):
+
+            # Timeout global
+            if self._check_timeout():
+                return
+
             ok = self._navegar_a(pose)
             if not ok:
                 with self._lock:
                     self._navigating = False
                 return
 
-            # Validación visual en punto falso
-            # Si hay persona aquí → coincidencia anticipada, terminar
             self._on_status(f"Revisando punto {i}...")
             persona_aqui = self._confirmar_persona()
 
             if persona_aqui:
                 self._on_status("¡Te encontré! (punto intermedio)")
+                self._finish_game(RESULT_WIN, 'found_early')
                 with self._lock:
                     self._navigating = False
                 return
 
             self._on_status(f"Punto {i} vacío. Continuando...")
 
-        # ── Fase 2: objetivo real ─────────────────────────────────────
+        # ── Fase 2: objetivo real ─────────────────────────────────────────
+        if self._check_timeout():
+            return
+
         ok = self._navegar_a(objetivo)
 
         if not ok:
@@ -167,17 +183,84 @@ class EsconditoLogic:
                 self._navigating = False
             return
 
-        # Validación visual en el objetivo real
         self._on_status("Llegué al punto objetivo. Buscando al niño...")
         persona_aqui = self._confirmar_persona()
 
+        duration = time.monotonic() - self._game_start
+
         if persona_aqui:
             self._on_status("¡Te encontré!")
+            self._finish_game(RESULT_WIN, 'found_objective', duration)
         else:
             self._on_status("Nadie aquí. Búsqueda completada sin éxito.")
+            self._finish_game(RESULT_LOSE, 'not_found', duration)
 
         with self._lock:
             self._navigating = False
+
+
+    def _check_timeout(self) -> bool:
+        """Comprueba timeout global. Si se agota, finaliza la partida."""
+        if self._game_start is None:
+            return False
+        elapsed = time.monotonic() - self._game_start
+        if elapsed >= self._game_timeout:
+            self._node.get_logger().warn(
+                f'⏰ Timeout global de búsqueda ({self._game_timeout}s).')
+            self._on_status('TIEMPO_AGOTADO')
+            self._finish_game(RESULT_LOSE, 'timeout', elapsed)
+            with self._lock:
+                self._navigating = False
+            return True
+        return False
+
+
+    def _finish_game(
+        self,
+        result: str,
+        reason: str,
+        duration: float | None = None,
+    ) -> None:
+
+        if duration is None and self._game_start is not None:
+            duration = time.monotonic() - self._game_start
+
+        self._node.get_logger().info(
+            f'Partida finalizada — resultado={result}, '
+            f'motivo={reason}, duración={duration:.1f}s'
+        )
+        self._guardar_resultado_bbdd(
+            juego='escondite',
+            resultado=result,
+            duracion_seg=duration or 0.0,
+            motivo=reason,
+        )
+
+
+    def _guardar_resultado_bbdd(
+        self,
+        juego: str,
+        resultado: str,
+        duracion_seg: float,
+        motivo: str,
+    ) -> None:
+        """
+        TODO: Conectar con el servicio de BBDD.
+        Sustituir el contenido de esta función con la llamada real.
+
+        Parámetros disponibles:
+        juego        : 'escondite'
+        resultado    : 'WIN' | 'LOSE'
+        duracion_seg : duración de la partida en segundos
+        motivo       : 'found_early' | 'found_objective' | 'not_found' | 'timeout'
+        """
+        self._node.get_logger().info(
+            f'[BBDD] TODO: guardar resultado '
+            f'juego={juego}, resultado={resultado}, '
+            f'duracion={duracion_seg:.1f}s, motivo={motivo}'
+        )
+        # ── INSERTAR AQUÍ LA LLAMADA A LA BBDD ──────────────────────────────────
+        
 
     # ── Validación visual ────────────────────────────────────────────────────
 
