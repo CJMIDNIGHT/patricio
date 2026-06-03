@@ -269,14 +269,34 @@ function setGameButtonState(juego, estado) {
 function handleGameFeedback(estado) {
     const lower = estado.toLowerCase();
 
-    if (lower.includes('corriendo')) {
+    if (lower.includes('corriendo') || lower.includes('buscando') || lower.includes('siguiendo')) {
         setGameButtonState('pilla_pilla', 'juego-activo');
         updateBubble('🏃 Patricio: ' + estado);
         juegoActivo = 'pilla_pilla';
-    } else if (lower.includes('descansando')) {
+
+    } else if (lower.includes('pillado')) {
+        // ── VICTORIA ──────────────────────────────────────────────────
+        setGameButtonState(null, '');
+        updateBubble('🎉 ¡El niño ha sido pillado! Patricio gana.');
+        finalizarYGuardarJuegoEnApi('pilla_pilla', 'ganado', 'finalizado_ok', {
+            texto_estado: estado,
+        });
+        juegoActivo = null;
+
+    } else if (lower.includes('tiempo_agotado')) {
+        // ── DERROTA ───────────────────────────────────────────────────
+        setGameButtonState(null, '');
+        updateBubble('⏰ ¡Tiempo agotado! El niño ha escapado.');
+        finalizarYGuardarJuegoEnApi('pilla_pilla', 'perdido', 'timeout', {
+            texto_estado: estado,
+        });
+        juegoActivo = null;
+
+    } else if (lower.includes('descansando') || lower.includes('espera')) {
         setGameButtonState(null, '');
         updateBubble('😴 Patricio está descansando...');
         juegoActivo = null;
+
     } else {
         updateBubble('🤖 Patricio: ' + estado);
     }
@@ -286,14 +306,36 @@ function handleEsconditeFeedback(estado) {
     updateBubble('🔍 Patricio: ' + estado);
 
     if (estado.includes('¡Te encontré!')) {
+        // ── VICTORIA ──────────────────────────────────────────────────
         setGameButtonState(null, '');
-        finalizarYGuardarJuegoEnApi('escondite', 'objetivo_encontrado', 'finalizado_ok', {
+        updateBubble('🎉 ¡Patricio ha encontrado al niño!');
+        finalizarYGuardarJuegoEnApi('escondite', 'ganado', 'finalizado_ok', {
             texto_estado: estado,
         });
         juegoActivo = null;
+
+    } else if (estado.includes('TIEMPO_AGOTADO')) {
+        // ── DERROTA ───────────────────────────────────────────────────
+        setGameButtonState(null, '');
+        updateBubble('⏰ ¡Tiempo agotado! El niño no fue encontrado.');
+        finalizarYGuardarJuegoEnApi('escondite', 'perdido', 'timeout', {
+            texto_estado: estado,
+        });
+        juegoActivo = null;
+
+    } else if (estado.includes('Nadie aquí')) {
+        // ── DERROTA ───────────────────────────────────────────────────
+        setGameButtonState(null, '');
+        updateBubble('😔 Patricio no encontró al niño en ningún punto.');
+        finalizarYGuardarJuegoEnApi('escondite', 'perdido', 'not_found', {
+            texto_estado: estado,
+        });
+        juegoActivo = null;
+
     } else if (estado.includes('No puedo llegar') || estado.includes('detenida')) {
         setGameButtonState(null, '');
-        finalizarYGuardarJuegoEnApi('escondite', 'sin_exito_nav', 'finalizado_ok', {
+        updateBubble('⚠️ Búsqueda detenida.');
+        finalizarYGuardarJuegoEnApi('escondite', 'abortado', 'sin_exito_nav', {
             texto_estado: estado,
         });
         juegoActivo = null;
@@ -495,3 +537,18 @@ function detenerPollCalamar() {
         calamarPollInterval = null;
     }
 }
+
+const resultadoSub = new ROSLIB.Topic({
+    ros: rosInstance,
+    name: '/patricio/resultado_juego',
+    messageType: 'std_msgs/msg/String'
+});
+
+resultadoSub.subscribe(function(message) {
+    const data = JSON.parse(message.data);
+    if (data.resultado === 'WIN') {
+        updateBubble(`🎉 ¡${data.juego} — GANASTE! (${data.duracion}s)`);
+    } else {
+        updateBubble(`😔 ${data.juego} — PERDISTE. Motivo: ${data.motivo}`);
+    }
+});
