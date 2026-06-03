@@ -17,6 +17,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/RegistrarIncidencia.srv"
   "msg/PersonDetection.msg"
   "msg/PoseResult.msg" 
+  "msg/FallEvent.msg"
   DEPENDENCIES
     geometry_msgs
     std_msgs

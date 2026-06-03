@@ -1,8 +1,6 @@
 from setuptools import find_packages, setup
-import os
-from glob import glob
 
-package_name = 'patricio_vision'
+package_name = 'patricio_deteccion_caidas'
 
 setup(
     name=package_name,
@@ -12,8 +10,6 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', 'patricio_vision', 'launch'), glob('launch/*.py')),
-
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -28,8 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'mediapipe_node = patricio_vision.mediapipe_node:main',
-            'fall_detection_node = patricio_vision.fall_detection_node:main',
+            'deteccion_caidas_node = patricio_deteccion_caidas.deteccion_caidas_node:main',
         ],
     },
 )
