@@ -89,7 +89,7 @@ class CaraNode(Node):
             '  Publica → /patricio/face_status, /patricio/game_status'
         )
 
-        #---Subsripción a topico de resultado_juego---
+        #---Subsripción a topico de /patricio/resultado_juego NO ESTA FUNCIONAL---
         self.create_subscription(
             String,
             '/patricio/resultado_juego',
@@ -145,6 +145,7 @@ class CaraNode(Node):
             if self._current_game == GAME_CALAMAR:
                 self._publish_face(ALERT)
 
+    #---Callback a topico de /patricio/resultado_juego NO ESTA FUNCIONAL---
     def _cb_resultado(self, msg: String) -> None:
         try:
             data = json.loads(msg.data)
