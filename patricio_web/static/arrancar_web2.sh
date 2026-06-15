@@ -112,3 +112,4 @@ exec bash"
 sleep 10
 MYIP=$(ip route get 1.1.1.1 | awk '{print $7; exit}')
 xdg-open http://${MYIP}:8000/admin.html
+bash ~/turtlebot3_ws/src/patricio/patricio_web/static/arrancar_face_screen.sh &
