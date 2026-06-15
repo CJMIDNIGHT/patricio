@@ -16,7 +16,7 @@ let gameTimeout = null;
 // ROSBRIDGE
 // ==========================
 
-const ROSBRIDGE_URL = "ws://10.0.2.15:9090";
+const ROSBRIDGE_URL = `ws://${window.location.hostname}:9090`;
 
 // ==========================
 // ESTADO ACTUAL
