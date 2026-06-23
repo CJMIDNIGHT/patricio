@@ -1189,10 +1189,19 @@ def iniciar_escondite():
     if result['error']:
         return jsonify({'success': False, 'error': result['error']}), 500
 
+    resp = result['response']
+    if isinstance(resp, str):
+        try:
+            resp = json.loads(resp)
+        except (json.JSONDecodeError, TypeError):
+            resp = {}
+    if not isinstance(resp, dict):
+        resp = {}
+
     return jsonify({
-        'success': result['response'].get('success', False),
-        'message': result['response'].get('message', ''),
-        'target_pose': result['response'].get('target_pose', {})
+        'success': resp.get('success', False),
+        'message': resp.get('message', ''),
+        'target_pose': resp.get('target_pose', {})
     })
 
 
