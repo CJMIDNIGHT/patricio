@@ -120,8 +120,11 @@ class CaraNode(Node):
         elif 'detenida' in estado or 'No puedo llegar' in estado:
             if self._current_game == GAME_ESCONDITE:
                 self._set_state(GAME_NONE, HAPPY)
+        elif 'Revisando' in estado:
+            self._set_state(GAME_ESCONDITE, FOCUS)
         elif estado:
             self._set_state(GAME_ESCONDITE, FOCUS)
+ 
 
     def _cb_calamar(self, msg: String) -> None:
         estado = msg.data.strip()
