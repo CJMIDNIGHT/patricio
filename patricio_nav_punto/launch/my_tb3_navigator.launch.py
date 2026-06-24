@@ -8,6 +8,8 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess, TimerAction
+
 
 TURTLEBOT3_MODEL = 'burger_cam'
 ROS_DISTRO = os.environ.get('ROS_DISTRO')
@@ -45,6 +47,30 @@ def generate_launch_description():
         get_package_share_directory('patricio_nav_punto'),
         'rviz',
         'tb3_navigation2.rviz')
+    
+    set_initial_pose = TimerAction(
+        period=8.0,
+        actions=[ExecuteProcess(
+            cmd=[
+                'ros2', 'topic', 'pub', '--once',
+                '/initialpose',
+                'geometry_msgs/msg/PoseWithCovarianceStamped',
+                '''{
+                    "header": {"frame_id": "map"},
+                    "pose": {
+                        "pose": {
+                            "position": {"x": 0, "y": 0, "z": 0.0},
+                            "orientation": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0}
+                        },
+                        "covariance": [0.25,0,0,0,0,0, 0,0.25,0,0,0,0,
+                                       0,0,0,0,0,0, 0,0,0,0,0,0,
+                                       0,0,0,0,0,0, 0,0,0,0,0,0.068]
+                    }
+                }'''
+            ],
+            output='screen'
+        )]
+    )   
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -78,4 +104,6 @@ def generate_launch_description():
             arguments=['-d', rviz_config_dir],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen'),
+
+        set_initial_pose,
     ])
