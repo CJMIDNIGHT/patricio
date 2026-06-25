@@ -41,7 +41,7 @@
 
         <div class="login-field">
           <label for="username">Usuario</label>
-          <input type="text" id="username" placeholder="Usuario">
+          <input type="text" id="username" placeholder="Usuario (ej. admin) o correo electrónico">        
         </div>
 
         <div class="login-field">
@@ -81,25 +81,33 @@
     </div>
   </footer>
 
-  <script src="js/script_singup_login_logout.js"></script>
-<script>
-  document.getElementById('loginBtn').addEventListener('click', function () {
-    const fields = ['username', 'password'];
-
-    fields.forEach(function (fieldId) {
-      const input = document.getElementById(fieldId);
+  <!-- Reemplaza el script inline por esto -->
+<script src="js/script_singup_login_logout.js"></script>
+<!--script>
+  // Solo validación visual — sin tocar loginBtn
+  document.addEventListener("DOMContentLoaded", () => {
+    ['username', 'password'].forEach(id => {
+      const input = document.getElementById(id);
       if (!input) return;
-      if (!input.value.trim()) {
-        input.classList.add('input-error');
-      } else {
-        input.classList.remove('input-error');
-      }
-
       input.addEventListener('input', function () {
         if (this.value.trim()) this.classList.remove('input-error');
       });
     });
+
+    // Añade la validación visual AL listener ya existente del JS externo
+    const btn = document.getElementById('loginBtn');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        ['username', 'password'].forEach(id => {
+          const input = document.getElementById(id);
+          if (input && !input.value.trim()) {
+            input.classList.add('input-error');
+          }
+        });
+        // El fetch lo maneja script_singup_login_logout.js
+      });
+    }
   });
-</script>
+</script-->
 </body>
 </html>

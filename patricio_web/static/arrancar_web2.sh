@@ -109,6 +109,25 @@ export ROS_DOMAIN_ID=7;
 ros2 run patricio_vision mediapipe_node;
 exec bash"
 
+# TERMINAL 13: Gemini (IA conversacional)
+gnome-terminal -- bash -c "
+echo '🧠 Lanzando Gemini...';
+sleep 10;
+source ~/turtlebot3_ws/install/setup.bash;
+export ROS_DOMAIN_ID=7;
+export NIM_API_KEY="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"
+ros2 launch patricio_gemini gemini.launch.py;
+exec bash"
+
+# TERMINAL 14: Voice assistant (STT + TTS)
+gnome-terminal -- bash -c "
+echo '🎙️ Lanzando Voice Assistant...';
+sleep 12;
+source ~/turtlebot3_ws/install/setup.bash;
+export ROS_DOMAIN_ID=7;
+ros2 launch patricio_voz voice_assistant.launch.py;
+exec bash"
+
 sleep 10
 MYIP=$(ip route get 1.1.1.1 | awk '{print $7; exit}')
 xdg-open http://${MYIP}:8000/admin.html
